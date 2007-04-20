@@ -1,0 +1,24 @@
+package TinyPlane;
+
+class PlaneAdd extends Plane2 {
+
+  effects 
+	   output B sLanding2 (&(sLanding,sLanding));
+	   //redeclare output B sLanding (&(f'(sLanding),sLanding));
+	   redeclare output B sLanding (test);// causes verify exception. 
+	   B test {UNDET:0.008};
+	   //redeclare B power1 {UNDET :0.002};
+  maps
+    //redeclare f : BoolPowerState --> B {
+    //  {Power} |--> UNDET
+    //};
+    //g : BoolFlapState --> BoolPowerState {
+    //  {Moves} |--> Power
+    //};
+    //h : BoolFlapState --> B {
+    //  {Moves} |--> UNDET
+    //};
+
+  components
+	//Plane subplane;
+} // class PlaneAdd

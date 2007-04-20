@@ -1,0 +1,17 @@
+package TinyPlane;
+
+sclass FlapState extends BoolFlapState {
+
+  properties
+    MovesOptimal MovesPartial MovesSlow MovesAny
+  map
+    replace Moves {
+      MovesOptimal MovesPartial MovesSlow MovesAny
+      relations 
+      MovesOptimal ==> MovesPartial;
+      MovesOptimal ==> MovesSlow;
+      MovesPartial ==> MovesAny;
+      MovesSlow    ==> MovesAny;
+    } // UNDET
+  relations
+} // class Plane

@@ -1,0 +1,71 @@
+package TestPkg;
+class CClassForSClass {
+effects
+	       //TestSClass  forOrderings;
+	       //ServOfPlane forInheritance;
+	       DetailedServOfPlane forInheritance2
+ {
+				   perfectPlane         : 0.00001
+				   replace passengerPlane {
+				       buffetControl    : 0.001
+				       gustAlleviation  : 0.02
+				       vibrationControl : 0.01
+				       passengerHealty  : 0.1
+				   } // passengerPlane 
+				   replace pursuitPlane {
+				       isVersatile      : 0.5
+				   } // pursuitPlane
+				   replace savePlane {
+				       allControl       : 0.6
+				       rollControl	: 0.7
+				   } // savePlane 
+				   
+	       };
+
+       //DetailedServOfPlaneSub forInheritance3;
+/*
+	       ServOfPassPlane passPlane { replace UNDET {
+			       buffetControl    : 0.01
+			       gustAlleviation  : 0.01
+			       vibrationControl : 0.01
+			       passengerHealty  : 0.01
+			       }
+			       };
+*/
+/*
+	       ServOfPassPlane passPlane { replace UNDET {
+			       buffetControl    : 0.1
+			       gustAlleviation  : 0.01
+			       vibrationControl : 0.01
+			       passengerHealty  : 0.001
+			       }
+			       };
+*/
+/*
+	       ServOfPassPlane passPlane { replace UNDET {
+			       buffetControl    : 0.001
+			       gustAlleviation  : 0.01
+			       vibrationControl : 0.01
+			       passengerHealty  : 0.1
+			       }
+			       };
+*/
+/*
+	       ServOfPassPlane passPlane { replace UNDET {
+			       buffetControl    : 0.36
+			       gustAlleviation  : 0.6
+			       vibrationControl : 0.6
+			       passengerHealty  : 0.84
+			       }
+			       };
+*/
+/*
+	       ServOfPassPlane passPlane { replace UNDET {
+			       buffetControl    : 0.81
+			       gustAlleviation  : 0.9
+			       vibrationControl : 0.9
+			       passengerHealty  : 0.99
+			       }
+			       };
+*/
+}
