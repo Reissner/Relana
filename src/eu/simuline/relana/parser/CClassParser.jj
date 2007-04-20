@@ -1,0 +1,990 @@
+
+options {
+    STATIC = false;
+    //LOOKAHEAD = 4;
+    //FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(CClassParser)
+
+package eu.simuline.relana.parser;
+
+import eu.simuline.relana.model.CClass;
+import eu.simuline.relana.model.SClass;
+import eu.simuline.relana.model.CClassLoader;
+import eu.simuline.relana.model.ClassLocator;
+import eu.simuline.relana.model.CClassLink;
+import eu.simuline.relana.model.Package;
+import eu.simuline.relana.model.ProbDistr;
+import eu.simuline.relana.model.Deficiency;
+import eu.simuline.relana.model.DeficiencyMap;
+import eu.simuline.relana.model.MapDecl;
+
+import eu.simuline.relana.expressions.FormulaDecl;
+import eu.simuline.relana.expressions.Operation;
+import eu.simuline.relana.expressions.Type;
+
+import java.math.BigDecimal;
+
+import java.io.File;
+import java.io.Reader;
+import java.io.FileReader;
+import java.io.StringReader;
+import java.io.IOException;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.Set;
+import java.util.HashSet;
+
+public class CClassParser {
+
+private CClassLoader classLoader;
+
+private ClassLocator loc;
+private CClass cClass;
+private boolean exceptionThrown;
+
+// *** only for reentry parsing formulae: should be separate parser. 
+static class FormulaWrapper {
+     private int lineNumber;
+     private int colnNumber;
+     private String formula;
+
+     FormulaWrapper(int lineNumber,
+		   int colnNumber,
+		   String formula) {
+         this.lineNumber = lineNumber;
+         this.colnNumber = colnNumber;
+         this.formula = formula;
+     }
+} // class FormulaWrapper 
+
+/**
+ * Returns a string comprising the current class, 
+ * the number of the current line and column, 
+ * the last token successfully read and the token tp be read next. 
+ *
+ * @return
+ *    a <code>String</code> of the form 
+ *    <code>[{@link #loc}] line ##, column ## 
+ *    between tokenRead and tokenToBeRead</code>. 
+ */
+private String getLocation() {
+	return getLocation(this.token);
+}
+private String getLocation(Token token) {
+   StringBuffer result = new StringBuffer();
+   result.append("[" + this.loc + "] ");
+
+   if (this.token.next == null) {
+      result.append("line "      + token.beginLine  );
+      result.append(", column "  + token.beginColumn);
+      result.append(", after \"" + token);
+      result.append("\": ");
+   } else {
+      result.append("line "        + token.next.beginLine  );
+      result.append(", column "    + token.next.beginColumn);
+      result.append(", between \"" + token);
+      result.append("\" and \""    + token.next);
+      result.append("\": ");
+   }
+   return result.toString();
+}
+
+/**
+ * Reports an error and also the location where it occurred. 
+ * **** same as in SClassParser **** 
+ * 
+ * @param msg 
+ *    the message to be displayed. 
+ */
+private void report(String msg) throws ParseException {
+       System.out.print(getLocation());
+       ParseException pe = new ParseException(msg);
+       //System.out.println(pe.getMessage());
+       this.exceptionThrown = true;
+       throw pe;
+} // report
+
+private void report(Token token,String msg) throws ParseException {
+       System.out.print(getLocation(token));
+       ParseException pe = new ParseException(msg);
+       //System.out.println(pe.getMessage());
+       this.exceptionThrown = true;
+       throw pe;
+} // report
+/*
+private void report(Exception exc) throws ParseException {
+       System.out.print(getLocation());
+       throw exc;
+} // report
+*/
+
+private void errorSkipTo(int kind) {
+     errorSkipTo(kind,generateParseException());
+} // errorSkipTo 
+
+private void errorSkipTo(int kind, Exception ex) {
+     System.out.print("[" + loc + "] ");
+     if (!(ex instanceof ParseException)) {
+	Token currentToken = generateParseException().currentToken;
+     }
+     System.out.println(ex.getMessage());
+     Token t;
+     do {
+	t= getNextToken();
+     } while(t.kind != kind);
+     this.exceptionThrown = true;
+} // errorSkipTo 
+
+/**
+ * To set the <code>CClassLoader<code>. 
+ * This is needed whenever the definition of the class currently read 
+ * relies on definitions of other classes such as 
+ * the superclass if it is given explicitly. 
+ * 
+ * @param classLoader
+ *    the current <code>SClassLoader<code>. 
+ */
+public void setClassLoader(CClassLoader classLoader) {
+     this.classLoader = classLoader;
+}
+
+/**
+ * Sets the locator for the class currently parsed. 
+ * This is needed to analyze formulae in a second parsing step 
+ * when all <code>SClass</code> declarations are clarified. 
+ * 
+ * @param loc
+ *    the location of the class currently parsed. 
+ */
+private void setLocator(ClassLocator loc) {
+     this.loc = loc;
+}
+
+/**
+ * Sets the <code>CClass</code> for the class currently parsed 
+ * but without formulae. 
+ * This is needed to analyze formulae in a second parsing step 
+ * when all <code>SClass</code> declarations are clarified. 
+ * 
+ * @param cClass
+ *    
+ */
+private void setCClass(CClass cClass) {
+    this.cClass = cClass;
+}
+
+
+} // class CClassParser 
+
+
+PARSER_END(CClassParser)
+
+
+
+/* WHITE SPACE */
+SKIP :
+{
+    " " | "\t" | "\n" | "\r" | "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+| "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+    <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+TOKEN : {
+    <PACKAGE:          "package"> |
+    <CCLASS:           "class"> |
+    <EXTENDS:          "extends"> |
+    <REDECLARE:        "redeclare"> |
+    <MAPS:             "maps"> |
+    <MAP:              "map"> |
+    <MAPSTO:           "|-->"> |
+    <IDDOMAIN:         "id:"> |
+    <COMPONENTS:       "components"> |
+    <EFFECTS:          "effects"> |
+    <INPUT:            "input"> |
+    <OUTPUT:           "output"> |
+    <REPLACE:          "replace"> | 
+    <INV:              "!" > |
+    <COV:              "," > |
+    <CONT:             "'" > |
+    <END:              ";" > |
+    <SEP:              "." > |
+    <UNION:            "|" > |
+    <INTERSECT:        "&" > |
+    <COMPLEMENT:       "~" > |
+    <NAME:             <LETTER>(<IDENTIFIER>)* > |
+    <FLOAT:            <NUMBER>("."<NUMBER>)?(("E" | "e")("+" | "-")?<NUMBER>)? > | 
+    <NUMBER:           (<DIGIT>)+ > | 
+    <#IDENTIFIER:      (<LETTER>|<DIGIT>|"_") > |
+    <#LETTER:          (<CAPITAL_LETTER>|<SMALL_LETTER>) > |
+    <#DIGIT:           ["0"-"9"] > |
+    <#SMALL_LETTER:    ["a"-"z"] > |
+    <#CAPITAL_LETTER:  ["A"-"Z"] >
+} // TOKEN
+
+/**
+ * Parses an <code>CClass</code>. 
+ * The main ingredients is its package, its name, the superclasses, 
+ * and the declared effects and components. 
+ * 
+ * @param loc
+ *    the location of the class currently parsed. 
+ * @return
+ *    the <code>CClass</code> described by the document parsed. 
+ */
+CClass cClass(ClassLocator loc) 
+       throws IOException :
+{
+//System.out.println("------------"+loc);
+this.exceptionThrown = false;
+List<String> pkgPath;
+Token cClassName;
+CClass superClass;
+Map<String,MapDecl> maps;
+Map<String,CClass.SClassDecl> effects;
+Map<String,CClassLink> components;
+this.loc = loc;
+Map<String,FormulaWrapper> incompEffects = 
+			   new HashMap<String,FormulaWrapper>();
+}
+{
+( <PACKAGE>  pkgPath = getPath() <END>
+<CCLASS>   cClassName = <NAME> 
+superClass = getSuperClass() 
+
+effects   = effects(incompEffects) 
+maps       = maps() 
+components = components() 
+"}" <EOF>)
+{
+//System.out.println("^^^^^^^^^^^^^^^");
+if (!this.loc.getPackage().getPath().equals(pkgPath)) {
+   report("Expected Package \""  + this.loc.getPackage().getPathName() + 
+   "\" but found: \""  + Package.getPackage(pkgPath).getPathName() + "\". ");
+}
+
+if (!this.loc.getName().equals(cClassName.toString())) {
+   report("Expected Class \""  + this.loc.getName() + 
+   "\" but found: \""  + cClassName + "\". ");
+}
+
+// Here, the the of this class is as prescribed by this.loc 
+// or something has been reported. 
+
+
+if (effects.size() == 0 && components.size() == 0) {
+   // Here, neither components nor effects are defined. 
+   report("Class \""  + cClassName + "\" is invalid: " + 
+   "Neither components nor effects are defined. ");
+}
+
+this.cClass = CClass.getCClass(this.loc.getName(),
+			       this.loc.getPackage(),
+			       superClass,
+			       maps,
+			       components,
+			       effects);
+
+// complete declarations of effects 
+if (!incompEffects.isEmpty()) {
+   FormulaParser fParser = new FormulaParser((Reader)null);
+   fParser.setClassLoader(this.classLoader);
+   fParser.setLocator(this.loc);
+   fParser.setCClass(this.cClass);
+   for (Map.Entry<String,FormulaWrapper> entry :
+   incompEffects.entrySet()) {
+       try {
+	   Reader str = new StringReader(entry.getValue().formula);
+	   fParser.ReInit(str);
+	   fParser.setLineColNum(entry.getValue().lineNumber,
+			         entry.getValue().colnNumber);
+           CClass.SClassDecl decl = effects.get(entry.getKey());
+	   decl.setFormula(fParser.getFormula(this.cClass));
+       } catch(IllegalArgumentException iaEx) {
+	   //throw iaEx;// for debugging
+	   fParser.report(iaEx.getMessage());
+       }
+    }
+}
+// Here, the entries of this class is valid or something has been reported. 
+
+if (this.exceptionThrown) {
+   report("Recoverable errors occurred; see above. ");
+}
+return this.cClass;
+}
+} // cClass
+
+
+
+/**
+ * Returns the superclass of this class. 
+ * The classes that occur are truely loaded which may cause an exception. 
+ * 
+ * @return
+ *    the superclass of the class currently parsed. 
+ * @throws IOException
+ *    see {@link CClassLoader#loadSClass}. 
+ */
+CClass getSuperClass() 
+       throws IOException : 
+{
+List<String> superPath = null;
+}
+{
+( (<EXTENDS> superPath = getPath())? "{" )
+{
+// determine the superclass 
+if (superPath == null) {
+   // extends implicitly Component 
+    return CClass.COMPONENT;
+}
+if (superPath.size() == 1 && 
+(superPath.get(0).equals(CClass.COMPONENT.getName()))) {
+   // Here it must be Component, the overall base class. 
+   return CClass.COMPONENT;
+}
+// Here, it must be a library class. 
+
+return this.classLoader.loadCClass(ClassLocator.getLocator(superPath),
+				this.loc.getPackage());
+
+}
+}
+
+/**
+ * Returns a path as a list of strings. 
+ * **** same as in SClassParser **** 
+ * 
+ * @return
+ *     a path as a list of strings. 
+ *     The outermost package is given first. 
+ */
+List<String> getPath() : 
+{
+Token first;
+List<String> path = new ArrayList<String>();
+}
+{
+(first = <NAME> (addToPath(path))* ) 
+{
+path.add(0,first.toString());
+return path;
+}
+}
+
+/**
+ * Adds the name of an inner package to a path given by a list of strings. 
+ * **** same as in SClassParser **** 
+ * 
+ * @param path
+ *    a path given as a list of strings as returned by {@link #getPath}. 
+ */
+void addToPath(List<String> path) : 
+{
+Token name;
+}
+{
+(<SEP> name = <NAME>)
+{
+path.add(name.toString());
+}
+}
+
+
+Map<String,MapDecl> maps() : 
+{
+Map<String,MapDecl> name2map = new HashMap<String,MapDecl>();
+}
+{
+( (<MAPS> (addMap(name2map) )*)? )
+{
+return name2map;
+}
+}
+
+
+
+void addMap(Map<String,MapDecl> name2map) : 
+{
+Token redeclare = null;
+Token nameT;
+List<String> invImgP;
+List<String>    imgP;
+SClass invImgCls;
+SClass    imgCls;
+Map<Set<Deficiency>,Deficiency> setOfSrc2targ = 
+				new
+				HashMap<Set<Deficiency>,Deficiency>();
+Set<Deficiency> idDomain = new HashSet<Deficiency>();
+}
+{
+(//<MAP> 
+(redeclare = <REDECLARE>)?
+nameT = <NAME> ":" invImgP = getPath() "-->" imgP = getPath() 
+"{" (add2DefMap(setOfSrc2targ))* (addToIdDom(idDomain))? "}" <END>)
+{
+String mapName = nameT.toString();
+try {
+    invImgCls = this.classLoader.loadSClass(ClassLocator.getLocator(invImgP),
+					    this.loc.getPackage());
+} catch (IOException ioe) {
+    report("IOException while loading \"" + ClassLocator.getLocator(invImgP) + 
+	   "\" in package this.loc.getPackage(): " + ioe + ". ");
+    invImgCls = null; // never reached. ****
+}
+
+try {
+    imgCls = this.classLoader.loadSClass(ClassLocator.getLocator(imgP),
+					    this.loc.getPackage());
+} catch (IOException ioe) {
+    report("IOException while loading \"" + ClassLocator.getLocator(imgP) + 
+	   "\" in package this.loc.getPackage(): " + ioe + ". ");
+    imgCls = null; // never reached. ****
+}
+
+try {
+    MapDecl newMap = new MapDecl(redeclare != null,
+			         mapName,
+			         setOfSrc2targ,
+				 invImgCls,
+				 imgCls,
+				 idDomain);
+    MapDecl oldMap = name2map.put(mapName,newMap);
+    if (oldMap != null) {
+       report(nameT,"Name \"" + mapName + 
+    	      "\" used for two maps: " + oldMap + " and " + newMap + ". ");
+    }
+} catch(IllegalArgumentException iaEx) {
+  // throw iaEx;// for debugging 
+  report(nameT,iaEx.getMessage());
+}
+}
+}
+
+
+void add2DefMap(Map<Set<Deficiency>,Deficiency> setOfSrc2targ) : 
+{
+Token defT;
+Set<Deficiency> invImg = new HashSet<Deficiency>();
+}
+{
+( "{" (addDef(invImg))* "}" <MAPSTO> defT = <NAME> )
+{
+Deficiency newDef = new Deficiency(defT.toString());
+Deficiency oldDef = setOfSrc2targ.put(invImg,newDef);
+if (oldDef != null) {
+   report("Defined image of "  + invImg + 
+   " twice: is \""  + oldDef + "\" and \""  + newDef + "\". ");
+}
+}
+}
+
+void addDef(Set<Deficiency> defs) : 
+{
+Token defT;
+}
+{
+( defT = <NAME> )
+{
+boolean isNew = defs.add(new Deficiency(defT.toString()));
+if (!isNew) {
+   report("Defined deficiency "  + defT + " twice. ");
+}
+}
+}
+
+void addToIdDom(Set<Deficiency> idDomain) : 
+{
+}
+{
+( <IDDOMAIN> "{" (addDef(idDomain))* "}" )
+{
+}
+}
+
+/**
+ * Reads in all declarations of effects. 
+ * 
+ * @param incompEffects
+ *    a map that maps names of effects to their respective declarations. 
+ *    Here only incomplete declarations are mentioned: 
+ *    Each formula requires a second parsing step. 
+ *    Note that this method may add entries to this map while parsing. 
+ * @return
+ *    a map that maps names of effects to their respective declarations. 
+ */
+Map<String,CClass.SClassDecl> 
+                         effects(Map<String,FormulaWrapper> incompEffects) :
+{
+Map<String,CClass.SClassDecl> effects = 
+			      new TreeMap<String,CClass.SClassDecl>();
+}
+{
+( <EFFECTS> (effect(effects,incompEffects))* )?
+{
+//System.out.println("effects: "+effects);
+
+return effects;
+}
+}
+
+/**
+ * Reads in the declaration of a effect. 
+ * Note that this method may add entries 
+ * to both maps in the parameter list while parsing. 
+ * 
+ * @param effects
+ *    a map that maps names of effects to their respective declarations. 
+ * @param incompEffects
+ *    a map that maps names of effects to their respective declarations. 
+ *    Here only incomplete declarations are mentioned: 
+ *    Each formula requires a second parsing step. 
+ */
+void effect(Map<String,CClass.SClassDecl>        effects,
+	     Map<String,FormulaWrapper>     incompEffects) :
+{
+Token redeclare = null;
+Set<CClass.SClassModifier> accessModifiers = 
+			   new HashSet<CClass.SClassModifier>();
+List<String> path;
+Token sNameT;
+SClass sClass;
+CClass.SClassDecl oldDecl, decl;
+ProbDistr distr = null;
+String form = null;
+}
+{
+
+//try {
+    ( (redeclare = <REDECLARE>)?
+      (addAccessModifier(accessModifiers))* 
+      path = getPath() 
+      sNameT = <NAME> 
+    )
+//} catch(IllegalArgumentException iaEx) {
+//  errorSkipTo(END,iaEx);
+//  return;
+//}
+
+{
+
+// get class of effect 
+if (path.size() == 1 && path.get(0).equals(SClass.BOOLEAN.getName())) {
+   sClass = SClass.BOOLEAN;
+} else {
+  try {
+      sClass = this.classLoader.loadSClass(ClassLocator.getLocator(path),
+					   this.loc.getPackage());
+  } catch (IOException ioe) {
+    report("IOException while loading \"" + ClassLocator.getLocator(path) + 
+	   "\" in package this.loc.getPackage(): " + ioe + ". ");
+    sClass = null; // never reached. ****
+  }
+}
+assert sClass != null;
+
+Token formT = null;
+}
+
+try {
+    (
+    (distr = getDistr(sClass) | ( formT = "(" form = skipFormula() ")") )?
+    <END>)
+} catch(IllegalArgumentException iaEx) {
+  report(iaEx.getMessage());
+//  errorSkipTo(END,iaEx);
+//  return;
+}
+
+{
+// read in the rest: name, modifiers, distribution, formula if any. 
+String sName = sNameT.toString();
+oldDecl = effects.put(sName,
+		       new CClass.SClassDecl(redeclare != null,
+					     accessModifiers,
+					     sClass,
+					     sNameT.toString(),
+					     distr));
+// consistency check: duplicate declaration 
+if (oldDecl != null) {
+   report("Duplicate effect declaration \"" + sNameT + 
+          "\"; overwrite " + oldDecl + " by " + sClass + ". " );
+}
+
+// store formula for later analysis 
+if (form != null) {
+   assert formT != null;
+   // for use of second pass parsing formulae 
+   int lineNumber = formT.beginLine;
+   int colnNumber = formT.beginColumn;
+
+   // form comes from skipFormula and comes from res.toString 
+   // if skipFormula is invoked, it is not null; otherwise it is.
+   incompEffects.put(sName,new FormulaWrapper(lineNumber,colnNumber,form));
+}
+}
+}
+
+/**
+ * Adds an access modifier to the set <code>accessModifiers</code>. 
+ * Reports an error if a modifyer is duplicate. 
+ * 
+ * @param accessModifiers
+ *    a set of access modifiers. 
+ */
+void addAccessModifier(Set<CClass.SClassModifier> accessModifiers) : 
+{
+Token modT;
+}
+{
+( (modT = <INPUT>) | (modT = <OUTPUT>) )
+{
+//***** bad; no single source principle. 
+CClass.SClassModifier mod = CClass.SClassModifier.get(modT.toString());
+
+if (!accessModifiers.add(mod)) {
+   // modifier already present 
+   report("Found duplicate access modifier \"" + mod + "\". ");
+}
+// Here, the modifiers are valid in their own right. 
+// Validity of combinations are not yet checked. 
+}
+}
+
+/**
+ * 
+ * 
+ * @param sClass
+ *    an <code>SClass</code> that describes the type 
+ *    of the probability distribution to be read in. 
+ * @return
+ *    the probability distribution read in. 
+ */
+ProbDistr getDistr(SClass sClass) : 
+{
+Map<Deficiency,BigDecimal> def2prob  = new HashMap<Deficiency,BigDecimal>();
+Map<Deficiency,ProbDistr > def2distr = new HashMap<Deficiency,ProbDistr >();
+}
+{
+( "{" (addProbAlloc(def2prob) | <REPLACE> replDistr(def2distr,sClass))* "}" )
+{
+// check whether all is allocated 
+assert sClass.getDeclaredInnerClasses().keySet()
+       .containsAll(def2distr.keySet());
+
+// check whether replacements are given for all "inner classes". 
+if (sClass.getDeclaredInnerClasses().keySet().size() != 
+    def2distr.keySet().size()) {
+    Set<Deficiency> minus = new HashSet<Deficiency>
+		    (sClass.getDeclaredInnerClasses().keySet());
+    minus.removeAll(def2distr.keySet());
+    report("Found no partial probability distribution " + 
+	   "for deficiencies " + minus + ". ");
+}
+
+// make sure that 
+Set<Deficiency> inter = new HashSet<Deficiency>(def2prob.keySet());
+inter.retainAll(def2distr.keySet());
+if (!inter.isEmpty()) {
+   report("For properties " + inter + 
+	  " defined probability and sub-distribution. ");
+}
+
+ProbDistr distr;
+Type type = sClass.getType();
+if ((sClass.getSuperClass() == null) || sClass.isInner()) {
+   // Here, the distribution is elementary, 
+   // i.e. has no subdistributions, i.e. replacements. 
+   if (!type.asSet().equals(def2prob.keySet())) {
+      report("Type with set " + type.asSet() + 
+	     " does not allow distribution " + def2prob + ". ");
+   }
+
+   distr = new ProbDistr(type, def2prob);
+} else {
+   Set<Deficiency> union = new HashSet<Deficiency>(def2prob.keySet());
+   union.addAll(def2distr.keySet());
+   Set<Deficiency> exp = sClass.getSuperClass().getType().asSet();
+   if (!exp.equals(union)) {
+   report("Expected properties " + exp + 
+          " but found " + union + ". ");
+   }
+   distr = new ProbDistr(type,def2distr,def2prob);
+}
+try {
+    distr.validate();
+} catch(IllegalStateException e) {
+  report("Probability distribution " + e.getMessage());
+}
+return distr;
+}
+}
+
+/**
+ * Parses the replacement for a probability distribution. 
+ * 
+ * @param def2distr
+ *    ****?
+ * @param sClass
+ *    ****?
+ */
+void replDistr(Map<Deficiency,ProbDistr> def2distr,
+	       SClass sClass) : 
+{
+Token replDefT;
+ProbDistr distrInner;
+}
+{
+(replDefT = <NAME> )
+{
+Deficiency repl = new Deficiency(replDefT.toString());
+SClass sClassInner = sClass.getDeclaredInnerClass(repl);
+assert sClassInner != null; // thrown exception otherwise. 
+}
+
+(distrInner = getDistr(sClassInner))
+{
+//replace 
+ProbDistr old = def2distr.put(repl,distrInner);
+if (old != null) {
+   report("Overwritten replacement of property \"" + replDefT + 
+   "\". ");
+}
+
+}
+}
+
+
+/**
+ * Reads in a probability allocation. 
+ * Reports an error if a value is overwritten or 
+ * if the value read in	is not in <code>90,1)</code>. 
+ * 
+ * @param def2prob
+ *    maps a deficiency to its probability. 
+ *    This is successively filled with the values read in. 
+ */
+void addProbAlloc(Map<Deficiency,BigDecimal> def2prob) : 
+{
+Token defT,floatT;
+}
+{
+(defT = <NAME> ":" floatT = <FLOAT>)
+{
+Deficiency def = new Deficiency(defT.toString());
+BigDecimal newProb = new BigDecimal(floatT.toString());
+if (newProb.compareTo(BigDecimal.ONE ) >= 0 || 
+    newProb.compareTo(BigDecimal.ZERO) <= 0) {
+   report("Assigned property \"" + defT + 
+	  "\" probability value " + floatT + 
+	  " which is not in (0,1). ");
+}
+BigDecimal oldProb = def2prob.put(def, newProb);
+if (oldProb != null) {
+   // overwritten 
+   report("Overwritten probability " + oldProb + " for property \"" + defT + 
+	  "\" by new value " + floatT.toString() + ". ");
+}
+}
+}
+
+/**
+ * Parses a formula checking its syntactic structure 
+ * but without analyzing it in detail and without decomposing it 
+ * nto its ingredients. 
+ * Essentially delegates work to be done to {@link #appendFormula}. 
+ * 
+ * @return
+ *    the formula read. 
+ * @see FormulaParser#getFormula
+ */
+String skipFormula() : 
+{
+StringBuffer res = new StringBuffer();
+}
+{
+(appendFormula("",res))
+{
+return res.toString();
+}
+}
+
+/**
+ * Essentially reads a formula into the buffer <code>res</code>. 
+ * 
+ * @param pre
+ *    a prefix string. 
+ * @param res
+ *    appends the prefix <code>pre</code> 
+ *    and then what is parsed subsequently to <code>res</code>. 
+ */
+void appendFormula(String pre, StringBuffer res) : 
+{
+Token name;
+Token cls = null;
+res.append(pre);
+}
+{
+( ("<"  appendToken("<",res,">{") ">" 
+   "{" (appendToken("" ,res,""  ))* cls = "}")      // constant 
+| 
+     LOOKAHEAD ( 
+      ( (<NAME> (<INV>)? (<COV> | <CONT>) ) | 
+         <UNION> | <INTERSECT> | <COMPLEMENT>) "(" )  
+   ( appendOp(res) 
+          "(" appendFormula("(",res) 
+        ( "," appendFormula(",",res))* cls = ")" )  // compound
+| 
+   LOOKAHEAD(1) ( appendToken("" ,res,"")  
+	     ("." appendToken(".",res,""))* )       // variable 
+)
+{
+if (cls != null) {
+   res.append(""+cls);
+}
+}
+}
+
+
+/**
+ * Appends to <code>buf</code> the prefix <code>pre</code>, a name parsed 
+ * and finally <code>post</code>. 
+ * 
+ * @param pre
+ *    a prefix string. 
+ * @param buf
+ *    a buffer to append <code>pre</code>, a name parsed 
+ *    and finally <code>post</code>. 
+ * @param post
+ *    a postfix string. 
+ */
+void appendToken(String pre,StringBuffer buf,String post) : 
+{
+Token name;
+buf.append(pre);
+}
+{
+(name = <NAME>)
+{
+buf.append(name + post);
+}
+}
+
+/**
+ * Appends to <code>buf</code> 
+ * the string representation of an operation parsed. 
+ * 
+ * @param buf
+ *    a buffer to append the string representation of an operation parsed. 
+ *    This may be either union, intersection or complement. 
+ */
+void appendOp(StringBuffer buf) : 
+{
+Token  opT = null;
+Token accT = null;
+Token funT = null;
+Token invT = null;
+}
+{
+( (( funT = <NAME> (invT = <INV>)? ( accT = <CONT> | accT = <COV> ) ) | 
+   opT = <UNION> | opT = <INTERSECT> | opT = <COMPLEMENT> ) 
+)
+{
+if (opT == null) {
+   assert funT != null && accT != null;
+   buf.append(funT.toString());
+   if (invT != null) {
+      buf.append(invT.toString());
+   }
+   buf.append(accT.toString());
+} else {
+   assert funT == null && invT == null && accT == null;
+   buf.append(opT.toString());
+}
+}
+}
+
+
+
+/**
+ * Parses the subcomponents declared in this <code>CClass</code>. 
+ * 
+ * @return
+ *    a map that maps the names of the subcomponents 
+ *    to their class links. 
+ */
+Map<String,CClassLink> components() :
+{
+Map<String,CClassLink> components = new TreeMap<String,CClassLink>();
+}
+{
+(<COMPONENTS>(component(components))*)?
+{
+//System.out.println("components: "+components);
+return components;
+}
+}
+
+
+/**
+ * Parses a single subcomponent declaration. 
+ * 
+ * @param components
+ *    a map that maps the names of the subcomponents 
+ *    to their class links. 
+ *    The parsed component is added to this map. 
+ */
+void component(Map<String,CClassLink> components) :
+{
+Token cClass;
+Token cName;
+ClassLocator loc;
+CClassLink link;
+CClassLink old;
+}
+{
+(cClass = <NAME> cName = <NAME> <END>)
+{
+loc = new ClassLocator(cClass.toString(),this.loc.getPackage());
+
+link = this.classLoader.resolveLocInOcc(loc,this.loc,cName.toString());
+
+old = components.put(cName.toString(),
+                     link);
+if (old != null) {
+   report("Duplicate component \"" + cName + 
+   "\"; overwrite " + old + " by " + cClass + ". " );
+}
+
+}
+}

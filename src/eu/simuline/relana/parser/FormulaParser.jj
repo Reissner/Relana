@@ -1,0 +1,418 @@
+options {
+    STATIC = false;
+    //LOOKAHEAD = 4;
+    //FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(FormulaParser)
+
+package eu.simuline.relana.parser;
+
+import eu.simuline.relana.model.CClass;
+import eu.simuline.relana.model.SClass;
+import eu.simuline.relana.model.CClassLoader;
+import eu.simuline.relana.model.MapDecl;
+import eu.simuline.relana.model.Deficiency;
+import eu.simuline.relana.model.DeficiencyMap;
+import eu.simuline.relana.model.ClassLocator;
+
+import eu.simuline.relana.expressions.FormulaDecl;
+import eu.simuline.relana.expressions.Operation;
+import eu.simuline.relana.expressions.Type;
+
+import java.io.IOException;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+
+
+public class FormulaParser {
+
+private CClassLoader classLoader;
+private CClass cClass;
+private ClassLocator loc;
+private boolean exceptionThrown;
+
+private int lineNumber;
+private int colnNumber;
+
+void setLineColNum(int lineNumber, int colnNumber) {
+     this.lineNumber = lineNumber;
+     this.colnNumber = colnNumber;
+}
+
+/**
+ * To set the <code>CClassLoader<code>. 
+ * This is needed whenever the definition of the class currently read 
+ * relies on definitions of other classes such as 
+ * the superclass if it is given explicitly. 
+ * 
+ * @param classLoader
+ *    the current <code>SClassLoader<code>. 
+ */
+public void setClassLoader(CClassLoader classLoader) {
+     this.classLoader = classLoader;
+}
+
+/**
+ * Sets the locator for the class currently parsed. 
+ * This is needed to analyze formulae in a second parsing step 
+ * when all <code>SClass</code> declarations are clarified. 
+ * 
+ * @param loc
+ *    the location of the class currently parsed. 
+ */
+void setLocator(ClassLocator loc) {
+     this.loc = loc;
+}
+
+/**
+ * Sets the <code>CClass</code> for the class currently parsed 
+ * but without formulae. 
+ * This is needed to analyze formulae in a second parsing step 
+ * when all <code>SClass</code> declarations are clarified. 
+ * 
+ * @param cClass
+ *    
+ */
+void setCClass(CClass cClass) {
+    this.cClass = cClass;
+}
+
+
+/**
+ * Returns a string comprising the current class, 
+ * the number of the current line and column, 
+ * the last token successfully read and the token tp be read next. 
+ *
+ * @return
+ *    a <code>String</code> of the form 
+ *    <code>[{@link #loc}] line ##, column ## 
+ *    between tokenRead and tokenToBeRead</code>. 
+ */
+String getLocation() {
+   StringBuffer result = new StringBuffer();
+   result.append("[" + this.loc + "] ");
+   result.append("line "     + (this.token.beginLine-1+this.lineNumber));
+   result.append(", column " + (this.token.beginColumn+this.colnNumber));
+   result.append(", after \"" + this.token);
+   result.append("\": ");
+
+   return result.toString();
+}
+
+/**
+ * Reports an error and also the location where it occurred. 
+ * **** same as in SClassParser **** 
+ * 
+ * @param msg 
+ *    the message to be displayed. 
+ */
+void report(String msg) throws ParseException {
+       System.out.print(getLocation());
+       ParseException pe = new ParseException(msg);
+       //System.out.println(pe.getMessage());
+       this.exceptionThrown = true;
+       throw pe;
+} // report
+
+} // class FormulaParser 
+
+PARSER_END(FormulaParser)
+
+/* WHITE SPACE */
+SKIP :
+{
+    " " | "\t" | "\n" | "\r" | "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+| "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+    <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+TOKEN : {
+    <PACKAGE:          "package"> |
+    <CLASS:            "class"> |
+    <MAPS:             "maps"> |
+    <MAP:              "map"> |
+    <MAPSTO:           "|-->"> |
+    <IDDOMAIN:         "id:"> |
+    <COMPONENTS:       "components"> |
+    <EFFECTS:          "effects"> |
+    <INPUT:            "input"> |
+    <OUTPUT:           "output"> |
+    <REPLACE:          "replace"> | 
+    <INV:              "!" > |
+    <COV:              "," > |
+    <CONT:             "'" > |
+    <END:              ";" > |
+    <SEP:              "." > |
+    <UNION:            "|" > |
+    <INTERSECT:        "&" > |
+    <COMPLEMENT:       "~" > |
+    <NAME:             <LETTER>(<IDENTIFIER>)* > |
+    <FLOAT:            <NUMBER>("."<NUMBER>)?(("E" | "e")("+" | "-")?<NUMBER>)? > | 
+    <NUMBER:           (<DIGIT>)+ > | 
+    <#IDENTIFIER:      (<LETTER>|<DIGIT>|"_") > |
+    <#LETTER:          (<CAPITAL_LETTER>|<SMALL_LETTER>) > |
+    <#DIGIT:           ["0"-"9"] > |
+    <#SMALL_LETTER:    ["a"-"z"] > |
+    <#CAPITAL_LETTER:  ["A"-"Z"] >
+} // TOKEN
+
+
+
+/**
+ * Parses a formula. 
+ * 
+ * @return
+ *    a declaration of a formula. 
+ * @see CClassParser#skipFormula
+ */
+FormulaDecl getFormula(CClass cClass) : 
+{
+FormulaDecl decl = null;
+}
+{
+
+try {
+( 
+  ( decl = getConstFormula() ) | 
+  LOOKAHEAD ( 
+      ( (<NAME> (<INV>)? (<COV> | <CONT>) ) | 
+         <UNION> | <INTERSECT> | <COMPLEMENT>) "(" )  
+  ( decl = getCompFormula(cClass) ) | 
+  ( decl = getVarFormula() ) 
+)
+} catch(IllegalArgumentException iaEx) {
+//throw(iaEx); // for debugging 
+  report(iaEx.getMessage());
+//  errorSkipTo(END,iaEx);
+//  return;
+}
+
+{
+return decl;
+}
+}
+
+
+/**
+ * Parses a constant formula. 
+ * 
+ * @return
+ *    the declaration of the constant formula parsed. 
+ */
+FormulaDecl getConstFormula() : 
+{
+List<String> path;
+}
+{
+( "<" path = getPath() ">" )
+{
+SClass sClass = null;
+try {
+    sClass = this.classLoader.loadSClass(ClassLocator.getLocator(path),
+					 this.loc.getPackage());
+} catch (IOException ioe) {
+  report("IOException while loading \"" + ClassLocator.getLocator(path) + 
+	 "\" in package " + this.loc.getPackage()+ ": " + ioe + ". ");
+  sClass = null; // never reached. ****
+}
+assert sClass != null;
+Type type = sClass.getType();
+
+Set<Deficiency> set = new HashSet<Deficiency>();
+}
+("{" (addConst(set))* "}")
+{
+if (!type.isValid(set)) {
+   report("Set " + set + " does not conform with type " +
+   type + ". ");
+}
+return FormulaDecl.getConst(type,set);
+}
+}
+
+/**
+ * Adds a deficiency parsed to the set of deficiencies read so far. 
+ * This is needed to read in a set of deficiencies 
+ * which makes up a constant formula. 
+ * 
+ * @param defs
+ *    the set of deficiencies read so far. 
+ * @see #getConstFormula
+ */
+void addConst(Set<Deficiency> defs) : 
+{
+Token constT;
+}
+{
+( constT = <NAME> )
+{
+defs.add(new Deficiency(constT.toString()));
+}
+}
+
+
+/**
+ * Parses a formula consisting of a single variable. 
+ * 
+ * @return
+ *    the declaration of the formula parsed. 
+ */
+FormulaDecl getVarFormula() : 
+{
+List<String> path;
+}
+{
+( path = getPath() )
+{
+CClass.SClassDecl declS = this.cClass.getEffectDecl(path);
+if (declS == null) {
+   report("Found name " + path + " leading to an unknown effect. ");
+}
+return FormulaDecl.getVar(declS,path);
+}
+}
+
+/**
+ * Parses a compound formula which has at least one operation recursively. 
+ * 
+ * @return
+ *    the declaration of the formula parsed. 
+ */
+FormulaDecl getCompFormula(CClass cClass) : 
+{
+Token opT, accT = null;
+Token invT = null;
+}
+{
+( 
+   opT = <UNION> | opT = <INTERSECT> | opT = <COMPLEMENT> | 
+   ( opT = <NAME> (invT = <INV>)? (accT = <CONT> | accT = <COV>) )
+) 
+{
+String key = null;
+String funName = null;
+Operation oper = null;
+if (accT == null) {
+   // opT = <UNION> | <INTERSECT> | <COMPLEMENT> 
+   key = opT.toString();
+   assert funName == null && invT == null;
+   oper = Operation.BaseOps.getOperation(key);
+} else {
+  // opT = f, | opt = f'
+  key = opT.toString();
+  funName = opT.toString();
+  MapDecl mapDecl = cClass.getMapDecl(funName);
+  if (mapDecl == null) {
+     report("Declared no map \"" + funName + "\". " );
+  }
+  DeficiencyMap map = mapDecl.getMap();
+  boolean isInverted = false;
+  if (invT != null) {
+     // replace map by its inverse 
+     map = map.getInverse();
+     isInverted = true;
+  }
+  oper = Operation.getOperation(funName,
+				isInverted,
+				map,
+				Operation.Functor.covCont(accT.toString()));
+}
+// Here, the operation is read. 
+
+Set<FormulaDecl> args = new HashSet<FormulaDecl>();
+}
+( "(" addFormula(args,cClass) ("," addFormula(args,cClass))* ")" )
+{
+return FormulaDecl.getComp(oper,args);
+}
+}
+
+
+/**
+ * Adds a formula to a set of formulae. 
+ * This is needed to read in the parameters of a compound formula. 
+ * 
+ * @param args
+ *    a set of formulae: the arguments of a compound formula read so  far. 
+ * @see #getCompFormula
+ */
+void addFormula(Set<FormulaDecl> args, CClass cClass) : 
+{
+FormulaDecl arg;
+}
+{
+(arg = getFormula(cClass))
+{
+args.add(arg);
+}
+}
+
+
+/**
+ * Returns a path as a list of strings. 
+ * **** same as in SClassParser **** 
+ * 
+ * @return
+ *     a path as a list of strings. 
+ *     The outermost package is given first. 
+ */
+List<String> getPath() : 
+{
+Token first;
+List<String> path = new ArrayList<String>();
+}
+{
+(first = <NAME> (addToPath(path))* ) 
+{
+path.add(0,first.toString());
+return path;
+}
+}
+
+/**
+ * Adds the name of an inner package to a path given by a list of strings. 
+ * **** same as in SClassParser **** 
+ * 
+ * @param path
+ *    a path given as a list of strings as returned by {@link #getPath}. 
+ */
+void addToPath(List<String> path) : 
+{
+Token name;
+}
+{
+(<SEP> name = <NAME>)
+{
+path.add(name.toString());
+}
+}
+

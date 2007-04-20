@@ -1,0 +1,581 @@
+
+options {
+	STATIC = false;
+}
+
+PARSER_BEGIN(SClassParser)
+
+package eu.simuline.relana.parser;
+
+import eu.simuline.relana.model.ClassLocator;
+import eu.simuline.relana.model.SClass;
+import eu.simuline.relana.model.Deficiency;
+import eu.simuline.relana.model.DeficiencyNode;
+import eu.simuline.relana.model.SClassLoader;
+import eu.simuline.relana.model.Package;
+
+import eu.simuline.relana.expressions.Type;
+
+import java.io.IOException;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Iterator;
+
+//    <PATH:             <NAME>(<SEP><NAME>)* > |
+
+public class SClassParser {
+
+private SClassLoader classLoader;
+private ClassLocator loc;
+private Map<ClassLocator,ClassLocator> subclassDep;
+
+/**
+ * Reports an error and also the location where it occurred. 
+ * 
+ * @param msg 
+ *    the message to be displayed. 
+ */
+void report(String msg) throws ParseException {
+       System.out.print("[" + loc + "] ");
+        //System.out.println(msg);
+       ParseException pe = new ParseException(msg);
+       //System.out.println(pe.getMessage());
+       throw pe;
+} // report
+
+/**
+ * To set the <code>SClassLoader<code>. 
+ * This is needed whenever the definition of the class currently read 
+ * relies on definitions of other classes such as 
+ * the superclass if it is given explicitly. 
+ * 
+ * @param classLoader
+ *    the current <code>SClassLoader<code>. 
+ */
+public void setClassLoader(SClassLoader classLoader) {
+     this.classLoader = classLoader;
+}
+
+/**
+ * Throws an exception if the class currently parsed 
+ * is involved in a cyclic definition. 
+ * 
+ * @param needed
+ *    points to a class to be loaded by {@link #classLoader}. 
+ * @throws ParseException 
+ *    if this class is parsed in order to declare a class <code>C</code>
+ *    and <code>C</code> in turn is adressed in this class. 
+ */
+private void checkDependencies(ClassLocator needed) 
+	throws ParseException {
+ClassLocator needs = this.subclassDep.get(needed);
+if (needs != null) {
+   // dependency: "needed" is really needed by "needs"
+   List<ClassLocator> trace = new ArrayList<ClassLocator>();
+   ClassLocator stop = needed;
+   while (needs != null && !needs.equals(stop)) {
+	 trace.add(needed);
+	 needed = needs;
+	 needs = this.subclassDep.get(needed);
+   }
+   report("Cyclic subclass-dependency: trace \""  + trace + "\". ");
+} // if 
+// 
+this.subclassDep.put(needed, this.loc);
+} // checkDependencies
+
+} // class SClassParser 
+
+PARSER_END(SClassParser)
+
+/* WHITE SPACE */
+SKIP :
+{
+    " " | "\t" | "\n" | "\r" | "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+| "/*" : IN_MULTI_LINE_COMMENT
+}
+
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+    <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+TOKEN : {
+    <PACKAGE:          "package"> |
+    <SCLASS:           "sclass"> |
+    <EXTENDS:          "extends"> |
+    <PROPERTIES:     "properties"> |
+    <MAP:              "map"> | 
+    <REPLACE:          "replace"> | 
+    <RELATIONS:	       "relations"> |
+    <IMPLIES:	       "==>"> | 
+    <END:              ";" > |
+    <SEP:              "." > |
+    <NAME:             <LETTER>(<IDENTIFIER>)* > |
+    <NUMBER:           (<DIGIT>)+ > | 
+    <#IDENTIFIER:      (<LETTER>|<DIGIT>|"_") > |
+    <#LETTER:          (<CAPITAL_LETTER>|<SMALL_LETTER>) > |
+    <#DIGIT:           ["0"-"9"] > |
+    <#SMALL_LETTER:    ["a"-"z"] > |
+    <#CAPITAL_LETTER:  ["A"-"Z"] >
+} // TOKEN
+
+
+/**
+ * Parses an <code>SClass</code>. 
+ * The main ingredients is its package, its name, the superclasses, 
+ * the declared deficiencies, 
+ * the inner classes and finally the relations. 
+ * 
+ * @param loc
+ *    the location of the class currently parsed. 
+ * @param subclassDep
+ *    the subclass dependencies as defined for 
+ *    {@link SClassLoader#loadSClass
+(ClassLocator,Package,Map<ClassLocator,ClassLocator>)}
+ * @return
+ *    the <code>SClass</code> described by the document parsed. 
+ * @throws IOException
+ *    see {@link #getSuperClass}. 
+ * @see #getSuperClass
+ * @see #getDeficiencies
+ * @see #getInnerCls
+ * @see #addRelations
+ */
+SClass sClass(ClassLocator loc,
+              Map<ClassLocator,ClassLocator> subclassDep) throws IOException :
+{
+this.loc = loc;
+this.subclassDep = subclassDep;
+List<String> pkgPath;
+Token sClassName;
+SClass superclass;
+Map<List<String>,SClass > paths2innerCls = new HashMap<List<String>,SClass >();
+Map<Deficiency,SClass> old2innerCls;
+Map<Deficiency,DeficiencyNode> deficiency2ordering;
+}
+{
+( <PACKAGE> pkgPath = getPath() <END>
+<SCLASS>  sClassName = <NAME> 
+superclass = getSuperClass(paths2innerCls) 
+"{" 
+deficiency2ordering = getDeficiencies() 
+old2innerCls = getInnerCls(superclass,
+			   new HashSet<Deficiency>(deficiency2ordering.keySet()))
+addRelations(deficiency2ordering) 
+"}" <EOF>)
+{
+//System.out.println("^^^^^^^^^^^^^^^"+this.loc);
+if (!this.loc.getPackage().getPath().equals(pkgPath)) {
+   report("Expected Package \""  + this.loc.getPackage().getPathName() + 
+   "\" but found: \""  + Package.getPackage(pkgPath).getPathName() + "\". ");
+}
+
+if (!this.loc.getName().equals(sClassName.toString())) {
+   report("Expected Class \""  + this.loc.getName() + 
+   "\" but found: \""  + sClassName + "\". ");
+}
+
+   //System.out.println("--------paths2innerCls: "+paths2innerCls);
+   //System.out.println("--------old2innerCls: "+old2innerCls);
+
+
+// Here, the the of this class is as prescribed by this.loc 
+// or something has been reported. 
+
+
+return SClass.getSClass(this.loc.getName(),
+			this.loc.getPackage(),
+			superclass,
+			old2innerCls,
+			deficiency2ordering);
+}
+}
+
+
+/**
+ * Returns a path as a list of strings. 
+ * 
+ * @return
+ *     a path as a list of strings. 
+ *     The outermost package is given first. 
+ */
+List<String> getPath() : 
+{
+Token first;
+List<String> path = new ArrayList<String>();
+}
+{
+(first = <NAME> (addToPath(path))* ) 
+{
+path.add(0,first.toString());
+return path;
+}
+}
+
+/**
+ * Adds the name of an inner package to a path given by a list of strings. 
+ * 
+ * @param path
+ *    a path given as a list of strings as returned by {@link #getPath}. 
+ */
+void addToPath(List<String> path) : 
+{
+Token name;
+}
+{
+(<SEP> name = <NAME>)
+{
+path.add(name.toString());
+}
+}
+
+// **** bug in javacc for jdk 1.5-generics 
+/**
+ * Adds a path to the given set of paths. 
+ * 
+ * @param innerPaths
+ *    a set of paths. 
+ */
+void addPath(Set<List<String> > innerPaths) : 
+{
+List<String> path;
+}
+{
+(path = getPath())
+{
+innerPaths.add(path);
+}
+}
+
+/**
+ * Returns the superclass of this class 
+ * and also puts the classes that overwrite Properties 
+ * into the parameter map. 
+ * The classes that occur are truely loaded which may cause an exception. 
+ * 
+ * @param paths2innerCls
+ *    maps paths to inner classes. 
+ * @return
+ *    the superclass of the class currently parsed. 
+ * @throws IOException
+ *    see {@link SClassLoader#loadSClass}. 
+ */
+SClass getSuperClass(Map<List<String>,SClass > paths2innerCls) 
+       throws IOException : 
+{
+List<String> superPath = null;
+ClassLocator needed;
+Set<List<String> > innerPaths = new HashSet<List<String> >();
+}
+{
+( <EXTENDS> superPath = getPath() 
+("[" addPath(innerPaths) ("," addPath(innerPaths))* "]")?)? 
+{
+if (superPath == null) {
+   // extends implicitly BooleanEffect 
+   return SClass.BOOLEAN;
+}
+// Here, we have a valid path. 
+
+if (superPath.size() == 1 && 
+(superPath.get(0).equals(SClass.BOOLEAN.getName()))) {
+   // Here it must be BooleanEffect, the overall base class. 
+   return SClass.BOOLEAN;
+}
+// Here, it must be a library class. 
+
+   //System.out.println("getSuperClass--------innerPaths: "+innerPaths);
+
+for (List<String> innerPath : innerPaths) {
+    needed = ClassLocator.getLocator(superPath);
+    checkDependencies(needed);
+    paths2innerCls.put(innerPath,
+		       this.classLoader.loadSClass(needed,
+						   this.loc.getPackage(),
+						   this.subclassDep));
+}
+
+needed = ClassLocator.getLocator(superPath);
+checkDependencies(needed);
+
+return this.classLoader.loadSClass(needed,
+				   this.loc.getPackage(),
+				   this.subclassDep);
+}
+}
+
+/**
+ * Returns a map describing a set of deficiencies 
+ * and their (ordering) relations. 
+ * 
+ * @return
+ *    see {@link Type#deficiency2ordering}. 
+ */
+Map<Deficiency,DeficiencyNode> getDeficiencies() :
+{
+Map<Deficiency,DeficiencyNode> deficiency2ordering = 
+			   new HashMap<Deficiency,DeficiencyNode>();
+}
+{
+(<PROPERTIES> (addDeficiency(deficiency2ordering))*)?
+{
+return deficiency2ordering;
+}
+}
+
+/**
+ * Adds a new deficiency to the ordered set 
+ * given by <code>deficiency2ordering</code> 
+ * without relating it to the rest. 
+ * 
+ * @param deficiency2ordering
+ *    an ordered set as described for {@link Type#deficiency2ordering}. 
+ */
+void addDeficiency(Map<Deficiency,DeficiencyNode> deficiency2ordering) : 
+{
+Token defT;
+Deficiency def;
+}
+{
+(defT = <NAME>)
+{
+def = new Deficiency(defT.toString());
+DeficiencyNode old = deficiency2ordering.put(def,new DeficiencyNode(def));
+if (old != null) {
+   // duplicate deficiency 
+   report("Property \""  + defT + "\" is duplicate. ");
+}
+}
+}
+
+/**
+ * Parses the subtype map. 
+ * 
+ * @param superclass
+ *    
+ * @param newDefs
+ *    
+ * @return
+ *    a map that maps each overwritten deficiency 
+ *    to the <code>SClass</code> overwriting it. 
+ * @see #addMap
+ */
+Map<Deficiency,SClass> getInnerCls(SClass superclass,
+		                   Set<Deficiency> newDefs) : 
+{
+Map<Deficiency,SClass> old2innerCls = new HashMap<Deficiency,SClass>();
+Set<Deficiency> oldDefs = superclass.getType().asSet();
+}
+{
+(<MAP> (addMap(oldDefs,old2innerCls,newDefs))*)?
+{
+if (!newDefs.isEmpty()) {
+   // **** this should be merely a warning. 
+   report("Found properties nowhere referenced: " + newDefs + ". ");
+}
+
+return old2innerCls;
+}
+}
+
+/**
+ * Adds a single old property and its inverse image 
+ * to the current subtype map. 
+ * 
+ * @param oldDefs
+ *    set of deficiencies of the superclass. 
+ *    These are the candidates that may be overwritten. 
+ * @param old2innerCls
+ *    maps each overwritten deficiency 
+ *    to the <code>SClass</code> overwriting it. 
+ *    The keys are out of <code>oldDefs</code>. 
+ * @param newDefs
+ *    An <code>SClass</code> overwriting an element 
+ *    of <code>oldDefs</code> may be given 
+ *    either by its classname or explicitly declaring its deficiencies 
+ *    and the ordering relation. 
+ *    In the latter case, 
+ *    the deficiencies must have been declared above, 
+ *    and hence must be in <code>newDefs</code>. 
+ * @return
+ *    <code>old2innerCls</code>. **** seems superfluous to me. **** 
+ */
+Map<Deficiency,SClass> addMap(Set<Deficiency> oldDefs, 
+			      Map<Deficiency,SClass> old2innerCls, 
+			      Set<Deficiency> newDefs) : 
+{
+Token oldD;
+List<String> clsPath = null;
+Map<Deficiency,DeficiencyNode> deficiency2ordering = null;
+}
+{
+( 
+<REPLACE> oldD = <NAME> 
+( "{" 
+deficiency2ordering = getCheckedDeficiencies(newDefs) 
+<RELATIONS>
+(addRelation(deficiency2ordering))* 
+"}" | 
+clsPath = getPath() 
+)
+)
+{
+Deficiency oldDef = new Deficiency(oldD.toString());
+SClass sClass;
+assert deficiency2ordering == null ^ clsPath == null;
+if (deficiency2ordering != null) {
+   // inner class is given directly 
+   sClass = SClass.getSClass(oldDef.getName(), 
+			     Package.getPackage(this.loc.getPath()),
+			     SClass.BOOLEAN,
+			     new HashMap<Deficiency,SClass>(),
+			     deficiency2ordering);
+   sClass.verifyInner();
+} else {
+  // inner class is loaded 
+  try {
+      sClass = this.classLoader
+		.loadSClass(ClassLocator.getLocator(clsPath),
+			    this.loc.getPackage());
+  } catch(IOException e) {
+     throw new IllegalStateException
+     ("Thrown exception which should have been loaded before: \"" + 
+     e + "\". ");
+  }
+
+}
+SClass overWrittenDef = old2innerCls.put(oldDef,sClass);
+//System.out.println();
+if (overWrittenDef != null) {
+   report("Tried to overwrite " + oldDef + ". ");
+
+}
+return old2innerCls;
+}
+}
+
+/**
+ * Reads in declared deficiencies in <code>newDefs</code> 
+ * and returns an ordered set consisting of a subset of them 
+ * with trivial ordering. 
+ * Reports an error 
+ * if deficiencies outside <code>newDefs</code> are addressed. 
+ * 
+ * @param newDefs
+ *    the set of declared deficiencies. 
+ *    These may be used to declare inner classes. 
+ * @return
+ *    an ordered subset of deficiencies out of code>newDefs</code> 
+ *    with trivial ordering. 
+ */
+Map<Deficiency,DeficiencyNode> 
+			  getCheckedDeficiencies(Set<Deficiency> newDefs) :
+{
+Map<Deficiency,DeficiencyNode> deficiency2ordering = 
+			       new HashMap<Deficiency,DeficiencyNode>();
+}
+{
+( ( addDeficiency(deficiency2ordering))+ )
+{
+if (!newDefs.containsAll(deficiency2ordering.keySet())) {
+   // undeclared deficiencies. 
+   Set<Deficiency> undeclared = 
+      new HashSet<Deficiency>(deficiency2ordering.keySet());
+   undeclared.removeAll(newDefs);
+   report("Found properties: " + undeclared + 
+   " either undeclared or used above. ");
+}
+// declared properties may not occur twice. 
+newDefs.removeAll(deficiency2ordering.keySet());
+return deficiency2ordering;
+}
+}
+
+/**
+ * Adds relations to the (outer) class parsed. 
+ * The main work is delegated to {@link #addRelation}. 
+ * After having read all relations, 
+ * the isolated entries in <code>deficiency2ordering</code> are removed. 
+ * 
+ * @param deficiency2ordering
+ *    Represents the ordering between the declared deficiencies 
+ *    which are not given by inner classes. 
+ *    Declarations of relations are added to this parameter. 
+ *    See also {@link Type#deficiency2ordering}. 
+ */
+void addRelations(Map<Deficiency,DeficiencyNode> deficiency2ordering) : 
+{
+}
+{
+(<RELATIONS> (addRelation(deficiency2ordering))*)?
+{
+Iterator<Deficiency> iter = deficiency2ordering.keySet().iterator();
+Deficiency def;
+DeficiencyNode node;
+while (iter.hasNext()) {
+      def = iter.next();
+      node = deficiency2ordering.get(def);
+      if (node.getPredecessors().isEmpty() && 
+	  node.getSuccessors()  .isEmpty()) {
+	  iter.remove();
+    }
+} // for 
+}
+}
+
+/**
+ * Adds a relation to an explicitly declared inner class. 
+ * 
+ * @param deficiency2ordering
+ *    an ordered set as described for {@link Type#deficiency2ordering}. 
+ */
+void addRelation(Map<Deficiency,DeficiencyNode> deficiency2ordering) : 
+{
+Token defT1, defT2;
+DeficiencyNode defN1, defN2;
+}
+{
+(defT1 = <NAME> <IMPLIES> defT2 = <NAME> <END>)
+{
+defN1 = deficiency2ordering.get(new Deficiency(defT1.toString()));
+if (defN1 == null) {
+   report("Deficiency \""  + defT1 + "\" is unknown. ");
+}
+defN2 = deficiency2ordering.get(new Deficiency(defT2.toString()));
+if (defN2 == null) {
+   report("Deficiency \""  + defT2 + "\" is unknown. ");
+}
+
+defN1.addSuccessor  (defN2);
+defN2.addPredecessor(defN1);
+}
+}
+
