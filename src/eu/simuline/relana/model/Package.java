@@ -120,11 +120,11 @@ public class Package {
     }
 
     Package addSubPackage(String name) {
-	return (Package)this.subPackages.put(name,new Package(name,this));
+	return this.subPackages.put(name,new Package(name,this));
     }
 
     Package subPackage(String name) {
-	return (Package)this.subPackages.get(name);
+	return this.subPackages.get(name);
     }
 
     // 

@@ -95,7 +95,7 @@ public class CInstance {
     public SInstance getEffect(List<String> path) {
 	CInstance comp = this;
 	for (int i = 0; i < path.size()-1; i++) {
-	    comp = comp.components.get((String)path.get(i));
+	    comp = comp.components.get(path.get(i));
 	}
 	
 	return comp.effects.get(path.get(path.size()-1));

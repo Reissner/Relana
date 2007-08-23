@@ -216,7 +216,7 @@ public class CClassLoader {
 	    while (iter.hasNext()) {
 		Occurence occ = (Occurence)iter.next();
 //System.out.println("occ: "+occ);
-		((CClassLink)this.name2class.get(occ.getLoc()))
+		this.name2class.get(occ.getLoc())
 		    .setComponent(occ.compName(),cClass);
 
 	    }
@@ -238,7 +238,7 @@ public class CClassLoader {
     private CClassLink resolveLocInOcc(ClassLocator loc, Occurence occ) {
 //System.out.println("resolveLocInOcc("+loc);
 	
-	CClassLink resolvation = (CClassLink)this.name2class.get(loc);
+	CClassLink resolvation = this.name2class.get(loc);
 //System.out.println("resolvation: "+ resolvation);
 	if (resolvation == null) {
 	    // loc never occured before
@@ -250,7 +250,7 @@ public class CClassLoader {
 	}
 
 	if (occ != null) {
-	    ((CClassLink)resolvation).addOccurence(occ);
+	    resolvation.addOccurence(occ);
 	}
 	    
 

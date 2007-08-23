@@ -584,7 +584,7 @@ public class CClass implements CClassLink {
     // replacement of CClassLink by CClass. 
     public CClassLink setComponent(String name, CClass cClass) {
 //System.out.println(": "+this.subComponents.put(name,cClass).getClass());
-	return (CClassLink)this.subComponents.put(name,cClass);
+	return this.subComponents.put(name,cClass);
     }
 
 
