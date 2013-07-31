@@ -199,7 +199,7 @@ decl=getVarFormula) {$res=decl;};
 getConstFormula returns [FormulaDecl decl] 
 @init{
     Set<Deficiency> defs = new HashSet<Deficiency>();
-    Type type;
+    Type type = null;
 }
     : '<' path=getPath '>' 
         {
