@@ -5,21 +5,64 @@ grammar SClass;
 @header {
     package eu.simuline.relana.parser;
 
-import eu.simuline.relana.model.ClassLocator;
-import eu.simuline.relana.model.SClass;
-import eu.simuline.relana.model.Deficiency;
-import eu.simuline.relana.model.DeficiencyNode;
+    import eu.simuline.relana.model.ClassLocator;
+    import eu.simuline.relana.model.SClass;
+    import eu.simuline.relana.model.Deficiency;
+    import eu.simuline.relana.model.DeficiencyNode;
+    import eu.simuline.relana.model.SClassLoader;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
+    import java.util.Map;
+    import java.util.HashMap;
+    import java.util.Set;
+    import java.util.HashSet;
+
+    import java.io.Reader;
+    import java.io.IOException;
 } // @header 
 
 @lexer::header {
     package eu.simuline.relana.parser;
 } // @lexer::header 
 
+@members {
+
+    private SClassLoader classLoader;
+
+    private static CommonTokenStream reader2tokenStream(Reader reader)  
+		throws IOException {
+        ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
+        SClassLexer lexer = new SClassLexer(antlrStream);
+        return new CommonTokenStream(lexer);
+    }
+
+    public SClassParser(Reader reader) throws IOException {
+        this(reader2tokenStream(reader));
+    }
+
+    public SClassParser(CommonTokenStream stream) {
+        super(stream);
+    }
+
+    public void ReInit(Reader reader) throws IOException {
+        setTokenStream(reader2tokenStream(reader));
+    }
+
+
+    /**
+     * To set the <code>SClassLoader<code>. 
+     * This is needed whenever the definition of the class currently read 
+     * relies on definitions of other classes such as 
+     * the superclass if it is given explicitly. 
+     * 
+     * @param classLoader
+     *    the current <code>SClassLoader<code>. 
+     */
+    public void setClassLoader(SClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+
+} // @members 
 
 // ======================================================================== 
 // Lexer 

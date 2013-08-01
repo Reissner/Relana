@@ -7,6 +7,7 @@ grammar CClass;
 
     import eu.simuline.relana.model.CClass;
     import eu.simuline.relana.model.SClass;
+    import eu.simuline.relana.model.CClassLoader;
     import eu.simuline.relana.model.ClassLocator;
     import eu.simuline.relana.model.CClassLink;
     import eu.simuline.relana.model.ProbDistr;
@@ -18,11 +19,16 @@ grammar CClass;
     import java.util.TreeMap;
     import java.util.Set;
     import java.util.HashSet;
+
+    import java.io.Reader;
+    import java.io.IOException;
 } // @header 
 
 @members {
-private ClassLocator loc;
-private boolean exceptionThrown;
+    private CClassLoader classLoader;
+
+    private ClassLocator loc;
+    private boolean exceptionThrown;
 
     // *** only for reentry parsing formulae: should be separate parser. 
     static class FormulaWrapper {
@@ -38,6 +44,40 @@ private boolean exceptionThrown;
             this.formula = formula;
         }
     } // class FormulaWrapper 
+
+    private static CommonTokenStream reader2tokenStream(Reader reader)   
+		throws IOException {
+        ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
+        CClassLexer lexer = new CClassLexer(antlrStream);
+        return new CommonTokenStream(lexer);
+    }
+
+    public CClassParser(Reader reader)   
+		throws IOException {
+        this(reader2tokenStream(reader));
+    }
+
+    public CClassParser(CommonTokenStream stream) {
+        super(stream);
+    }
+
+    public void ReInit(Reader reader)   
+		throws IOException {
+        setTokenStream(reader2tokenStream(reader));
+    }
+
+    /**
+     * To set the <code>CClassLoader<code>. 
+     * This is needed whenever the definition of the class currently read 
+     * relies on definitions of other classes such as 
+     * the superclass if it is given explicitly. 
+     * 
+     * @param classLoader
+     *    the current <code>SClassLoader<code>. 
+     */
+    public void setClassLoader(CClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
 } // @members 
 
@@ -186,7 +226,7 @@ effect[Map<String,CClass.SClassDecl> effects,
 @init {
     Set<CClass.SClassModifier> accessModifiers = 
         new HashSet<CClass.SClassModifier>();
-    SClass sClass;
+    SClass sClass = null;
 }
     : 
         ( (redeclare = REDECLARE)?
@@ -222,7 +262,7 @@ getDistr[SClass sClass] returns [ProbDistr res]
 
 replDistr[Map<Deficiency,ProbDistr> def2distr, SClass sClass] 
 @init {
-    SClass sClassInner;
+    SClass sClassInner = null;
 }
     : 
         replDefT = NAME
