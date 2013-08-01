@@ -850,7 +850,7 @@ return res.toString();
  */
 void appendFormula(String pre, StringBuffer res) : 
 {
-Token name;
+//Token name;
 Token cls = null;
 res.append(pre);
 }
