@@ -20,6 +20,7 @@ grammar Formula;
     import eu.simuline.relana.expressions.Operation;
     import eu.simuline.relana.expressions.Type;
 
+    import java.io.Reader;
     import java.io.IOException;
 
     import java.util.Set;
@@ -35,6 +36,27 @@ grammar Formula;
 
     private int lineNumber;
     private int colnNumber;
+
+    private static CommonTokenStream reader2tokenStream(Reader reader)   
+		throws IOException {
+        ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
+        FormulaLexer lexer = new FormulaLexer(antlrStream);
+        return new CommonTokenStream(lexer);
+    }
+
+    public FormulaParser(Reader reader)   
+		throws IOException {
+        this(reader2tokenStream(reader));
+    }
+
+    public FormulaParser(CommonTokenStream stream) {
+        super(stream);
+    }
+
+    public void ReInit(Reader reader)   
+		throws IOException {
+        setTokenStream(reader2tokenStream(reader));
+    }
 
     void setLineColNum(int lineNumber, int colnNumber) {
         this.lineNumber = lineNumber;
