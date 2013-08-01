@@ -27,6 +27,7 @@ grammar SClass;
 @members {
 
     private SClassLoader classLoader;
+    private ClassLocator loc;
 
     private static CommonTokenStream reader2tokenStream(Reader reader)  
 		throws IOException {
@@ -61,6 +62,19 @@ grammar SClass;
         this.classLoader = classLoader;
     }
 
+    /**
+     * Reports an error and also the location where it occurred. 
+     * 
+     * @param msg 
+     *    the message to be displayed. 
+     */
+    void report(String msg) throws RuntimeException {// **** was ParseException
+        System.out.print("[" + loc + "] ");
+        //System.out.println(msg);
+        RuntimeException pe = new RuntimeException(msg);
+        //System.out.println(pe.getMessage());
+        throw pe;
+    } // report
 
 } // @members 
 
@@ -185,8 +199,8 @@ addMap[Set<Deficiency> oldDefs,
 getCheckedDeficiencies[Set<Deficiency> newDefs] 
     returns [Map<Deficiency,DeficiencyNode> res] 
 @init {
-Map<Deficiency,DeficiencyNode> deficiency2ordering = 
-			       new HashMap<Deficiency,DeficiencyNode>();
+    Map<Deficiency,DeficiencyNode> deficiency2ordering = 
+        new HashMap<Deficiency,DeficiencyNode>();
 }
     : addDeficiency[deficiency2ordering]+ 
     ;
@@ -196,5 +210,21 @@ addRelations[Map<Deficiency,DeficiencyNode> deficiency2ordering]
     ;
 
 addRelation[Map<Deficiency,DeficiencyNode> deficiency2ordering] 
+@init {
+    DeficiencyNode defN1, defN2;
+}
     : (defT1=NAME IMPLIES defT2=NAME END)
+        {
+            defN1 = deficiency2ordering.get(new Deficiency(defT1.toString()));
+            if (defN1 == null) {
+                    report("Deficiency \""  + defT1 + "\" is unknown. ");
+                }
+            defN2 = deficiency2ordering.get(new Deficiency(defT2.toString()));
+            if (defN2 == null) {
+                    report("Deficiency \""  + defT2 + "\" is unknown. ");
+                }
+
+            defN1.addSuccessor  (defN2);
+            defN2.addPredecessor(defN1);
+        }
     ;
