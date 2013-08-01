@@ -45,6 +45,39 @@ grammar CClass;
         }
     } // class FormulaWrapper 
 
+    /*
+     * Returns a string comprising the current class, 
+     * the number of the current line and column, 
+     * the last token successfully read and the token tp be read next. 
+     *
+     * @return
+     *    a <code>String</code> of the form 
+     *    <code>[{@link #loc}] line ##, column ## 
+     *    between tokenRead and tokenToBeRead</code>. 
+     */
+//    private String getLocation() {
+//       return getLocation(this.token);
+//    }
+
+//    private String getLocation(Token token) {
+//        StringBuffer result = new StringBuffer();
+//        result.append("[" + this.loc + "] ");
+
+//        if (this.token.next == null) {
+//            result.append("line "      + token.beginLine  );
+//            result.append(", column "  + token.beginColumn);
+//            result.append(", after \"" + token);
+//            result.append("\": ");
+//        } else {
+//            result.append("line "        + token.next.beginLine  );
+//            result.append(", column "    + token.next.beginColumn);
+//            result.append(", between \"" + token);
+//            result.append("\" and \""    + token.next);
+//            result.append("\": ");
+//       }
+//        return result.toString();
+//    }
+
     private static CommonTokenStream reader2tokenStream(Reader reader)   
 		throws IOException {
         ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
@@ -78,6 +111,39 @@ grammar CClass;
     public void setClassLoader(CClassLoader classLoader) {
         this.classLoader = classLoader;
     }
+
+    /**
+     * Reports an error and also the location where it occurred. 
+     * **** same as in SClassParser **** 
+     * 
+     * @param msg 
+     *    the message to be displayed. 
+     */
+//    private void report(String msg) throws ParseException {
+    private void report(String msg) throws RuntimeException {
+//        System.out.print(getLocation());
+        RuntimeException pe = new RuntimeException(msg);
+//        ParseException pe = new ParseException(msg);
+        //System.out.println(pe.getMessage());
+        this.exceptionThrown = true;
+        throw pe;
+    } // report
+
+//    private void report(Token token,String msg) throws ParseException {
+    private void report(Token token,String msg) throws RuntimeException {
+//        System.out.print(getLocation(token));
+        RuntimeException pe = new RuntimeException(msg);
+//        ParseException pe = new ParseException(msg);
+        //System.out.println(pe.getMessage());
+        this.exceptionThrown = true;
+        throw pe;
+    } // report
+/*
+private void report(Exception exc) throws ParseException {
+       System.out.print(getLocation());
+       throw exc;
+} // report
+*/
 
 } // @members 
 
@@ -235,14 +301,61 @@ effect[Map<String,CClass.SClassDecl> effects,
             sNameT=NAME 
         ) 
         {
-            throw new eu.simuline.util.NotYetImplementedException();
+            // get class of effect 
+            if (path.size() == 1 && 
+                path.get(0).equals(SClass.BOOLEAN.getName())) {
+                sClass = SClass.BOOLEAN;
+            } else {
+                try {
+                    sClass = this.classLoader
+                        .loadSClass(ClassLocator.getLocator(path),
+                                    this.loc.getPackage());
+                } catch (IOException ioe) {
+                    report("IOException while loading \"" 
+                           + ClassLocator.getLocator(path) 
+                           + "\" in package this.loc.getPackage(): " 
+                           + ioe + ". ");
+                    sClass = null; // never reached. ****
+                }
+            }
+            assert sClass != null;
+
+//Token formT = null;
         }
         (
-            (distr = getDistr[sClass] | ( formT = '(' form = skipFormula ')') )?
+            (distr=getDistr[sClass] | ( formT='(' form=skipFormula ')') )?
             END
         )
         {
-            throw new eu.simuline.util.NotYetImplementedException();
+            // read in the rest: name, modifiers, distribution, formula if any. 
+            String sName = sNameT.toString();
+            CClass.SClassDecl oldDecl = effects
+                .put(sName,
+                     new CClass.SClassDecl(redeclare != null,
+                                           accessModifiers,
+                                           sClass,
+                                           sNameT.toString(),
+                                           distr));
+            // consistency check: duplicate declaration 
+            if (oldDecl != null) {
+                report("Duplicate effect declaration \"" + sNameT + 
+                       "\"; overwrite " + oldDecl + " by " + sClass + ". " );
+            }
+
+            // store formula for later analysis 
+            if (form != null) {
+                assert formT != null;
+                // for use of second pass parsing formulae 
+                int lineNumber = $formT.line;//beginLine;
+                int colnNumber = $formT.pos;//beginColumn;
+
+                // form comes from skipFormula and comes from res.toString 
+                // if skipFormula is invoked, it is not null; otherwise it is.
+                incompEffects.put(sName,
+                                  new FormulaWrapper(lineNumber,
+                                                     colnNumber,
+                                                     form));
+            }
         }
     ;
 
