@@ -29,6 +29,10 @@ grammar Formula;
 
 @members {
 
+    /* -------------------------------------------------------------------- *
+     * fields.                                                              *
+     * -------------------------------------------------------------------- */
+
     private CClassLoader classLoader;
     private CClass cClass;
     private ClassLocator loc;
@@ -36,6 +40,10 @@ grammar Formula;
 
     private int lineNumber;
     private int colnNumber;
+
+    /* -------------------------------------------------------------------- *
+     * constructors and creator methods.                                    *
+     * -------------------------------------------------------------------- */
 
     private static CommonTokenStream reader2tokenStream(Reader reader)   
 		throws IOException {
@@ -53,10 +61,13 @@ grammar Formula;
         super(stream);
     }
 
-    public void ReInit(Reader reader)   
-		throws IOException {
+    public void ReInit(Reader reader) throws IOException {
         setTokenStream(reader2tokenStream(reader));
     }
+
+    /* -------------------------------------------------------------------- *
+     * methods.                                                             *
+     * -------------------------------------------------------------------- */
 
     void setLineColNum(int lineNumber, int colnNumber) {
         this.lineNumber = lineNumber;
@@ -113,10 +124,11 @@ grammar Formula;
      */
     String getLocation() {
         StringBuffer result = new StringBuffer();
+        Token token = this.getTokenStream().LT(0);
         result.append("[" + this.loc + "] ");
-//        result.append("line "     + (this.token.beginLine-1+this.lineNumber));
-//        result.append(", column " + (this.token.beginColumn+this.colnNumber));
-//        result.append(", after \"" + this.token);
+        result.append("line "     + (token.getLine()-1            +this.lineNumber));
+        result.append(", column " + (token.getCharPositionInLine()+this.colnNumber));
+        result.append(", after \"" + token);
         result.append("\": ");
         
         return result.toString();
@@ -138,13 +150,54 @@ grammar Formula;
         throw pe;
     } // report
 
+    public static void main(String[] args) throws Exception {
+        Reader str = new java.io.StringReader(args[0]);
+System.out.println("str: "+str);
+//java.io.StringWriter wr = new java.io.StringWriter();
+//while (true) {
+//int ch = str.read();
+//if (ch == -1) {System.out.println("wr: "+wr);break;}
+//wr.write(ch);
+//}
+        FormulaParser fParser = new FormulaParser((Reader)null);
+fParser.setCClass(CClass.COMPONENT);
+        fParser.ReInit(str);
+        //fParser.setLineColNum(entry.getValue().lineNumber,
+        //                      entry.getValue().colnNumber);
+       fParser.getFormula(CClass.COMPONENT);
+    }
+
 } // @members 
 
+@rulecatch {
+catch (RecognitionException e) {
+//        if (this.failFirstError) {
+                throw e;
+//        }
+//        reportError(e);
+//        recover(input, e);
+} // catch 
+} // @rulecatch 
 
 @lexer::header {
     package eu.simuline.relana.parser;
 } // @lexer::header 
 
+@lexer::members {
+    // fail at first error 
+    @Override
+    public void displayRecognitionError(String[] tokenNames, 
+        RecognitionException e) {
+//        if (this.failFirstError) {
+                String hdr = getErrorHeader(e);
+                String msg = getErrorMessage(e, tokenNames);
+                throw new RuntimeException(hdr + ":" + msg);
+//throw e;
+//        }
+//                super.displayRecognitionError(tokenNames, e);
+//                return;
+    }
+} // @lexer::members
 
 // ======================================================================== 
 // Lexer 
@@ -156,17 +209,17 @@ SingleLineComment : '//' ~( '\r' | '\n' )* {skip();};
 
 MultiLineComment  : '/*' (options {greedy=false;} : .)* '*/' {skip();};
 
-PACKAGE:          'package';
-CLASS:            'class';
-MAPS:             'maps';
-MAP:              'map';
-MAPSTO:           '|-->';
-IDDOMAIN:         'id:';
-COMPONENTS:       'components';
-EFFECTS:          'effects';
-INPUT:            'input';
-OUTPUT:           'output';
-REPLACE:          'replace'; 
+//PACKAGE:          'package';
+//CLASS:            'class';
+//MAPS:             'maps';
+//MAP:              'map';
+//MAPSTO:           '|-->';
+//IDDOMAIN:         'id:';
+//COMPONENTS:       'components';
+//EFFECTS:          'effects';
+//INPUT:            'input';
+//OUTPUT:           'output';
+//REPLACE:          'replace'; 
 INV:              '!' ;
 COV:              ',' ;
 CONT:             '\'' ;
@@ -176,8 +229,8 @@ UNION:            '|' ;
 INTERSECT:        '&' ;
 COMPLEMENT:       '~' ;
 NAME:         LETTER IDENTIFIER*;
-FLOAT:        NUMBER ('.' NUMBER)? (('E' | 'e') ('+' | '-')? NUMBER)?; 
-fragment NUMBER:           (DIGIT)+ ; 
+//FLOAT:        NUMBER ('.' NUMBER)? (('E' | 'e') ('+' | '-')? NUMBER)?; 
+//fragment NUMBER:           (DIGIT)+ ; 
 fragment IDENTIFIER:      (LETTER | DIGIT | '_') ;
 fragment LETTER:          (CAPITAL_LETTER | SMALL_LETTER) ;
 fragment DIGIT:           '0'..'9';
@@ -188,6 +241,15 @@ fragment CAPITAL_LETTER:  'A'..'Z';
 // ======================================================================== 
 // Parser 
 // ======================================================================== 
+
+/**
+ * Start rule just wrapping {@link #getFormula(CClass)}. 
+ * Purely formally, to avoid warning on missing start rule 
+ * coming from the fact, that no eof is specified 
+ * and that {@link #getFormula(CClass)} is defined recursively. 
+ */
+getFormulaStart[CClass cClass] returns [FormulaDecl res] 
+    : res1=getFormula[cClass] {$res=res1;};
 
 /**
  * Parses a formula. 
@@ -202,11 +264,11 @@ fragment CAPITAL_LETTER:  'A'..'Z';
  */
 getFormula[CClass cClass] returns [FormulaDecl res] 
     : 
-        (decl=getConstFormula | 
-        ( ((NAME INV? (COV | CONT) ) | 
-            UNION | INTERSECT | COMPLEMENT) '(')=> 
-decl=getCompFormula[cClass] | 
-decl=getVarFormula) {$res=decl;};
+        (
+            decl=getConstFormula | 
+            decl=getCompFormula[cClass] | 
+            decl=getVarFormula
+        ) {$res=decl;};
 
 
 /**
@@ -242,13 +304,15 @@ getConstFormula returns [FormulaDecl decl]
 
             defs = new HashSet<Deficiency>();
         }
-'{' name=NAME {defs.add(new Deficiency($name.text));} '}' 
+'{' (name=NAME {defs.add(new Deficiency($name.text));})* '}' 
         {
             if (!type.isValid(defs)) {
                 report("Set " + defs + " does not conform with type " +
                        type + ". ");
             }
             $decl = FormulaDecl.getConst(type,defs);
+assert $decl != null;
+System.out.println("$decl: "+$decl);
         }
     ;
 
@@ -262,6 +326,7 @@ getConstFormula returns [FormulaDecl decl]
 getVarFormula returns [FormulaDecl decl] 
     :  path = getPath
         {
+System.out.println("path: "+path);
             CClass.SClassDecl declS = this.cClass.getEffectDecl(path);
             if (declS == null) {
                 report("Found name " + path + 
@@ -269,6 +334,7 @@ getVarFormula returns [FormulaDecl decl]
             }
             $decl = FormulaDecl.getVar(declS,path);
             //throw new eu.simuline.util.NotYetImplementedException();
+assert $decl != null;
         };
 
 
@@ -299,34 +365,31 @@ getCompFormula[CClass cClass] returns [FormulaDecl decl]
             (opT=NAME (invT=INV)? (accT=CONT | accT=COV) )
         ) 
         {
-            String key = null;
-            String funName = null;
-            if (accT == null) {
+            String key = $opT.text;
+            if ($accT == null) {
                 // opT = <UNION> | <INTERSECT> | <COMPLEMENT> 
-                key = opT.toString();
-                assert funName == null && invT == null;
+                assert $invT == null;
                 oper = Operation.BaseOps.getOperation(key);
             } else {
                 // opT = f, | opt = f'
-                key = opT.toString();
-                funName = opT.toString();
+                String funName = key;
                 MapDecl mapDecl = cClass.getMapDecl(funName);
                 if (mapDecl == null) {
                     report("Declared no map \"" + funName + "\". " );
                 }
                 DeficiencyMap map = mapDecl.getMap();
-                boolean isInverted = false;
-                if (invT != null) {
+                boolean isInverted = $invT != null;
+                if (isInverted) {
                     // replace map by its inverse 
                     map = map.getInverse();
-                    isInverted = true;
                 }
                 oper = Operation.getOperation(funName,
                                               isInverted,
                                               map,
                                               Operation.Functor
-                                              .covCont(accT.toString()));
+                                              .covCont($accT.text));
             }
+            assert oper != null;
 // Here, the operation is read. 
         }
         (
@@ -334,6 +397,7 @@ getCompFormula[CClass cClass] returns [FormulaDecl decl]
         )
         {
             $decl = FormulaDecl.getComp(oper,args);
+assert $decl != null;
         };
 
 /**
