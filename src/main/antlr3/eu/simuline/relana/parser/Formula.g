@@ -312,7 +312,6 @@ getConstFormula returns [FormulaDecl decl]
             }
             $decl = FormulaDecl.getConst(type,defs);
 assert $decl != null;
-System.out.println("$decl: "+$decl);
         }
     ;
 
@@ -326,7 +325,6 @@ System.out.println("$decl: "+$decl);
 getVarFormula returns [FormulaDecl decl] 
     :  path = getPath
         {
-System.out.println("path: "+path);
             CClass.SClassDecl declS = this.cClass.getEffectDecl(path);
             if (declS == null) {
                 report("Found name " + path + 
