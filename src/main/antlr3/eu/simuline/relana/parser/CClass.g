@@ -152,9 +152,35 @@ private void report(Exception exc) throws ParseException {
 
 } // @members 
 
+@rulecatch {
+catch (RecognitionException e) {
+//        if (this.failFirstError) {
+                throw e;
+//        }
+//        reportError(e);
+//        recover(input, e);
+} // catch 
+} // @rulecatch 
+
 @lexer::header {
     package eu.simuline.relana.parser;
 } // @lexer::header 
+
+@lexer::members {
+    // fail at first error 
+    @Override
+    public void displayRecognitionError(String[] tokenNames, 
+        RecognitionException e) {
+//        if (this.failFirstError) {
+                String hdr = getErrorHeader(e);
+                String msg = getErrorMessage(e, tokenNames);
+                throw new RuntimeException(hdr + ":" + msg);
+//throw e;
+//        }
+//                super.displayRecognitionError(tokenNames, e);
+//                return;
+    }
+} // @lexer::members
 
 
 // ======================================================================== 
@@ -338,6 +364,7 @@ getPath returns [List<String> res]
 
 maps returns [Map<String,MapDecl> res] 
 @init{Map<String,MapDecl> name2map = new HashMap<String,MapDecl>();}
+@after{$res = name2map;}
     : (MAPS (addMap[name2map])*)?
     ;
 
@@ -721,7 +748,7 @@ skipFormula returns [String res]
 appendFormula[String pre, StringBuffer res] 
 @init {
     //Token cls = null;
-    res.append(pre);
+    $res.append($pre);
 }
     : 
         ( 
@@ -739,7 +766,7 @@ appendFormula[String pre, StringBuffer res]
         )
         {
             if ($cls != null) {
-                    res.append($cls.text);
+                    $res.append($cls.text);
             }
         }
     ;
@@ -758,6 +785,7 @@ appendFormula[String pre, StringBuffer res]
  *    a postfix string. 
  */
 appendToken[String pre,StringBuffer buf,String post] 
+@init {$buf.append($pre);}
     : name = NAME {buf.append($name.text + post);};
 
 
@@ -824,10 +852,10 @@ component[Map<String,CClassLink> componentsX]
             CClassLink link = this.classLoader
             .resolveLocInOcc(loc,this.loc,$cName.text);
 
-            CClassLink old = components.put($cName.text, link);  
+            CClassLink old = componentsX.put($cName.text, link);  
             if (old != null) {
                     report("Duplicate component \"" + $cName.text + 
-                        "\"; overwrite " + old + " by " + $cClass.text + ". " );
+                        "\"; overwrite " + old + " by " + $cClassX.text + ". " );
 }
         }
     ;
