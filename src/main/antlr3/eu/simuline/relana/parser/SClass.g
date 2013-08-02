@@ -28,9 +28,17 @@ grammar SClass;
 
 @members {
 
+    /* -------------------------------------------------------------------- *
+     * fields.                                                              *
+     * -------------------------------------------------------------------- */
+
     private SClassLoader classLoader;
     private ClassLocator loc;
     private Map<ClassLocator,ClassLocator> subclassDep;
+
+    /* -------------------------------------------------------------------- *
+     * constructors and creator methods.                                    *
+     * -------------------------------------------------------------------- */
 
     private static CommonTokenStream reader2tokenStream(Reader reader)  
 		throws IOException {
@@ -51,19 +59,10 @@ grammar SClass;
         setTokenStream(reader2tokenStream(reader));
     }
 
+    /* -------------------------------------------------------------------- *
+     * methods.                                                             *
+     * -------------------------------------------------------------------- */
 
-    /**
-     * To set the <code>SClassLoader<code>. 
-     * This is needed whenever the definition of the class currently read 
-     * relies on definitions of other classes such as 
-     * the superclass if it is given explicitly. 
-     * 
-     * @param classLoader
-     *    the current <code>SClassLoader<code>. 
-     */
-    public void setClassLoader(SClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
     /**
      * Reports an error and also the location where it occurred. 
@@ -78,6 +77,19 @@ grammar SClass;
         //System.out.println(pe.getMessage());
         throw pe;
     } // report
+
+    /**
+     * To set the <code>SClassLoader<code>. 
+     * This is needed whenever the definition of the class currently read 
+     * relies on definitions of other classes such as 
+     * the superclass if it is given explicitly. 
+     * 
+     * @param classLoader
+     *    the current <code>SClassLoader<code>. 
+     */
+    public void setClassLoader(SClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     /**
      * Throws an exception if the class currently parsed 
@@ -443,7 +455,7 @@ addMap[Set<Deficiency> oldDefs,
             }
             $res = old2innerCls;// **** superfluous? 
         }
-        ;
+    ;
 
 
 /**
