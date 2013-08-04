@@ -1,0 +1,10 @@
+class TestCClass2 {
+effects
+	SClass someService2;
+	SClassB someService;
+components
+	Component asomeComponentX;
+	TestCClass asomeComponent;
+	TestCClass2 asomeComponent2;
+	//TestCClass1 asomeComponent1;
+}

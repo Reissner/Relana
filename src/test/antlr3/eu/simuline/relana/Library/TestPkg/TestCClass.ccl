@@ -1,0 +1,11 @@
+package TestPkg;
+class TestCClass {
+effects
+	       B someService { UNDET:1.0e-22 };
+	output B someService2 ( someService );
+components
+	Component bsomeComponentX;
+	Component bsomeComponentY;
+	//TestCClass bsomeComponent;
+	TestCClass2 bsomeComponent2;
+}

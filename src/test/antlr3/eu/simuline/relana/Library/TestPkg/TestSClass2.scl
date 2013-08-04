@@ -1,0 +1,68 @@
+package TestPkg;
+/*
+BuffetControl
+EmergencyDescent
+GustLoadAlleviationActive
+GustLoadAlleviationPassive
+ImprovedClimb
+ImprovedLandingSlowApproach
+ImprovedLandingSteepApproach
+ImprovedRollControl
+ImprovedTakeOff
+ManoeuvreLoadControl
+StabilizerControlHorizontal
+StabilizerControlVertical
+VibrationControl
+*/
+
+/*
+landing
+EmergencyDescent
+ImprovedLandingSlowApproach
+ImprovedLandingSteepApproach
+
+start
+ImprovedClimb
+ImprovedTakeOff
+
+convenience
+VibrationControl
+
+safety
+ImprovedRollControl
+
+
+BuffetControl
+GustLoadAlleviationActive
+GustLoadAlleviationPassive
+ManoeuvreLoadControl
+StabilizerControlHorizontal
+StabilizerControlVertical
+
+
+gust 	                der Windstoß
+alleviation 	  	die Erleichterung
+load control 	  	die Belastungsregelung
+stabilizer [aviat.]   	die Höhenflosse
+buffet [aviat.]   	die Bordküche
+*/
+
+
+
+
+sclass TestSClass2 extends B {
+properties 
+	noLanding noShortLanding //anotherKindOfLanding thirdLanding 
+map
+replace UNDET {
+	noLanding noShortLanding //anotherKindOfLanding thirdLanding 
+	relations
+	noLanding ==> noShortLanding;
+	//noLanding ==> anotherKindOfLanding; 
+	//anotherKindOfLanding  ==> thirdLanding;
+	//noShortLanding  ==> thirdLanding;
+} // UNDET
+
+relations
+
+} // sclass TestSClass 

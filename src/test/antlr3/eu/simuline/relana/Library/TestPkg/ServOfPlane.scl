@@ -1,0 +1,19 @@
+package TestPkg;
+
+sclass ServOfPlane {
+properties 
+	perfectPlane passengerPlane pursuitPlane savePlane
+map
+
+replace UNDET {
+	perfectPlane passengerPlane pursuitPlane savePlane
+
+	relations
+	perfectPlane ==> passengerPlane; 
+	perfectPlane ==> pursuitPlane; 
+	passengerPlane ==> savePlane;
+	pursuitPlane ==> savePlane;
+} // passengerPlane
+
+relations
+} // sclass TestSClass 

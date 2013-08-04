@@ -1,0 +1,14 @@
+package TinyPlane;
+
+sclass PowerState extends BoolPowerState {
+
+  properties
+    FullPower HalfPower 
+  map
+    replace Power {
+      FullPower HalfPower
+      relations 
+        FullPower ==> HalfPower;
+    } // Power
+  relations
+} // class Plane

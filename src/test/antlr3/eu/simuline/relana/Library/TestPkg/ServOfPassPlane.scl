@@ -1,0 +1,18 @@
+package TestPkg;
+sclass ServOfPassPlane {
+properties 
+	buffetControl gustAlleviation vibrationControl passengerHealty 
+map
+replace UNDET {
+	buffetControl gustAlleviation vibrationControl
+	passengerHealty
+
+	relations
+	buffetControl ==> gustAlleviation;
+	buffetControl ==> vibrationControl;
+
+	gustAlleviation  ==> passengerHealty;
+	vibrationControl ==> passengerHealty;
+} // UNDET 
+relations
+}
