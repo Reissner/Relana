@@ -146,7 +146,7 @@ public class SInstance {
 	res.append("\n<SInstance name=\"");
 	res.append(this.name);
 	res.append("\">\nformula: ");
-	res.append(this.form.toString());
+	res.append(""+this.form);
 	res.append("\n</SInstance>");
 
 	return res.toString();
