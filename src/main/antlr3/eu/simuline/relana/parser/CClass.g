@@ -23,17 +23,30 @@ grammar CClass;
     import java.io.IOException;
     import java.io.StringReader;
 
+    import java.util.List;
+    import java.util.ArrayList;
+    import java.util.Map;
+    import java.util.HashMap;
     import java.util.TreeMap;
     import java.util.Set;
     import java.util.HashSet;
 } // @header 
 
 @members {
+
+    /* -------------------------------------------------------------------- *
+     * fields.                                                              *
+     * -------------------------------------------------------------------- */
+
     private CClassLoader classLoader;
 
     private ClassLocator loc;
     private CClass cClass;
     private boolean exceptionThrown;
+
+    /* -------------------------------------------------------------------- *
+     * inner classes.                                                       *
+     * -------------------------------------------------------------------- */
 
     // *** only for reentry parsing formulae: should be separate parser. 
     static class FormulaWrapper {
@@ -50,38 +63,9 @@ grammar CClass;
         }
     } // class FormulaWrapper 
 
-    /*
-     * Returns a string comprising the current class, 
-     * the number of the current line and column, 
-     * the last token successfully read and the token tp be read next. 
-     *
-     * @return
-     *    a <code>String</code> of the form 
-     *    <code>[{@link #loc}] line ##, column ## 
-     *    between tokenRead and tokenToBeRead</code>. 
-     */
-//    private String getLocation() {
-//       return getLocation(this.token);
-//    }
-
-//    private String getLocation(Token token) {
-//        StringBuffer result = new StringBuffer();
-//        result.append("[" + this.loc + "] ");
-
-//        if (this.token.next == null) {
-//            result.append("line "      + token.beginLine  );
-//            result.append(", column "  + token.beginColumn);
-//            result.append(", after \"" + token);
-//            result.append("\": ");
-//        } else {
-//            result.append("line "        + token.next.beginLine  );
-//            result.append(", column "    + token.next.beginColumn);
-//            result.append(", between \"" + token);
-//            result.append("\" and \""    + token.next);
-//            result.append("\": ");
-//       }
-//        return result.toString();
-//    }
+    /* -------------------------------------------------------------------- *
+     * constructors and creator methods.                                    *
+     * -------------------------------------------------------------------- */
 
     private static CommonTokenStream reader2tokenStream(Reader reader)   
 		throws IOException {
@@ -104,17 +88,39 @@ grammar CClass;
         setTokenStream(reader2tokenStream(reader));
     }
 
-    /**
-     * To set the <code>CClassLoader<code>. 
-     * This is needed whenever the definition of the class currently read 
-     * relies on definitions of other classes such as 
-     * the superclass if it is given explicitly. 
-     * 
-     * @param classLoader
-     *    the current <code>SClassLoader<code>. 
+    /* -------------------------------------------------------------------- *
+     * methods.                                                             *
+     * -------------------------------------------------------------------- */
+
+   /**
+     * Returns a string comprising the current class, 
+     * the number of the current line and column, 
+     * the last token successfully read and the token tp be read next. 
+     *
+     * @return
+     *    a <code>String</code> of the form 
+     *    <code>[{@link #loc}] line ##, column ## 
+     *    between tokenRead and tokenToBeRead</code>. 
      */
-    public void setClassLoader(CClassLoader classLoader) {
-        this.classLoader = classLoader;
+    private String getLocation() {
+       StringBuffer result = new StringBuffer();
+        result.append("[" + this.loc + "] ");
+        Token token0 = this.getTokenStream().LT(-1);
+        Token token1 = this.getTokenStream().LT(+1);
+
+        if (token1.getType() == Token.EOR_TOKEN_TYPE) {
+            result.append("line "      + token0.getLine()  );
+            result.append(", column "  + token0.getCharPositionInLine());
+            result.append(", after \"" + token0);
+            result.append("\": ");
+        } else {
+            result.append("line "        + token1.getLine()  );
+            result.append(", column "    + token1.getCharPositionInLine());
+            result.append(", between \"" + token0);
+            result.append("\" and \""    + token1);
+            result.append("\": ");
+       }
+        return result.toString();
     }
 
     /**
@@ -149,6 +155,19 @@ private void report(Exception exc) throws ParseException {
        throw exc;
 } // report
 */
+
+    /**
+     * To set the <code>CClassLoader<code>. 
+     * This is needed whenever the definition of the class currently read 
+     * relies on definitions of other classes such as 
+     * the superclass if it is given explicitly. 
+     * 
+     * @param classLoader
+     *    the current <code>SClassLoader<code>. 
+     */
+    public void setClassLoader(CClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
 } // @members 
 
@@ -267,7 +286,7 @@ Map<String,FormulaWrapper> incompEffects =
                        "\" but found: \""  + $cClassName.text + "\". ");
             }
 
-            // Here, the the of this class is as prescribed by this.loc 
+            // Here, the name of the of this class is as prescribed by this.loc 
             // or something has been reported. 
 
             if (effectsX.size() == 0 && componentsX.size() == 0) {
@@ -304,7 +323,8 @@ Map<String,FormulaWrapper> incompEffects =
                     }
                 }
             }
-            // Here, the entries of this class is valid or something has been reported. 
+            // Here, the entries of this class is valid 
+            // or something has been reported. 
 
             if (this.exceptionThrown) {
                 report("Recoverable errors occurred; see above. ");
@@ -327,21 +347,17 @@ getSuperClass returns [CClass res] throws IOException
     :  (EXTENDS superPath = getPath())? '{' 
         {
             // determine the superclass 
-            if (superPath == null) {
-                // extends implicitly Component 
+            if (superPath == null || 
+                (superPath.size() == 1 && 
+                    superPath.get(0).equals(CClass.COMPONENT.getName()))) {
+                // extends implicitly or explicitely Component 
                 $res = CClass.COMPONENT;
             } else {
-                if (superPath.size() == 1 && 
-                    (superPath.get(0).equals(CClass.COMPONENT.getName()))) {
-                    // Here it must be Component, the overall base class. 
-                    $res = CClass.COMPONENT;
-                } else {
-                    // Here, it must be a library class. 
+                // Here, it must be a library class. 
 
-                    $res = this.classLoader
-                        .loadCClass(ClassLocator.getLocator(superPath),
-                                    this.loc.getPackage());
-                }
+                $res = this.classLoader
+                    .loadCClass(ClassLocator.getLocator(superPath),
+                                this.loc.getPackage());
              }
        }
     ;
@@ -357,14 +373,13 @@ getSuperClass returns [CClass res] throws IOException
  */
 getPath returns [List<String> res] 
 @init{$res = new ArrayList<String>();}
-    :       first=NAME {res.add($first.text);} 
-        (SEP next=NAME {res.add( $next.text);})*;
+    :       first=NAME {$res.add($first.text);} 
+        (SEP next=NAME {$res.add( $next.text);})*;
 
 
 
-maps returns [Map<String,MapDecl> res] 
-@init{Map<String,MapDecl> name2map = new HashMap<String,MapDecl>();}
-@after{$res = name2map;}
+maps returns [Map<String,MapDecl> name2map] 
+@init{$name2map = new HashMap<String,MapDecl>();}
     : (MAPS (addMap[name2map])*)?
     ;
 
@@ -378,7 +393,7 @@ addMap[Map<String,MapDecl> name2map]
     : 
         (//<MAP> 
             (redeclare = REDECLARE)?
-            nameT = NAME ':' invImgP = getPath '-->' imgP = getPath 
+            nameT = NAME ':' invImgP=getPath '-->' imgP=getPath 
             '{' add2DefMap[setOfSrc2targ]* addToIdDom[idDomain]? '}' END
         )
         {
@@ -449,9 +464,9 @@ add2DefMap[Map<Set<Deficiency>,Deficiency> setOfSrc2targ]
 
 
 addDef[Set<Deficiency> defs] 
-    : defT = NAME
+    : defT=NAME
         {
-            boolean isNew = defs.add(new Deficiency($defT.text));
+            boolean isNew = $defs.add(new Deficiency($defT.text));
             if (!isNew) {
                 report("Defined deficiency "  + $defT.text + " twice. ");
             }
@@ -481,7 +496,7 @@ returns [Map<String,CClass.SClassDecl> effectsX]
 @init {
     $effectsX = new TreeMap<String,CClass.SClassDecl>();
 }
-    : ( EFFECTS (effect[effectsX,incompEffects])* )?
+    : ( EFFECTS effect[effectsX,incompEffects]* )?
     ;
 
 
@@ -507,7 +522,7 @@ effect[Map<String,CClass.SClassDecl> effects,
     : 
         (
             (redeclare=REDECLARE)?
-            (addAccessModifier[accessModifiers])* 
+            addAccessModifier[accessModifiers]* 
             path=getPath 
             sNameT=NAME 
         ) 
@@ -540,6 +555,7 @@ effect[Map<String,CClass.SClassDecl> effects,
         {
             // read in the rest: name, modifiers, distribution, formula if any. 
             String sName = $sNameT.text;
+            assert sName != null;
             CClass.SClassDecl oldDecl = effects
                 .put(sName,
                      new CClass.SClassDecl(redeclare != null,
@@ -669,7 +685,7 @@ replDistr[Map<Deficiency,ProbDistr> def2distr, SClass sClass]
     Deficiency repl = null;
 }
     : 
-        replDefT= NAME
+        replDefT=NAME
         {
             repl = new Deficiency($replDefT.text);
             sClassInner = sClass.getDeclaredInnerClass(repl);
@@ -678,7 +694,7 @@ replDistr[Map<Deficiency,ProbDistr> def2distr, SClass sClass]
         distrInner=getDistr[sClassInner]
         {
             //replace 
-            ProbDistr old = def2distr.put(repl,distrInner);
+            ProbDistr old = $def2distr.put(repl,distrInner);
             if (old != null) {
                     report("Overwritten replacement of property \"" 
                         + $replDefT.text + "\". ");
@@ -747,7 +763,6 @@ skipFormula returns [String res]
  */
 appendFormula[String pre, StringBuffer res] 
 @init {
-    //Token cls = null;
     $res.append($pre);
 }
     : 
@@ -786,7 +801,12 @@ appendFormula[String pre, StringBuffer res]
  */
 appendToken[String pre,StringBuffer buf,String post] 
 @init {$buf.append($pre);}
-    : name = NAME {buf.append($name.text + post);};
+    : name=NAME 
+        {
+            buf.append($name.text);
+            buf.append($post);
+        }
+    ;
 
 
 /**
