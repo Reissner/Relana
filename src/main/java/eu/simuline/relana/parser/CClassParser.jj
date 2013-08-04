@@ -17,18 +17,13 @@ import eu.simuline.relana.model.CClassLink;
 import eu.simuline.relana.model.Package;
 import eu.simuline.relana.model.ProbDistr;
 import eu.simuline.relana.model.Deficiency;
-import eu.simuline.relana.model.DeficiencyMap;
 import eu.simuline.relana.model.MapDecl;
 
-import eu.simuline.relana.expressions.FormulaDecl;
-import eu.simuline.relana.expressions.Operation;
 import eu.simuline.relana.expressions.Type;
 
 import java.math.BigDecimal;
 
-import java.io.File;
 import java.io.Reader;
-import java.io.FileReader;
 import java.io.StringReader;
 import java.io.IOException;
 
@@ -140,45 +135,6 @@ private void errorSkipTo(int kind, Exception ex) {
      } while(t.kind != kind);
      this.exceptionThrown = true;
 } // errorSkipTo 
-
-/**
- * To set the <code>CClassLoader<code>. 
- * This is needed whenever the definition of the class currently read 
- * relies on definitions of other classes such as 
- * the superclass if it is given explicitly. 
- * 
- * @param classLoader
- *    the current <code>SClassLoader<code>. 
- */
-public void setClassLoader(CClassLoader classLoader) {
-     this.classLoader = classLoader;
-}
-
-/**
- * Sets the locator for the class currently parsed. 
- * This is needed to analyze formulae in a second parsing step 
- * when all <code>SClass</code> declarations are clarified. 
- * 
- * @param loc
- *    the location of the class currently parsed. 
- */
-private void setLocator(ClassLocator loc) {
-     this.loc = loc;
-}
-
-/**
- * Sets the <code>CClass</code> for the class currently parsed 
- * but without formulae. 
- * This is needed to analyze formulae in a second parsing step 
- * when all <code>SClass</code> declarations are clarified. 
- * 
- * @param cClass
- *    
- */
-private void setCClass(CClass cClass) {
-    this.cClass = cClass;
-}
-
 
 } // class CClassParser 
 
