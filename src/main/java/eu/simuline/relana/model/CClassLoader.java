@@ -1,7 +1,8 @@
 package eu.simuline.relana.model;
 
 import eu.simuline.relana.parser.CClassParser;
-import eu.simuline.relana.parser.ParseException;
+
+import org.antlr.runtime.RecognitionException;
 
 import java.net.URL;
 import java.net.URISyntaxException;
@@ -139,13 +140,13 @@ public class CClassLoader {
 
 
     public SClass loadSClass(ClassLocator loc,Package pkg) 
-	throws IOException, ParseException {
+	throws IOException, RecognitionException {
 	return this.scLoader.loadSClass(loc,pkg);
     }
 
     // **** copy from SClassParser **** used for superclass only. 
     public CClass loadCClass(ClassLocator loc,Package pkg) 
-	throws IOException, ParseException {
+	throws IOException, RecognitionException {
 	URL url = null;
 	List<String> pkgPath = pkg.getPath();
 	List<String> path = new ArrayList<String>(pkgPath);
@@ -186,10 +187,10 @@ public class CClassLoader {
 
 
     public CClass loadCClass(ClassLocator loc) 
-	throws IOException, ParseException {
+	throws IOException, RecognitionException {
 //System.out.println("loadCClass(");
 
-	//CClassLink result = resolveLocInOcc(loc,null);!!!!!!!
+	CClassLink result = resolveLocInOcc(loc,null);//!!!!!!!
 	while (!this.unresolvedClasses.empty()) {
 	    ClassLocator loc2 = this.unresolvedClasses.pop();
 //System.out.println("-->loc2: "+loc2);
