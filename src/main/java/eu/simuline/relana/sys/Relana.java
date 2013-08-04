@@ -6,11 +6,12 @@ import eu.simuline.relana.model.FlatCInstance;
 import eu.simuline.relana.model.SInstance;
 import eu.simuline.relana.model.InstanceLocator;
 //import eu.simuline.relana.model.Deficiency;
-import eu.simuline.relana.parser.ParseException;
 
 import eu.simuline.util.sgml.SGMLParser;
 
 import org.xml.sax.SAXException;
+
+import org.antlr.runtime.RecognitionException;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -42,8 +43,9 @@ public abstract class Relana {// NOPMD
     } // Relana constructor
 
 
-    public static void main(String[] args) throws 
-	MalformedURLException, IOException, SAXException, ParseException{
+    public static void main(String[] args) 
+	throws MalformedURLException, IOException, SAXException, 
+	       RecognitionException {
 	if (args.length != 1) {
 	    throw new IllegalArgumentException
 		("Expected a single argument: the project file " + 
