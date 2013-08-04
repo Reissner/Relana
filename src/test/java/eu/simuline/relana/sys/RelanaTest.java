@@ -36,7 +36,10 @@ import junit.framework.JUnit4TestAdapter;
 public class RelanaTest {
 
     private final static String ROOT = 
-    "file:///home/ernst/Software/src/test/antlr3/eu/simuline/relana/";
+    "file://" + 
+	System.getProperty("environment") + 
+	System.getProperty("tstSrcAntlrDir") + 
+	"eu/simuline/relana/";
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
