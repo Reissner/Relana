@@ -1,3 +1,0 @@
-package TestPkg;
-sclass SClassB extends BooleanService {
-}

@@ -1,6 +1,0 @@
-
-<Rml library="file:///home/ernst/Software/tst/eu/simuline/relana/Library/" 
-     baseClass="TinyPlane.PlaneB2">
-<Output effect="sLanding"/>
-<!--Output effect="sRollControl"/-->
-</Rml>

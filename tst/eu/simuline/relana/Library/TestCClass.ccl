@@ -1,9 +1,0 @@
-class TestCClass {
-effects
-	SClass someService;
-	SClass someService2;
-components
-	Component bsomeComponentX;
-	TestCClass bsomeComponent;
-	TestCClass2 bsomeComponent2;
-}
