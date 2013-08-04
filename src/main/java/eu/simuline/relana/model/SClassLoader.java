@@ -1,7 +1,7 @@
 package eu.simuline.relana.model;
 
 import eu.simuline.relana.parser.SClassParser;
-import eu.simuline.relana.parser.ParseException;
+import org.antlr.runtime.RecognitionException;
 
 import java.net.URL;
 import java.net.URISyntaxException;
@@ -59,7 +59,7 @@ public class SClassLoader {
     public SClass loadSClass(ClassLocator loc,
 			     Package pkg,
 			     Map<ClassLocator,ClassLocator> subclassDep) 
-	throws IOException, ParseException {
+	throws IOException, RecognitionException {
 	
 	URL url = null;
 	List<String> pkgPath = pkg.getPath();
@@ -104,13 +104,13 @@ public class SClassLoader {
 
     public SClass loadSClass(ClassLocator loc,
 			     Package pkg) 
-	throws IOException, ParseException {
+	throws IOException, RecognitionException {
 	return loadSClass(loc,pkg,new HashMap<ClassLocator,ClassLocator>());
     }
 
     private SClass resolveSClass(ClassLocator loc,
 				 Map<ClassLocator,ClassLocator> subclassDep) 
-	throws IOException, ParseException {
+	throws IOException, RecognitionException {
 	InputStream str = new URL(this.library + 
 				  loc.getPackage().getPathName()
 				  .replace('.','/') + 
