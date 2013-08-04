@@ -491,17 +491,7 @@ getCheckedDeficiencies[Set<Deficiency> newDefs]
                 }
             // declared properties may not occur twice. 
             newDefs.removeAll(deficiency2ordering.keySet());
-            if (!newDefs.containsAll(deficiency2ordering.keySet())) {
-                    // undeclared deficiencies. 
-                    Set<Deficiency> undeclared = 
-                        new HashSet<Deficiency>(deficiency2ordering.keySet());
-                    undeclared.removeAll(newDefs);
-                    report("Found properties: " + undeclared + 
-                        " either undeclared or used above. ");
-                }
-            // declared properties may not occur twice. 
-            newDefs.removeAll(deficiency2ordering.keySet());
-        }
+       }
     ;
 
 /**
