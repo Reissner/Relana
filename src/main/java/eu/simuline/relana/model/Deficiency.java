@@ -17,6 +17,7 @@ public class Deficiency {
      * attributes.                                                          *
      * -------------------------------------------------------------------- */
 
+    // must be final to guarantee a valid {@link #hashCode()}. 
     private final String name;
 
     /* -------------------------------------------------------------------- *
@@ -47,6 +48,7 @@ public class Deficiency {
 	return getName().equals(((Deficiency)obj).getName());
     }
 
+    // HashCode is immutable. 
     public int hashCode() {
 	return getName().hashCode();
     }
