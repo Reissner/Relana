@@ -16,7 +16,6 @@ import java.util.HashSet;
 
 public class DeficiencyNode {
 
-
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *
      * -------------------------------------------------------------------- */
@@ -25,7 +24,8 @@ public class DeficiencyNode {
 
     private Set<DeficiencyNode> successors;
 
-    private Deficiency deficiency;
+    // must be final because of {@link #hashCode()} 
+    private final Deficiency deficiency;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -68,10 +68,6 @@ public class DeficiencyNode {
 
     public Deficiency getDeficiency() {
 	return this.deficiency;
-    }
-
-    public void setDeficiency(Deficiency deficiency) {
-	this.deficiency = deficiency;
     }
 
     public Set<DeficiencyNode> getPredecessors() {
@@ -145,9 +141,10 @@ public class DeficiencyNode {
 	    return false;
 	}
 	DeficiencyNode other = (DeficiencyNode)obj;
-	return getDeficiency().equals(other.getDeficiency())  && 
+	return 
+	    getDeficiency  ().equals(other.getDeficiency  ()) && 
 	    getPredecessors().equals(other.getPredecessors()) && 
-	    getSuccessors  ().equals(other.getSuccessors());
+	    getSuccessors  ().equals(other.getSuccessors  ());
     }
 
     public int hashCode() {
