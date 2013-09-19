@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 import java.util.Map;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.SortedSet;
@@ -439,7 +440,7 @@ public class ProbDistr {
     }
 
     public void validate() {
-	this.validators = new HashMap<Inverter,Validator>();
+	this.validators = new EnumMap<Inverter,Validator>(Inverter.class);
 	validateUp(Inverter.Identity);
 	validateUp(Inverter.Invert);
     }
