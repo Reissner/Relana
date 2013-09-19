@@ -127,7 +127,8 @@ public class FlatCInstance {
 	
 	// create the set {def} with type serv.getType() 
 	// This works, because def is minimal within serv.getType() 
-	Set<Deficiency> defSet = new HashSet<Deficiency>();
+	Set<Deficiency> defSet = 
+	    new HashSet<Deficiency>();// eq&hashCode not overwritten 
 	defSet.add(def);
 	Formula newConst = new Formula.Const(defSet,serv.getType());
 	assert serv.getType().isValid(defSet);
