@@ -22,7 +22,8 @@ public class ClassLocator {
     /**
      * The name of the class to be located. 
      */
-    protected String name;
+    // must be final to guarantee a valid {@link #hashCode()}. 
+    protected final String name;
 
     /**
      * The package of the class to be located. 
