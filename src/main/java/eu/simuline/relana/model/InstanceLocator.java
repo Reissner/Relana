@@ -3,6 +3,7 @@ package eu.simuline.relana.model;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Locates a class within a library. 
@@ -22,7 +23,7 @@ public class InstanceLocator {
     /**
      * The name of the class to be located. 
      */
-    protected List<String> path;
+    protected final List<String> path;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -41,7 +42,7 @@ public class InstanceLocator {
 	    
 	}
 	
-	this.path = path;
+	this.path = Collections.unmodifiableList(path);
     } // InstanceLocator constructor
     
     /* -------------------------------------------------------------------- *
