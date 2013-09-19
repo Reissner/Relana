@@ -23,6 +23,7 @@ public class InstanceLocator {
     /**
      * The name of the class to be located. 
      */
+    // declared final to ensure that hashCode() remains unchanged. 
     protected final List<String> path;
 
     /* -------------------------------------------------------------------- *
