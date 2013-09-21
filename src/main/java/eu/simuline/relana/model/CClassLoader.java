@@ -37,13 +37,28 @@ public class CClassLoader {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    static class Occurence {
+    final static class Occurence {
+
+	/* ---------------------------------------------------------------- *
+	 * attributes.                                                      *
+	 * ---------------------------------------------------------------- */
+
 	private final ClassLocator loc;
 	private final String component;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
 	Occurence(ClassLocator loc,String component) {
 	    this.loc = loc;
 	    this.component = component;
 	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
 	ClassLocator getLoc() {
 	    return this.loc;
 	}
@@ -60,16 +75,40 @@ public class CClassLoader {
 	    res.append("</Occurence>");
 	    return res.toString();
 	}
+
+	// for use in hash sets/maps 
+	public boolean equals(Object obj) {
+	    return super.equals(obj);
+	}
+
+	// for use in hash sets/maps 
+	public int hashCode() {
+	    return super.hashCode();
+	}
+
     } // class Occurence 
 
     static class ClassResolver implements CClassLink {
+
+	/* ---------------------------------------------------------------- *
+	 * attributes.                                                      *
+	 * ---------------------------------------------------------------- */
+
 	private final ClassLocator loc;
 	private final Set<Occurence> occurences;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
 
 	ClassResolver(ClassLocator loc) {
 	    this.loc = loc;
 	    this.occurences = new HashSet<Occurence>();
 	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
 
 	public String getName() {
 	    return this.loc.getName();
