@@ -9,7 +9,7 @@ package eu.simuline.relana.model;
  * @author <a href="mailto:ernst@local">Ernst Reissner</a>
  * @version 1.0
  */
-public class Deficiency {
+public final class Deficiency {
 
     public final static Deficiency UNDET = new Deficiency("UNDET");
 
