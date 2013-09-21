@@ -43,6 +43,7 @@ public class Project
      * --------------------------------------------------------------------- */
 
     public Project() {
+	// InstanceLocator overwrites hashCode and is immutable 
 	this.outputEffects = new HashSet<InstanceLocator>();
     } // Project constructor
     
