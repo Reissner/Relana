@@ -84,7 +84,7 @@ public class CClass implements CClassLink {
      * and also optionally, a probability distribution {@link #distr} 
      * or a formula declaration {@link #form}. 
      */
-    public static class SClassDecl {
+    public final static class SClassDecl {
 
 	/* ---------------------------------------------------------------- *
 	 * attributes.                                                      *
@@ -97,7 +97,7 @@ public class CClass implements CClassLink {
 	private final boolean isRedeclare;
 
 	/**
-	 * The set of mofifiers of this effect. 
+	 * The set of modifiers of this effect. 
 	 */
 	private final Set<SClassModifier> modifiers;
 
@@ -307,6 +307,17 @@ public class CClass implements CClassLink {
 	    }
 	    return res.toString();
 	}
+
+	// for use in hash sets/maps 
+	public boolean equals(Object obj) {
+	    return super.equals(obj);
+	}
+
+	// for use in hash sets/maps 
+	public int hashCode() {
+	    return super.hashCode();
+	}
+
     } // class SClassDecl 
 
     /* -------------------------------------------------------------------- *
