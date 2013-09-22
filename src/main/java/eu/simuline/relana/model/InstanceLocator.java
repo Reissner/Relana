@@ -14,7 +14,7 @@ import java.util.Collections;
  * @author <a href="mailto:ernst@local">Ernst Reissner</a>
  * @version 1.0
  */
-public class InstanceLocator {
+public final class InstanceLocator {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *
@@ -22,8 +22,8 @@ public class InstanceLocator {
 
     /**
      * The name of the class to be located. 
+     * Declared final to ensure that {@link #hashCode()} remains unchanged. 
      */
-    // declared final to ensure that hashCode() remains unchanged. 
     protected final List<String> path;
 
     /* -------------------------------------------------------------------- *
@@ -71,6 +71,7 @@ public class InstanceLocator {
 	return this.path.equals(((InstanceLocator)other).getPath());
     }
 
+    // immutable to allow InstanceLocators as elements of hashsets. 
     public int hashCode() {
 	return getPath().hashCode();
     }
