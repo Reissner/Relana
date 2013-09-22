@@ -14,7 +14,7 @@ import java.util.HashSet;
  * @version 1.0
  */
 
-public class DeficiencyNode {
+public final class DeficiencyNode {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *
@@ -148,8 +148,7 @@ public class DeficiencyNode {
     }
 
     public int hashCode() {
-	return 
-	    getDeficiency().hashCode();
+	return getDeficiency().hashCode();
     }
 
 } // DeficiencyNode
