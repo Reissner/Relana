@@ -740,7 +740,7 @@ public class CClass implements CClassLink {
 	return cInstance;
     }
 
-    public void addOccurence(CClassLoader.Occurence occ) {
+    public void addOccurrence(CClassLoader.Occurrence occ) {
 	    // is empty. 
     }
 

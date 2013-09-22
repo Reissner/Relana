@@ -14,6 +14,6 @@ public interface CClassLink {
     String getName();
     boolean isResolved();
     CClassLink setComponent(String name,CClass cClass);
-    void addOccurence(CClassLoader.Occurence occ);
+    void addOccurrence(CClassLoader.Occurrence occ);
 
 }// CClassLink

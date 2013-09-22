@@ -37,7 +37,7 @@ public class CClassLoader {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    final static class Occurence {
+    final static class Occurrence {
 
 	/* ---------------------------------------------------------------- *
 	 * attributes.                                                      *
@@ -50,7 +50,7 @@ public class CClassLoader {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	Occurence(ClassLocator loc,String component) {
+	Occurrence(ClassLocator loc,String component) {
 	    this.loc = loc;
 	    this.component = component;
 	}
@@ -68,11 +68,11 @@ public class CClassLoader {
 
 	public String toString() {
 	    StringBuffer res = new StringBuffer(25);
-	    res.append("<Occurence>");
+	    res.append("<Occurrence>");
 	    res.append(this.loc.toString());
 	    res.append(this.component);
 
-	    res.append("</Occurence>");
+	    res.append("</Occurrence>");
 	    return res.toString();
 	}
 
@@ -86,7 +86,7 @@ public class CClassLoader {
 	    return super.hashCode();
 	}
 
-    } // class Occurence 
+    } // class Occurrence 
 
     static class ClassResolver implements CClassLink {
 
@@ -95,7 +95,7 @@ public class CClassLoader {
 	 * ---------------------------------------------------------------- */
 
 	private final ClassLocator loc;
-	private final Set<Occurence> occurences;
+	private final Set<Occurrence> occurences;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -103,7 +103,7 @@ public class CClassLoader {
 
 	ClassResolver(ClassLocator loc) {
 	    this.loc = loc;
-	    this.occurences = new HashSet<Occurence>();
+	    this.occurences = new HashSet<Occurrence>();
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -114,7 +114,7 @@ public class CClassLoader {
 	    return this.loc.getName();
 	}
 
-	public void addOccurence(Occurence occ) {
+	public void addOccurrence(Occurrence occ) {
 	    this.occurences.add(occ);
 	}
 
@@ -254,7 +254,7 @@ public class CClassLoader {
 		this.name2class.put(loc2,cClass);
 	    Iterator iter = res.resolvationPoints().iterator();
 	    while (iter.hasNext()) {
-		Occurence occ = (Occurence)iter.next();
+		Occurrence occ = (Occurrence)iter.next();
 //System.out.println("occ: "+occ);
 		this.name2class.get(occ.getLoc())
 		    .setComponent(occ.compName(),cClass);
@@ -272,10 +272,10 @@ public class CClassLoader {
     public CClassLink resolveLocInOcc(ClassLocator toBeResolved, 
 				      ClassLocator loc,
 				      String comp) {
-	return  resolveLocInOcc(toBeResolved,new Occurence(loc,comp));
+	return  resolveLocInOcc(toBeResolved,new Occurrence(loc,comp));
     }
 
-    private CClassLink resolveLocInOcc(ClassLocator loc, Occurence occ) {
+    private CClassLink resolveLocInOcc(ClassLocator loc, Occurrence occ) {
 //System.out.println("resolveLocInOcc("+loc);
 	
 	CClassLink resolvation = this.name2class.get(loc);
@@ -290,7 +290,7 @@ public class CClassLoader {
 	}
 
 	if (occ != null) {
-	    resolvation.addOccurence(occ);
+	    resolvation.addOccurrence(occ);
 	}
 	    
 
