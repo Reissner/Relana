@@ -20,7 +20,7 @@ import java.util.Stack;
  * @author <a href="mailto:ernst@local">Ernst Reissner</a>
  * @version 1.0
  */
-final public class Type {
+public final class Type {
 
     public final static Type EMPTY = new Type();
     public final static Type BOOLEAN;
