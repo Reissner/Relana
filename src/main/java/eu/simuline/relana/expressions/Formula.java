@@ -27,8 +27,18 @@ public abstract class Formula {
 		 Type.getEmpty());
 
     public static class Const extends Formula {
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
 	private final Set<Deficiency> val;
 	private final Type type;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
 	public Const(Set<Deficiency> val,Type type) {
 	    this.val  = val;
 	    this.type = type;
@@ -39,6 +49,11 @@ public abstract class Formula {
 	    }
 
 	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
 	private final static Const create(Set<Deficiency> val,Type type) {
 	    return new Const(val,type);
 	}
@@ -46,9 +61,11 @@ public abstract class Formula {
 	public Formula remove(SInstance serv, Deficiency def) {
 	    return Const.this;
 	}
+
 	public Formula add(SInstance serv, Deficiency def) {
 	    return Const.this;
 	}
+
 	public Formula substitute(SInstance serv, Formula form) {
 	    return Const.this;
 	}
@@ -71,20 +88,37 @@ public abstract class Formula {
     } // class Const 
 
     public static class Var extends Formula {
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
 	private final SInstance varS;
 	String name;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
 	public Var(SInstance varS,String name) {
 	    this.varS = varS;
 	    this.name = name;
 	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
 	public Formula remove(SInstance serv, Deficiency def) {
 	    throw new eu.simuline.util.NotYetImplementedException();
 	    // return new Var(var);
 	}
+
 	public Formula add(SInstance serv, Deficiency def) {
 	    throw new eu.simuline.util.NotYetImplementedException();
 	    // return new Var(var);
 	}
+
 	public Formula substitute(SInstance serv, Formula form) {
 //System.out.println("-----serv : "+serv);
 //System.out.println("this.var : "+this.var);
@@ -92,20 +126,25 @@ public abstract class Formula {
 
 	    return (serv == this.varS) ? form : Var.this;
 	}
+
 	public Set<SInstance> getVars() {
 	    Set<SInstance> res = new HashSet<SInstance>();
 	    res.add(this.varS);
 	    return res;
 	}
+
 	public Set<Deficiency> getConst() {
 	    return null;
 	}
+
 	public Set<Deficiency> getMax() {
 	    return this.varS.getType().asSet();
 	}
+
 	public Set<Deficiency> getMin() {
 	    return new HashSet<Deficiency>();
 	}
+
 	public String toString() {
 	    StringBuffer res = new StringBuffer();
 	    res.append("$" + this.name + "$");
@@ -115,11 +154,19 @@ public abstract class Formula {
 
     public static class Comp extends Formula {
 
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
 	protected Set<Deficiency> min;
 	protected Set<Deficiency> max;
 
 	private final Operation.Eval oper;
 	private final Set<Formula> args;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
 
 	private Comp(Operation.Eval oper, Set<Formula> args) {
 	    this.oper = oper;
@@ -150,6 +197,10 @@ public abstract class Formula {
 	    }
 	}
 
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
 	private final static Comp create(Operation.Eval oper, 
 					 Set<Formula> args) {
 	    return new Comp(oper, args);
@@ -162,6 +213,7 @@ public abstract class Formula {
 	    }
 	    return getFormula(this.oper,newArgs);
 	}
+
 	public Formula add(SInstance serv, Deficiency def) {
 	    Set<Formula> newArgs = new HashSet<Formula>();
 	    for (Formula form : args) {
@@ -177,6 +229,7 @@ public abstract class Formula {
 	    }
 	    return getFormula(this.oper,newArgs);
 	}
+
 	public Set<SInstance> getVars() {
 	    Set<SInstance> res = new HashSet<SInstance>();
 	    for (Formula arg : args) {
@@ -184,12 +237,15 @@ public abstract class Formula {
 	    }
 	    return res;
 	}
+
 	public Set<Deficiency> getConst() {
 	    return null;
 	}
+
 	public Set<Deficiency> getMax() {
 	    return this.max;
 	}
+
 	public Set<Deficiency> getMin() {
 	    return this.min;
 	}
@@ -222,8 +278,8 @@ public abstract class Formula {
      * further methods.                                                     *
      * -------------------------------------------------------------------- */
 
-    public abstract Formula remove(SInstance serv, Deficiency def);
-    public abstract Formula    add(SInstance serv, Deficiency def);
+    public abstract Formula     remove(SInstance serv, Deficiency def);
+    public abstract Formula        add(SInstance serv, Deficiency def);
     public abstract Formula substitute(SInstance serv, Formula form);
 
     public abstract Set<SInstance> getVars();
