@@ -93,6 +93,8 @@ System.out.println("outServ: "+outServ);
 		throw new IllegalArgumentException
 		    ("Found non-output variable " + loc + ". ");
 	    }
+	    // this works with HashMap observables, 
+	    // because loc.getPath() yields an unmodifyable list. 
 	    observables.put(loc.getPath(),serv);
 	}
 	
