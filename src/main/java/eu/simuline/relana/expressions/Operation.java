@@ -3,6 +3,8 @@ package eu.simuline.relana.expressions;
 import eu.simuline.relana.model.Deficiency;
 import eu.simuline.relana.model.DeficiencyMap;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -119,7 +121,7 @@ public abstract class Operation {
 	    while (iter.hasNext()) {
 		if (!proto.equals(iter.next().retType())) {
 		    // prepare types 
-		    Set<Type> argTypes = new HashSet<Type>();
+		    List<Type> argTypes = new ArrayList<Type>();
 		    for (FormulaDecl form : args) {
 			argTypes.add(form.retType());
 		    }
@@ -170,7 +172,7 @@ public abstract class Operation {
 	    while (iter.hasNext()) {
 		if (!proto.equals(iter.next().retType())) {
 		    // prepare types 
-		    Set<Type> argTypes = new HashSet<Type>();
+		    List<Type> argTypes = new ArrayList<Type>();
 		    for (FormulaDecl form : args) {
 			argTypes.add(form.retType());
 		    }
