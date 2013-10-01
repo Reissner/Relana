@@ -14,7 +14,7 @@ import java.util.Set;
  * @author <a href="mailto:ernst@local">Ernst Reissner</a>
  * @version 1.0
  */
-public class SInstance {
+public final class SInstance {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *
@@ -139,6 +139,16 @@ public class SInstance {
 	    res.setFormula(newForm);
 	}
 	return res;
+    }
+
+    // prevent overwriting: enable for (Weak)HashSet/Map 
+    public boolean equals(Object obj) {//final 
+	return super.equals(obj);
+    }
+
+    // enable for (Weak)HashSet/Map 
+    public int hashCode() {
+	return super.hashCode();
     }
 
     public String toString() {
