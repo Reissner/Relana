@@ -39,7 +39,8 @@ public final class Type {
 
     /**
      * Maps declared <code>Deficiency</code>s **********
-     * (see {@link eu.simuline.relana.model.SClass#getDeclaredDeficiency2ordering}) 
+     * (see 
+     * {@link eu.simuline.relana.model.SClass#getDeclaredDeficiency2ordering}) 
      * to their nodes 
      * which determine their predecessors and their successors. 
      * It is required that this relation extends that 
@@ -113,16 +114,12 @@ System.out.println("pred: "+ pred);
 	this.minDefs = new HashSet<Deficiency>();
 	this.maxDefs = new HashSet<Deficiency>();
 	
-	Iterator<DeficiencyNode> iter = 
-	    this.deficiency2ordering.values().iterator();
-	DeficiencyNode node;
-	while (iter.hasNext()) {
-	    node = iter.next();
+	for (DeficiencyNode node : this.deficiency2ordering.values()) {
 	    if (node.getSuccessors().isEmpty()) {
-		minDefs.add(node.getDeficiency());
+		this.minDefs.add(node.getDeficiency());
 	    }
 	    if (node.getPredecessors().isEmpty()) {
-		maxDefs.add(node.getDeficiency());
+		this.maxDefs.add(node.getDeficiency());
 	    }
 	}
     }
