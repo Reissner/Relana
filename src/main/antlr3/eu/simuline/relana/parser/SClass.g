@@ -17,6 +17,7 @@ grammar SClass;
     import java.util.Set;
     import java.util.HashSet;
     import java.util.Iterator;
+    import java.util.Collections;
 
     import java.io.Reader;
     import java.io.IOException;
@@ -234,6 +235,7 @@ returns [SClass res] throws IOException
  */
 getPath returns [List<String> res] 
 @init{$res = new ArrayList<String>();}
+@after{$res = Collections.unmodifiableList($res);}
     :       first=NAME {res.add($first.text);} 
         (SEP next=NAME {res.add( $next.text);})*;
 
