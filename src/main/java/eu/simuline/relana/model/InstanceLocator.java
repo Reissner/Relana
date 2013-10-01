@@ -23,6 +23,7 @@ public final class InstanceLocator {
     /**
      * The name of the class to be located. 
      * Declared final to ensure that {@link #hashCode()} remains unchanged. 
+     * In addition this list is unmodifyable. 
      */
     protected final List<String> path;
 
@@ -59,7 +60,9 @@ public final class InstanceLocator {
 	    (new ArrayList<String>(Arrays.asList(path.split("[.]",-1))));
     }
 
-
+    /**
+     * Returns the wrapped path as an unmodifiable list. 
+     */
     public List<String> getPath() {
 	return this.path;
     }
