@@ -32,7 +32,7 @@ public class SClass {
     /**
      * The name of this <code>SClass</code>. 
      */
-    protected String sName;
+    protected final String sName;
 
     /**
      * The package of this <code>SClass</code>. 
