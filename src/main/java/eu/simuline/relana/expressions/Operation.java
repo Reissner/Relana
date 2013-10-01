@@ -94,8 +94,7 @@ public abstract class Operation {
     } // enum BaseOps 
 
     /**
-     * Comprises the basic set theoretic operations 
-     * union, intersection and complement. 
+     * Defines the basic set theoretic intersection. 
      */
     static class IntsOp extends Operation implements Eval {
 	//private Type type;
@@ -157,6 +156,9 @@ public abstract class Operation {
 	}
     } // class IntsOp 
 
+    /**
+     * Defines the basic set theoretic union complement. 
+     */
     static class UnionOp extends Operation implements Eval {
 	boolean arity1() {
 	    return false;
@@ -205,6 +207,9 @@ public abstract class Operation {
 	}
     } // class UnionOp 
 
+    /**
+     * Defines the basic set theoretic complement. 
+     */
     static class CompOp extends Operation {
 	boolean arity1() {
 	    return true;
