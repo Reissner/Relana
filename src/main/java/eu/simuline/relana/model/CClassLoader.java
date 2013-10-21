@@ -118,7 +118,7 @@ public class CClassLoader {
 	    this.occurences.add(occ);
 	}
 
-	Set resolvationPoints() {
+	Set<Occurrence> resolvationPoints() {
 	    return this.occurences;
 	}
 
@@ -252,14 +252,11 @@ public class CClassLoader {
 
 	    ClassResolver res = (ClassResolver)
 		this.name2class.put(loc2,cClass);
-	    Iterator iter = res.resolvationPoints().iterator();
-	    while (iter.hasNext()) {
-		Occurrence occ = (Occurrence)iter.next();
-//System.out.println("occ: "+occ);
+	    for (Occurrence occ : res.resolvationPoints()) {
 		this.name2class.get(occ.getLoc())
 		    .setComponent(occ.compName(),cClass);
-
 	    }
+
 //System.out.println("XX2this.unresolvedClasses: "+ this.unresolvedClasses);
 	}
 	// Here, all links are resolved. 
@@ -299,3 +296,22 @@ public class CClassLoader {
     }
 
 } // CClassLoader
+
+// usr/lib64/jvm/javaLatest/bin/javac -classpath /home/ernst/Software/target/test-classes:/home/ernst/Software/target/classes:/home/ernst/Software/jars/junitLatest.jar:/home/ernst/Software/jars/fastutilLatest.jar:/home/ernst/Software/jars/javaoctaveLatest.jar:/home/ernst/Software/jars/commons-loggingLatest.jar:/home/ernst/Software/jars/antlr-3.5-complete.jar:/home/ernst/Software/jars/jnaLatest.jar:/home/ernst/Software/jars/jnaPlatformLatest.jar -sourcepath /home/ernst/Software/src/main/java -encoding UTF-8 -d /home/ernst/Software/target/classes -deprecation -target 1.6 -source 1.6 -Xlint CClassLoader.java
+
+// warning: [options] bootstrap class path not set in conjunction with -source 1.6
+// CClassLoader.java:121: warning: [rawtypes] found raw type: Set
+// 	Set resolvationPoints() {
+// 	^
+//   missing type arguments for generic class Set<E>
+//   where E is a type-variable:
+//     E extends Object declared in interface Set
+// CClassLoader.java:255: warning: [rawtypes] found raw type: Iterator
+// 	    Iterator iter = res.resolvationPoints().iterator();
+// 	    ^
+//   missing type arguments for generic class Iterator<E>
+//   where E is a type-variable:
+//     E extends Object declared in interface Iterator
+// 3 warnings
+
+// Compilation finished at Mon Oct 21 17:13:53
