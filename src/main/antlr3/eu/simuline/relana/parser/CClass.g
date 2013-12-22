@@ -30,6 +30,7 @@ grammar CClass;
     import java.util.TreeMap;
     import java.util.Set;
     import java.util.HashSet;
+    import java.util.Collections;
 } // @header 
 
 @members {
@@ -422,6 +423,7 @@ addMap[Map<String,MapDecl> name2map]
                 imgCls = null; // never reached. ****
             }
             
+            setOfSrc2targ = Collections.unmodifiableMap(setOfSrc2targ);
             try {
                 MapDecl newMap = new MapDecl(redeclare != null,
                                              mapName,
@@ -453,6 +455,7 @@ add2DefMap[Map<Set<Deficiency>,Deficiency> setOfSrc2targ]
         )
         {
             Deficiency newDef = new Deficiency($defT.text);
+            invImg = Collections.unmodifiableSet(invImg);
             Deficiency oldDef = setOfSrc2targ.put(invImg,newDef);
             if (oldDef != null) {
                 report("Defined image of "  + invImg + 
