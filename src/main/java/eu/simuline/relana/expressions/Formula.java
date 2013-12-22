@@ -26,7 +26,7 @@ public abstract class Formula {
     Const.create(new HashSet<Deficiency>(),
 		 Type.getEmpty());
 
-    public static class Const extends Formula {
+    public final static class Const extends Formula {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -87,7 +87,7 @@ public abstract class Formula {
 	}
     } // class Const 
 
-    public static class Var extends Formula {
+    public final static class Var extends Formula {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -152,7 +152,7 @@ public abstract class Formula {
 	}
     } // class Var 
 
-    public static class Comp extends Formula {
+    public final static class Comp extends Formula {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -267,6 +267,9 @@ public abstract class Formula {
      * static creator methods.                                              *
      * -------------------------------------------------------------------- */
 
+    private Formula() {
+    }
+
     public static Formula getFormula(Operation.Eval oper, Set<Formula> args) {
 	Formula res = Comp.create(oper,args);
 	return (res.getMin().size() == res.getMax().size())
@@ -302,4 +305,13 @@ public abstract class Formula {
     public abstract Set<Deficiency> getConst();
     public abstract Set<Deficiency> getMin();
     public abstract Set<Deficiency> getMax();
+
+    public final boolean equals(Object obj) {
+	return super.equals(obj);
+    }
+
+    public final int hashCode() {
+	return super.hashCode();
+    }
+
 } // FormulaDecl

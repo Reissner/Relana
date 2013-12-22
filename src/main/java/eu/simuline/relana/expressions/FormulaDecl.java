@@ -23,7 +23,7 @@ public abstract class FormulaDecl {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    static class Const extends FormulaDecl {
+    final static class Const extends FormulaDecl {
 	private final Set<Deficiency> val;
 	private final Type type;
 	Const(Type type,Set<Deficiency> val) {
@@ -48,7 +48,7 @@ public abstract class FormulaDecl {
 	}
     } // class Const 
 
-    static class Var extends FormulaDecl {
+    final static class Var extends FormulaDecl {
 	private final CClass.SClassDecl decl;
 	// from variable where the root formula is defined to this variable 
 	// which is "more interior". 
@@ -77,7 +77,7 @@ public abstract class FormulaDecl {
      * consisting of a operation {@link #oper} 
      * and a set of arguments {@link #args}. 
      */
-    static class Comp extends FormulaDecl {
+    final static class Comp extends FormulaDecl {
 
 	private final Operation oper;
 	private final Set<FormulaDecl> args;
@@ -114,6 +114,9 @@ public abstract class FormulaDecl {
      * static creator methods used by CClassParser.                         *
      * -------------------------------------------------------------------- */
 
+    private FormulaDecl() {
+    }
+
     public static FormulaDecl getConst(Type type,Set<Deficiency> val) {
 	return new Const(type,val);
     }
@@ -134,6 +137,14 @@ public abstract class FormulaDecl {
     public abstract Type retType();
 
     public abstract Formula resolve(CInstance cInst);
+
+    public final boolean equals(Object obj) {
+	return super.equals(obj);
+    }
+
+    public final int hashCode() {
+	return super.hashCode();
+    }
 
 
 } // FormulaDecl
