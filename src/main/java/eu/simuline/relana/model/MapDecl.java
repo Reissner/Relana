@@ -55,9 +55,9 @@ public class MapDecl {
 	this.target = target;
 	this.idDom = idDom;
 	this.map = new DeficiencyMap(this.setOfNew2old,
-				this.source,
-				this.target,
-				this.idDom);
+				     this.source,
+				     this.target,
+				     this.idDom);
     } // MapDecl constructor
 
     /* -------------------------------------------------------------------- *
