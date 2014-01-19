@@ -54,7 +54,7 @@ public abstract class Formula {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	private final static Const create(Set<Deficiency> val,Type type) {
+	private static Const create(Set<Deficiency> val,Type type) {
 	    return new Const(val,type);
 	}
 
@@ -201,7 +201,7 @@ public abstract class Formula {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	private final static Comp create(Operation.Eval oper, 
+	private static Comp create(Operation.Eval oper, 
 					 Set<Formula> args) {
 	    return new Comp(oper, args);
 	}
