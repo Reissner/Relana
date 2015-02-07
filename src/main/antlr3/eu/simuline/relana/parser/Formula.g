@@ -164,7 +164,7 @@ fParser.setCClass(CClass.COMPONENT);
         fParser.ReInit(str);
         //fParser.setLineColNum(entry.getValue().lineNumber,
         //                      entry.getValue().colnNumber);
-       fParser.getFormula(CClass.COMPONENT);
+       fParser.getFormula();
     }
 
 } // @members 
@@ -248,8 +248,8 @@ fragment CAPITAL_LETTER:  'A'..'Z';
  * coming from the fact, that no eof is specified 
  * and that {@link #getFormula(CClass)} is defined recursively. 
  */
-getFormulaStart[CClass cClass] returns [FormulaDecl res] 
-    : res1=getFormula[cClass] {$res=res1;};
+getFormulaStart returns [FormulaDecl res] 
+    : res1=getFormula {$res=res1;};
 
 /**
  * Parses a formula. 
@@ -262,11 +262,11 @@ getFormulaStart[CClass cClass] returns [FormulaDecl res]
  *    a declaration of a formula. 
  * @see CClassParser#skipFormula
  */
-getFormula[CClass cClass] returns [FormulaDecl res] 
+getFormula returns [FormulaDecl res] 
     : 
         (
             decl=getConstFormula | 
-            decl=getCompFormula[cClass] | 
+            decl=getCompFormula | 
             decl=getVarFormula
         ) {$res=decl;};
 
@@ -350,7 +350,7 @@ assert $decl != null;
  * @return
  *    the declaration of the formula parsed. 
  */
-getCompFormula[CClass cClass] returns [FormulaDecl decl] 
+getCompFormula returns [FormulaDecl decl] 
 @init{
     Set<FormulaDecl> args = new HashSet<FormulaDecl>();
     Operation oper = null;
@@ -371,7 +371,7 @@ getCompFormula[CClass cClass] returns [FormulaDecl decl]
             } else {
                 // opT = f, | opt = f'
                 String funName = key;
-                MapDecl mapDecl = cClass.getMapDecl(funName);
+                MapDecl mapDecl = this.cClass.getMapDecl(funName);
                 if (mapDecl == null) {
                     report("Declared no map \"" + funName + "\". " );
                 }
@@ -391,7 +391,8 @@ getCompFormula[CClass cClass] returns [FormulaDecl decl]
 // Here, the operation is read. 
         }
         (
-            '(' addFormula[args,cClass] (',' addFormula[args,cClass])* ')'
+            '('      addFormula[args] 
+                (',' addFormula[args])* ')'
         )
         {
             $decl = FormulaDecl.getComp(oper,args);
@@ -406,8 +407,8 @@ assert $decl != null;
  *    a set of formulae: the arguments of a compound formula read so  far. 
  * @see #getCompFormula
  */
-addFormula[Set<FormulaDecl> args, CClass cClass]
-    : arg=getFormula[cClass] {args.add(arg);};
+addFormula[Set<FormulaDecl> args]
+    : arg=getFormula {args.add(arg);};
 
 
 /**

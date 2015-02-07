@@ -317,7 +317,7 @@ Map<String,FormulaWrapper> incompEffects =
                         fParser.setLineColNum(entry.getValue().lineNumber,
                                               entry.getValue().colnNumber);
                         CClass.SClassDecl decl = effectsX.get(entry.getKey());
-                        decl.setFormula(fParser.getFormula(this.cClass));
+                        decl.setFormula(fParser.getFormula());
                     } catch(IllegalArgumentException iaEx) {
                         //throw iaEx;// for debugging
                         fParser.report(iaEx.getMessage());
