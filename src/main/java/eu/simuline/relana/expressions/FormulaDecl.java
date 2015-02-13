@@ -93,7 +93,7 @@ public abstract class FormulaDecl {
 	}
 	public Formula resolve(CInstance cInst) {
 	    Set<Formula> fArgs = new HashSet<Formula>();
-	    for (FormulaDecl decl : args) {
+	    for (FormulaDecl decl : this.args) {
 		fArgs.add(decl.resolve(cInst));
 	    }
 	    
