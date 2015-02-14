@@ -314,15 +314,13 @@ org.antlr.v4.runtime.ANTLRInputStream input = new org.antlr.v4.runtime.ANTLRInpu
                         FormulaLexer lexer = new FormulaLexer(input);
  	org.antlr.v4.runtime.CommonTokenStream tokens = new org.antlr.v4.runtime.CommonTokenStream(lexer);
                         fParser = new FormulaParser(tokens);
+//fParser = new FormulaParser(str);
                         fParser.setClassLoader(this.classLoader);
                         fParser.setLocator(this.loc);
                         fParser.setCClass(this.cClass);
-                        //fParser.ReInit(str);
                         fParser.setLineColNum(entry.getValue().lineNumber,
                                               entry.getValue().colnNumber);
                         CClass.SClassDecl decl = effectsX.get(entry.getKey());
-       //fParser.formula();
-
                         decl.setFormula(fParser.getFormulaStart());
                     } catch(IllegalArgumentException iaEx) {
                         //throw iaEx;// for debugging
