@@ -317,7 +317,7 @@ Map<String,FormulaWrapper> incompEffects =
                         fParser.setLineColNum(entry.getValue().lineNumber,
                                               entry.getValue().colnNumber);
                         CClass.SClassDecl decl = effectsX.get(entry.getKey());
-                        decl.setFormula(fParser.getFormula());
+                        decl.setFormula(fParser.getFormulaStart());
                     } catch(IllegalArgumentException iaEx) {
                         //throw iaEx;// for debugging
                         fParser.report(iaEx.getMessage());
@@ -745,7 +745,7 @@ addProbAlloc[Map<Deficiency,BigDecimal> def2prob]
  * 
  * @return
  *    the formula read. 
- * @see FormulaParser#getFormula
+ * @see FormulaParser#getFormulaStart
  */
 skipFormula returns [String res]
 @init {
