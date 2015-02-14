@@ -5,9 +5,7 @@
  */
 grammar Formula;
 
-@header {
-    package eu.simuline.relana.parser;
-
+@parser::header {
     import eu.simuline.relana.model.CClass;
     import eu.simuline.relana.model.SClass;
     import eu.simuline.relana.model.CClassLoader;
@@ -25,9 +23,10 @@ grammar Formula;
 
     import java.util.Set;
     import java.util.HashSet;
-} // @header 
+    import java.util.Stack;
+} // @parser::header 
 
-@members {
+@parser::members {
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -41,29 +40,45 @@ grammar Formula;
     private int lineNumber;
     private int colnNumber;
 
+    // for data exchange between nodes **** 
+
+    /**
+     * The stack of incompletely parsed levels of formulae. 
+     * Created by getCompFormula, populated by addFormula
+     */
+    Stack<Set<FormulaDecl>> argsStack = new Stack<Set<FormulaDecl>>();
+
+    /**
+     * Represents a path. 
+     * Required by constFormula and varFormula, set by path. 
+     */
+    List<String> path;
+
+    /**
+     * 'Returned by constFormula, varFormula and compFormula. 
+     * For recursive parsing of nested formulae: 
+     * Added as an argument of an enclosing formula to {@link #argsStack} 
+     * by rule addFormula. 
+     */
+    FormulaDecl fDecl;
+
     /* -------------------------------------------------------------------- *
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
-    private static CommonTokenStream reader2tokenStream(Reader reader)   
-		throws IOException {
-        ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
-        FormulaLexer lexer = new FormulaLexer(antlrStream);
-        return new CommonTokenStream(lexer);
-    }
+//    private static org.antlr.v4.runtime.CommonTokenStream 
+//        reader2tokenStream(Reader reader)   
+//		throws IOException {
+//        org.antlr.v4.runtime.ANTLRInputStream antlrStream = 
+//            new org.antlr.v4.runtime.ANTLRInputStream(reader);
+//        FormulaLexer lexer = new FormulaLexer(antlrStream);
+//        return new CommonTokenStream(lexer);
+//    }
 
-    public FormulaParser(Reader reader)   
-		throws IOException {
-        this(reader2tokenStream(reader));
-    }
+//    FormulaParser(Reader reader) {
+//        this(reader2tokenStream(reader));
+//    }
 
-    public FormulaParser(CommonTokenStream stream) {
-        super(stream);
-    }
-
-    public void ReInit(Reader reader) throws IOException {
-        setTokenStream(reader2tokenStream(reader));
-    }
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -113,6 +128,14 @@ grammar Formula;
     }
 
     /**
+     * Returns the all in all formula invoking rule 'formula'. 
+     */
+    FormulaDecl getFormulaStart() {
+        formula();
+        return this.fDecl;
+    }
+
+    /**
      * Returns a string comprising the current class, 
      * the number of the current line and column, 
      * the last token successfully read and the token tp be read next. 
@@ -126,9 +149,15 @@ grammar Formula;
         StringBuffer result = new StringBuffer();
         Token token = this.getTokenStream().LT(0);
         result.append("[" + this.loc + "] ");
-        result.append("line "     + (token.getLine()-1            +this.lineNumber));
-        result.append(", column " + (token.getCharPositionInLine()+this.colnNumber));
+        if (token == null) {
+            result.append("no token ");
+        } else {
+            result.append("line "     + 
+                          (token.getLine()-1            +this.lineNumber));
+            result.append(", column " + 
+                          (token.getCharPositionInLine()+this.colnNumber));
         result.append(", after \"" + token);
+        }
         result.append("\": ");
         
         return result.toString();
@@ -150,22 +179,22 @@ grammar Formula;
         throw pe;
     } // report
 
-    public static void main(String[] args) throws Exception {
-        Reader str = new java.io.StringReader(args[0]);
-System.out.println("str: "+str);
+//    public static void main(String[] args) throws Exception {
+//        Reader str = new java.io.StringReader(args[0]);
+//System.out.println("str: "+str);
 //java.io.StringWriter wr = new java.io.StringWriter();
 //while (true) {
 //int ch = str.read();
 //if (ch == -1) {System.out.println("wr: "+wr);break;}
 //wr.write(ch);
 //}
-        FormulaParser fParser = new FormulaParser((Reader)null);
-fParser.setCClass(CClass.COMPONENT);
-        fParser.ReInit(str);
-        //fParser.setLineColNum(entry.getValue().lineNumber,
-        //                      entry.getValue().colnNumber);
-       fParser.getFormula();
-    }
+//        FormulaParser fParser = new FormulaParser((Reader)null);
+//fParser.setCClass(CClass.COMPONENT);
+//        fParser.ReInit(str);
+//        //fParser.setLineColNum(entry.getValue().lineNumber,
+//        //                      entry.getValue().colnNumber);
+//       fParser.getFormula();
+//    }
 
 } // @members 
 
@@ -179,10 +208,11 @@ catch (RecognitionException e) {
 } // catch 
 } // @rulecatch 
 
-@lexer::header {
-    package eu.simuline.relana.parser;
-} // @lexer::header 
+//@lexer::header {
+//    package eu.simuline.relana.parser;
+//} // @lexer::header 
 
+/*
 @lexer::members {
     // fail at first error 
     @Override
@@ -198,16 +228,18 @@ catch (RecognitionException e) {
 //                return;
     }
 } // @lexer::members
+*/
 
 // ======================================================================== 
 // Lexer 
 // ======================================================================== 
 
-WS : (' ' | '\t' | '\n' | '\r' | '\f') {skip();};
+WS : (' ' | '\t' | '\n' | '\r' | '\f') -> skip;
 
-SingleLineComment : '//' ~( '\r' | '\n' )* {skip();};
+SingleLineComment : '//' ~( '\r' | '\n' )* -> skip;
 
-MultiLineComment  : '/*' (options {greedy=false;} : .)* '*/' {skip();};
+MultiLineComment  : //'/*' (options {greedy=false;} : .)* '*/' -> skip;
+'/*' (~'*' | '*' ~'/')* '*/' -> skip;
 
 //PACKAGE:          'package';
 //CLASS:            'class';
@@ -242,14 +274,6 @@ fragment CAPITAL_LETTER:  'A'..'Z';
 // Parser 
 // ======================================================================== 
 
-/**
- * Start rule just wrapping {@link #getFormula(CClass)}. 
- * Purely formally, to avoid warning on missing start rule 
- * coming from the fact, that no eof is specified 
- * and that {@link #getFormula(CClass)} is defined recursively. 
- */
-getFormulaStart returns [FormulaDecl res] 
-    : res1=getFormula {$res=res1;};
 
 /**
  * Parses a formula. 
@@ -262,13 +286,22 @@ getFormulaStart returns [FormulaDecl res]
  *    a declaration of a formula. 
  * @see CClassParser#skipFormula
  */
-getFormula returns [FormulaDecl res] 
+formula //returns [FormulaDecl res] 
     : 
+{this.fDecl = null;}
+
         (
-            decl=getConstFormula | 
-            decl=getCompFormula | 
-            decl=getVarFormula
-        ) {$res=decl;};
+            constFormula | 
+            compFormula | 
+            varFormula
+        ) 
+{assert this.fDecl != null;}
+ //   {
+            //$res=decl;
+            //this.formulaStack.push(decl);
+ //       }
+;
+
 
 
 /**
@@ -280,25 +313,29 @@ getFormula returns [FormulaDecl res]
  * @return
  *    the declaration of the constant formula parsed. 
  */
-getConstFormula returns [FormulaDecl decl] 
+constFormula //returns [FormulaDecl decl] 
 @init{
     Set<Deficiency> defs = new HashSet<Deficiency>();
+    assert this.fDecl == null;
     Type type = null;
 }
-    : '<' path=getPath '>' 
+    : '<' path '>' 
         {
             SClass sClass = null;
             try {
                 sClass = this.classLoader.loadSClass
-                    (ClassLocator.getLocator(path),
+                    (ClassLocator.getLocator(this.path),
 					 this.loc.getPackage());
             } catch (IOException ioe) {
                 report("IOException while loading \"" 
-                       + ClassLocator.getLocator(path) 
+                       + ClassLocator.getLocator(this.path) 
                        + "\" in package " + this.loc.getPackage() 
                        + ": " + ioe + ". ");
                 sClass = null; // never reached. ****
-            }
+            } catch (Exception e) {
+					assert false;// **** to be removed 
+					// after transition to v4: v4 and v3 exception. 
+				    }
             assert sClass != null;
             type = sClass.getType();
 
@@ -310,29 +347,29 @@ getConstFormula returns [FormulaDecl decl]
                 report("Set " + defs + " does not conform with type " +
                        type + ". ");
             }
-            $decl = FormulaDecl.getConst(type,defs);
-assert $decl != null;
+           this.fDecl = FormulaDecl.getConst(type, defs);
+assert this.fDecl != null;
         }
     ;
 
 /**
  * Parses a formula consisting of a single variable, 
- * the name of which is a path according to {@link #getPath()}. 
+ * the name of which is a path according to {@link #path()}. 
  * 
  * @return
  *    the declaration of the formula parsed. 
  */
-getVarFormula returns [FormulaDecl decl] 
-    :  path = getPath
+varFormula //returns [FormulaDecl decl] 
+    :  path
         {
-            CClass.SClassDecl declS = this.cClass.getEffectDecl(path);
+            assert fDecl == null;
+            CClass.SClassDecl declS = this.cClass.getEffectDecl(this.path);
             if (declS == null) {
-                report("Found name " + path + 
+                report("Found name " + this.path + 
                        " leading to an unknown effect. ");
             }
-            $decl = FormulaDecl.getVar(declS,path);
-            //throw new eu.simuline.util.NotYetImplementedException();
-assert $decl != null;
+            this.fDecl = FormulaDecl.getVar(declS, this.path);
+assert this.fDecl != null;
         };
 
 
@@ -350,9 +387,10 @@ assert $decl != null;
  * @return
  *    the declaration of the formula parsed. 
  */
-getCompFormula returns [FormulaDecl decl] 
+compFormula //returns [FormulaDecl decl] 
 @init{
-    Set<FormulaDecl> args = new HashSet<FormulaDecl>();
+    this.argsStack.push(new HashSet<FormulaDecl>());
+    assert this.fDecl == null;
     Operation oper = null;
 }
     : 
@@ -391,12 +429,11 @@ getCompFormula returns [FormulaDecl decl]
 // Here, the operation is read. 
         }
         (
-            '('      addFormula[args] 
-                (',' addFormula[args])* ')'
+            '(' addFormula (',' addFormula)* ')'
         )
         {
-            $decl = FormulaDecl.getComp(oper,args);
-assert $decl != null;
+            this.fDecl = FormulaDecl.getComp(oper, this.argsStack.pop());
+assert this.fDecl != null;
         };
 
 /**
@@ -407,23 +444,22 @@ assert $decl != null;
  *    a set of formulae: the arguments of a compound formula read so  far. 
  * @see #getCompFormula
  */
-addFormula[Set<FormulaDecl> args]
-    : arg=getFormula {args.add(arg);};
+addFormula//[Set<FormulaDecl> args]
+    : 
+  formula 
+{this.argsStack.peek().add(this.fDecl);};
 
 
 /**
  * Returns a path as a list of strings. 
+ * Used in getVarFormula and getConstFormula, 
  * **** same as in SClassParser **** 
  * 
  * @return
  *     a path as a list of strings. 
  *     The outermost package is given first. 
  */
-getPath returns [List<String> res] 
-@init{$res = new ArrayList<String>();}
-    :       first=NAME {res.add($first.text);} 
-        (SEP next=NAME {res.add( $next.text);})*;
-
-
-
-
+path //returns [List<String> res] 
+@init{this.path = new ArrayList<String>();}
+    :       first=NAME {this.path.add($first.text);} 
+        (SEP next=NAME {this.path.add( $next.text);})*;
