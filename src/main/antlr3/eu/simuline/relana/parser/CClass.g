@@ -305,24 +305,30 @@ Map<String,FormulaWrapper> incompEffects =
 
             // complete declarations of effects 
             if (!incompEffects.isEmpty()) {
-                FormulaParser fParser = new FormulaParser((Reader)null);
-                fParser.setClassLoader(this.classLoader);
-                fParser.setLocator(this.loc);
-                fParser.setCClass(this.cClass);
+                FormulaParser fParser = null;
                 for (Map.Entry<String,FormulaWrapper> entry :
                          incompEffects.entrySet()) {
                     try {
                         Reader str = new StringReader(entry.getValue().formula);
-                        fParser.ReInit(str);
+org.antlr.v4.runtime.ANTLRInputStream input = new org.antlr.v4.runtime.ANTLRInputStream(str);
+                        FormulaLexer lexer = new FormulaLexer(input);
+ 	org.antlr.v4.runtime.CommonTokenStream tokens = new org.antlr.v4.runtime.CommonTokenStream(lexer);
+                        fParser = new FormulaParser(tokens);
+                        fParser.setClassLoader(this.classLoader);
+                        fParser.setLocator(this.loc);
+                        fParser.setCClass(this.cClass);
+                        //fParser.ReInit(str);
                         fParser.setLineColNum(entry.getValue().lineNumber,
                                               entry.getValue().colnNumber);
                         CClass.SClassDecl decl = effectsX.get(entry.getKey());
-                        decl.setFormula(fParser.getFormula());
+       //fParser.formula();
+
+                        decl.setFormula(fParser.getFormulaStart());
                     } catch(IllegalArgumentException iaEx) {
                         //throw iaEx;// for debugging
                         fParser.report(iaEx.getMessage());
                     }
-                }
+                } // for 
             }
             // Here, the entries of this class is valid 
             // or something has been reported. 
