@@ -117,10 +117,9 @@ public class SClassLoader {
 				  loc.getName() + ".scl")
 	    .openStream();
 	SClassParser scParser;
-	scParser = new SClassParser((Reader)null);
+	scParser = new SClassParser(new InputStreamReader(str));
 	scParser.setClassLoader(this);
-	scParser.ReInit(new InputStreamReader(str));
-	SClass sClass = scParser.sClass(loc,subclassDep);
+	SClass sClass = scParser.getSClass(loc, subclassDep);
 
 	sClass.verify();
 	this.name2class.put(loc,sClass);
