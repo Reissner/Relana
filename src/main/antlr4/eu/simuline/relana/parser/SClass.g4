@@ -1,10 +1,10 @@
 
-
+/**
+ * A parser for relana-SClasses. 
+ */
 grammar SClass;
 
-@header {
-    package eu.simuline.relana.parser;
-
+@parser::header {
     import eu.simuline.relana.model.ClassLocator;
     import eu.simuline.relana.model.SClass;
     import eu.simuline.relana.model.Deficiency;
@@ -21,13 +21,13 @@ grammar SClass;
 
     import java.io.Reader;
     import java.io.IOException;
-} // @header 
+} // @parser::header 
 
-@lexer::header {
-    package eu.simuline.relana.parser;
-} // @lexer::header 
+//@lexer::header {
+//    package eu.simuline.relana.parser;
+//} // @lexer::header 
 
-@members {
+@parser::members {
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -43,7 +43,7 @@ grammar SClass;
 
     private static CommonTokenStream reader2tokenStream(Reader reader)  
 		throws IOException {
-        ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
+        ANTLRInputStream antlrStream = new ANTLRInputStream(reader);
         SClassLexer lexer = new SClassLexer(antlrStream);
         return new CommonTokenStream(lexer);
     }
@@ -52,13 +52,6 @@ grammar SClass;
         this(reader2tokenStream(reader));
     }
 
-    public SClassParser(CommonTokenStream stream) {
-        super(stream);
-    }
-
-    public void ReInit(Reader reader) throws IOException {
-        setTokenStream(reader2tokenStream(reader));
-    }
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -92,6 +85,11 @@ grammar SClass;
         this.classLoader = classLoader;
     }
 
+    public SClass getSClass(ClassLocator loc,
+                            Map<ClassLocator,ClassLocator> subclassDep) {
+        return sClass(loc,subclassDep).res;
+    }
+
     /**
      * Throws an exception if the class currently parsed 
      * is involved in a cyclic definition. 
@@ -121,38 +119,12 @@ grammar SClass;
         this.subclassDep.put(needed, this.loc);
     } // checkDependencies
 
-} // @members 
-
-// ======================================================================== 
-// Lexer 
-// ======================================================================== 
-
-WS : (' ' | '\t' | '\n' | '\r' | '\f') {skip();};
-
-SingleLineComment : '//' ~( '\r' | '\n' )* {skip();};
-
-MultiLineComment  : '/*' (options {greedy=false;} : .)* '*/' {skip();};
-
-PACKAGE:          'package';
-SCLASS:           'sclass';
-EXTENDS:          'extends';
-PROPERTIES:       'properties';
-MAP:              'map';
-REPLACE:          'replace';
-RELATIONS:	      'relations';
-IMPLIES:	      '==>';
-END:              ';' ;
-SEP:              '.' ;
-NAME:             LETTER IDENTIFIER*;
-fragment IDENTIFIER:      (LETTER | DIGIT | '_') ;
-fragment LETTER:          (CAPITAL_LETTER | SMALL_LETTER) ;
-fragment DIGIT:           '0'..'9';
-fragment SMALL_LETTER:    'a'..'z';
-fragment CAPITAL_LETTER:  'A'..'Z';
+} // @parser::members 
 
 // ======================================================================== 
 // Parser 
 // ======================================================================== 
+
 
 /**
  * Parses an <code>SClass</code>. 
@@ -177,22 +149,42 @@ fragment CAPITAL_LETTER:  'A'..'Z';
  */
 sClass[ClassLocator loc,
        Map<ClassLocator,ClassLocator> subclassDep] 
-returns [SClass res] throws IOException 
+returns [SClass res] 
 @init {
     this.loc = loc;
     this.subclassDep = subclassDep;
     Map<List<String>,SClass> paths2innerCls = 
         new HashMap<List<String>,SClass>();
+List<String> pkgPath;
+SClass superclass;
+Map<Deficiency,DeficiencyNode> deficiency2ordering;
+Map<Deficiency,SClass> old2innerCls;
 }
     : 
         ( 
-            PACKAGE pkgPath=getPath END
-            SCLASS  sClassName=NAME 
-            superclass=getSuperClass[paths2innerCls] 
+            PACKAGE pkgPathC=getPath END
+            {
+                pkgPath = ((GetPathContext)
+                           ((SClassContext)_localctx).pkgPathC).res;
+            }
+           SCLASS  sClassName=NAME 
+            superclassC=getSuperClass[paths2innerCls] 
             '{' 
-            deficiency2ordering = getDeficiencies 
-            old2innerCls = getInnerCls[superclass,
+            deficiency2orderingC = getDeficiencies 
+            {
+                superclass = ((GetSuperClassContext)
+                    ((SClassContext)_localctx).superclassC).res;
+                deficiency2ordering = ((GetDeficienciesContext)
+                     ((SClassContext)_localctx).deficiency2orderingC)
+                .deficiency2ordering;
+            }
+            old2innerClsC = getInnerCls[superclass,
 			   new HashSet<Deficiency>(deficiency2ordering.keySet())]
+        {
+            old2innerCls = ((GetInnerClsContext)
+                            ((SClassContext)_localctx).old2innerClsC)
+                .old2innerCls;
+        }
             addRelations[deficiency2ordering] 
             '}' EOF
         )
@@ -234,10 +226,10 @@ returns [SClass res] throws IOException
  *     The outermost package is given first. 
  */
 getPath returns [List<String> res] 
-@init{$res = new ArrayList<String>();}
-@after{$res = Collections.unmodifiableList($res);}
-    :       first=NAME {res.add($first.text);} 
-        (SEP next=NAME {res.add( $next.text);})*;
+@init{List<String> res0 = new ArrayList<String>();}
+@after{$res = Collections.unmodifiableList(res0);}
+    :       first=NAME {res0.add($first.text);} 
+        (SEP next=NAME {res0.add( $next.text);})*;
 
 
 /**
@@ -247,8 +239,12 @@ getPath returns [List<String> res]
  *    a set of paths. 
  */
 addPath[Set<List<String>> innerPaths] 
-    : path = getPath 
-        {$innerPaths.add(path);}
+    : pkgPathC=getPath
+        {
+            List<String> path = ((GetPathContext)
+                                 ((AddPathContext)_localctx).pkgPathC).res;
+            $innerPaths.add(path);
+        }
     ;
 
 
@@ -266,48 +262,75 @@ addPath[Set<List<String>> innerPaths]
  *    see {@link SClassLoader#loadSClass}. 
  */
 getSuperClass[Map<List<String>,SClass > paths2innerCls] 
-returns[SClass res] throws IOException 
+returns[SClass res] 
+//throws IOException 
 @init {
     //List<String> superPath = null;
     ClassLocator needed;
     Set<List<String> > innerPaths = new HashSet<List<String> >();
+List<String> superPath = null;
 }
     :  
-        (EXTENDS superPath=getPath 
+        (EXTENDS superPathC=getPath
+            {
+                superPath = ((GetPathContext)
+                             ((GetSuperClassContext)_localctx).superPathC).res;
+
+            } 
             ('[' addPath[innerPaths] (',' addPath[innerPaths])* ']')?
         )? 
         {
             if (superPath == null) {
                 // extends implicitly BooleanEffect 
-                return SClass.BOOLEAN;
+((GetSuperClassContext)_localctx).res = SClass.BOOLEAN;
+                return _localctx;
             }
             // Here, we have a valid path. 
 
             if (superPath.size() == 1 && 
                 (superPath.get(0).equals(SClass.BOOLEAN.getName()))) {
                 // Here it must be BooleanEffect, the overall base class. 
-                return SClass.BOOLEAN;
+((GetSuperClassContext)_localctx).res = SClass.BOOLEAN;
+                return _localctx;
             }   
             // Here, it must be a library class. 
 
             //System.out.println("getSuperClass------innerPaths: "+innerPaths);
 
-            for (List<String> innerPath : innerPaths) {
-                needed = ClassLocator.getLocator(superPath);
-                checkDependencies(needed);
-                paths2innerCls.put(innerPath,
-                                   this.classLoader
-                                   .loadSClass(needed,
-                                               this.loc.getPackage(),
-                                               this.subclassDep));
+            try {
+                for (List<String> innerPath : innerPaths) {
+                    needed = ClassLocator.getLocator(superPath);
+                    checkDependencies(needed);
+                    paths2innerCls.put(innerPath,
+                                       this.classLoader
+                                       .loadSClass(needed,
+                                                   this.loc.getPackage(),
+                                                   this.subclassDep));
+
+                } // for 
+            } catch(IOException ioe) {
+                  throw new IllegalStateException
+                        ("Thrown exception while loading class: \"" + 
+                         ioe + "\". ");
+            } catch (org.antlr.runtime.RecognitionException re0) {
+                // **** 
             }
 
             needed = ClassLocator.getLocator(superPath);
             checkDependencies(needed);
 
+           try {
             $res = this.classLoader.loadSClass(needed,
                                                this.loc.getPackage(),
                                                this.subclassDep);
+            } catch(IOException ioe) {
+               $res = null;
+                  throw new IllegalStateException
+                        ("Thrown exception while loading class: \"" + 
+                         ioe + "\". ");
+            } catch (org.antlr.runtime.RecognitionException re0) {
+                // **** 
+            }
         }
     ;
 
@@ -318,7 +341,7 @@ returns[SClass res] throws IOException
  * 
  * @return
  *    see {@link Type#deficiency2ordering}. 
- */
+ */// old *********************************
 //getDeficiencies returns[Map<Deficiency,DeficiencyNode> res]
 //@init {
 //    Map<Deficiency,DeficiencyNode> deficiency2ordering = 
@@ -330,9 +353,12 @@ returns[SClass res] throws IOException
 
 getDeficiencies returns[Map<Deficiency,DeficiencyNode> deficiency2ordering]
 @init {
-    $deficiency2ordering = new HashMap<Deficiency,DeficiencyNode>();
+    Map<Deficiency,DeficiencyNode> deficiency2ordering0 = new HashMap<Deficiency,DeficiencyNode>();
 }
-    : (PROPERTIES addDeficiency[deficiency2ordering]*)?
+@after {
+$deficiency2ordering = deficiency2ordering0;
+}
+    : (PROPERTIES addDeficiency[deficiency2ordering0]*)?
         //{$res=deficiency2ordering;}
     ;
 
@@ -374,16 +400,17 @@ addDeficiency[Map<Deficiency,DeficiencyNode> deficiency2ordering]
 getInnerCls[SClass superclass, Set<Deficiency> newDefs] 
     returns [Map<Deficiency,SClass> old2innerCls]
 @init {
-    $old2innerCls = new HashMap<Deficiency,SClass>();
+    Map<Deficiency,SClass> old2innerCls0 = new HashMap<Deficiency,SClass>();
     Set<Deficiency> oldDefs = superclass.getType().asSet();
 }
-    : (MAP addMap[oldDefs,old2innerCls,newDefs]*)?
+    : (MAP addMap[oldDefs,old2innerCls0,newDefs]*)?
         {
             if (!newDefs.isEmpty()) {
                 // **** this should be merely a warning. 
                 report("Found properties nowhere referenced: " 
                        + newDefs + ". ");
             }
+$old2innerCls = old2innerCls0;
         }
     ;
 
@@ -412,21 +439,35 @@ getInnerCls[SClass superclass, Set<Deficiency> newDefs]
 addMap[Set<Deficiency> oldDefs, 
        Map<Deficiency,SClass> old2innerCls, 
        Set<Deficiency> newDefs] returns [Map<Deficiency,SClass> res]
+throws RecognitionException 
+@init {
+Map<Deficiency,DeficiencyNode> deficiency2ordering = null;
+List<String> clsPath = null;
+}
     : 
         ( 
             REPLACE oldD=NAME 
             ( 
                 '{' 
-                    deficiency2ordering=getCheckedDeficiencies[newDefs] 
+                    deficiency2orderingC=getCheckedDeficiencies[newDefs] 
+                {
+                    deficiency2ordering = ((GetCheckedDeficienciesContext)
+                            ((AddMapContext)_localctx).deficiency2orderingC)
+                    .deficiency2ordering;
+                }
                     RELATIONS
                     addRelation[deficiency2ordering]* 
                 '}' 
-                | clsPath=getPath 
+                |     pathC=getPath 
+                    {   
+                        clsPath = ((GetPathContext)
+                           ((AddMapContext)_localctx).pathC).res;
+                    }
             )
         )
         {
             Deficiency oldDef = new Deficiency($oldD.text);
-            SClass sClass;
+            SClass sClass = null;
             assert deficiency2ordering == null ^ clsPath == null;
             if (deficiency2ordering != null) {
                 // inner class is given directly 
@@ -437,7 +478,7 @@ addMap[Set<Deficiency> oldDefs,
                                           new HashMap<Deficiency,SClass>(),
                                           deficiency2ordering);
                 sClass.verifyInner();
-            } else {
+             } else {
                 // inner class is loaded 
                 try {
                     sClass = this.classLoader
@@ -448,6 +489,8 @@ addMap[Set<Deficiency> oldDefs,
                         ("Thrown exception " 
                          +"which should have been loaded before: \"" + 
                          e + "\". ");
+                } catch(org.antlr.runtime.RecognitionException re0) {
+                    // **** 
                 }
             }
             SClass overWrittenDef = old2innerCls.put(oldDef,sClass);
@@ -477,22 +520,24 @@ addMap[Set<Deficiency> oldDefs,
 getCheckedDeficiencies[Set<Deficiency> newDefs] 
     returns [Map<Deficiency,DeficiencyNode> deficiency2ordering] 
 @init {
-   $deficiency2ordering = 
+   Map<Deficiency,DeficiencyNode> deficiency2ordering0 = 
         new HashMap<Deficiency,DeficiencyNode>();
 }
+
     : 
-        (addDeficiency[deficiency2ordering]+) 
+        (addDeficiency[deficiency2ordering0]+) 
         {
-            if (!newDefs.containsAll(deficiency2ordering.keySet())) {
+            if (!newDefs.containsAll(deficiency2ordering0.keySet())) {
                     // undeclared deficiencies. 
                     Set<Deficiency> undeclared = 
-                        new HashSet<Deficiency>(deficiency2ordering.keySet());
+                        new HashSet<Deficiency>(deficiency2ordering0.keySet());
                     undeclared.removeAll(newDefs);
                     report("Found properties: " + undeclared + 
                         " either undeclared or used above. ");
                 }
             // declared properties may not occur twice. 
-            newDefs.removeAll(deficiency2ordering.keySet());
+            newDefs.removeAll(deficiency2ordering0.keySet());
+$deficiency2ordering = deficiency2ordering0;
        }
     ;
 
@@ -549,3 +594,31 @@ addRelation[Map<Deficiency,DeficiencyNode> deficiency2ordering]
             defN2.addPredecessor(defN1);
         }
     ;
+
+// ======================================================================== 
+// Lexer 
+// ======================================================================== 
+
+WS : (' ' | '\t' | '\n' | '\r' | '\f') -> skip;
+
+SingleLineComment : '//' ~( '\r' | '\n' )* -> skip;
+
+MultiLineComment  : '/*'  .*? '*/' -> skip;
+
+PACKAGE:          'package';
+SCLASS:           'sclass';
+EXTENDS:          'extends';
+PROPERTIES:       'properties';
+MAP:              'map';
+REPLACE:          'replace';
+RELATIONS:	      'relations';
+IMPLIES:	      '==>';
+END:              ';' ;
+SEP:              '.' ;
+NAME:             LETTER IDENTIFIER*;
+fragment IDENTIFIER:      (LETTER | DIGIT | '_') ;
+fragment LETTER:          (CAPITAL_LETTER | SMALL_LETTER) ;
+fragment DIGIT:           '0'..'9';
+fragment SMALL_LETTER:    'a'..'z';
+fragment CAPITAL_LETTER:  'A'..'Z';
+
