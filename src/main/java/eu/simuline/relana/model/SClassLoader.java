@@ -116,8 +116,7 @@ public class SClassLoader {
 				  .replace('.','/') + 
 				  loc.getName() + ".scl")
 	    .openStream();
-	SClassParser scParser;
-	scParser = new SClassParser(new InputStreamReader(str));
+	SClassParser scParser = new SClassParser(new InputStreamReader(str));
 	scParser.setClassLoader(this);
 	SClass sClass = scParser.getSClass(loc, subclassDep);
 
