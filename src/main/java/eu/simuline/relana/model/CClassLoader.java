@@ -242,10 +242,9 @@ public class CClassLoader {
 //System.out.println("file: "+path);
 
 
-	    CClassParser ccParser = new CClassParser((Reader)null);
+	    CClassParser ccParser = new CClassParser
+		(new InputStreamReader(str));
 	    ccParser.setClassLoader(this);
-
-	    ccParser.ReInit(new InputStreamReader(str));
 	    CClass cClass = ccParser.cClass(loc2);
 //System.out.println("XXthis.unresolvedClasses: "+ this.unresolvedClasses);
 
