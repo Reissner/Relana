@@ -57,7 +57,6 @@ grammar SClass;
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
-
     /**
      * Reports an error and also the location where it occurred. 
      * 
@@ -312,8 +311,6 @@ List<String> superPath = null;
                   throw new IllegalStateException
                         ("Thrown exception while loading class: \"" + 
                          ioe + "\". ");
-            } catch (org.antlr.runtime.RecognitionException re0) {
-                // **** 
             }
 
             needed = ClassLocator.getLocator(superPath);
@@ -328,8 +325,6 @@ List<String> superPath = null;
                   throw new IllegalStateException
                         ("Thrown exception while loading class: \"" + 
                          ioe + "\". ");
-            } catch (org.antlr.runtime.RecognitionException re0) {
-                // **** 
             }
         }
     ;
@@ -439,7 +434,7 @@ $old2innerCls = old2innerCls0;
 addMap[Set<Deficiency> oldDefs, 
        Map<Deficiency,SClass> old2innerCls, 
        Set<Deficiency> newDefs] returns [Map<Deficiency,SClass> res]
-throws RecognitionException 
+//throws RecognitionException 
 @init {
 Map<Deficiency,DeficiencyNode> deficiency2ordering = null;
 List<String> clsPath = null;
@@ -489,8 +484,6 @@ List<String> clsPath = null;
                         ("Thrown exception " 
                          +"which should have been loaded before: \"" + 
                          e + "\". ");
-                } catch(org.antlr.runtime.RecognitionException re0) {
-                    // **** 
                 }
             }
             SClass overWrittenDef = old2innerCls.put(oldDef,sClass);
