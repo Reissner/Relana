@@ -11,7 +11,7 @@ import eu.simuline.util.sgml.SGMLParser;
 
 import org.xml.sax.SAXException;
 
-import org.antlr.runtime.RecognitionException;
+import org.antlr.v4.runtime.RecognitionException;
 
 import java.net.URL;
 import java.net.MalformedURLException;
