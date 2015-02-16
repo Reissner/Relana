@@ -2,13 +2,12 @@ package eu.simuline.relana.model;
 
 import eu.simuline.relana.parser.CClassParser;
 
-import org.antlr.runtime.RecognitionException;
+import org.antlr.v4.runtime.RecognitionException;
 
 import java.net.URL;
 import java.net.URISyntaxException;
 
 import java.io.File;
-import java.io.Reader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -245,7 +244,7 @@ public class CClassLoader {
 	    CClassParser ccParser = new CClassParser
 		(new InputStreamReader(str));
 	    ccParser.setClassLoader(this);
-	    CClass cClass = ccParser.cClass(loc2);
+	    CClass cClass = ccParser.getCClass(loc2);
 //System.out.println("XXthis.unresolvedClasses: "+ this.unresolvedClasses);
 
 	    ClassResolver res = (ClassResolver)
