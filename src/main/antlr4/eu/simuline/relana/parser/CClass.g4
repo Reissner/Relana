@@ -2,9 +2,7 @@
 
 grammar CClass;
 
-@header {
-    package eu.simuline.relana.parser;
-
+@parser::header {
     import eu.simuline.relana.model.CClass;
     import eu.simuline.relana.model.SClass;
     import eu.simuline.relana.model.CClassLoader;
@@ -33,7 +31,7 @@ grammar CClass;
     import java.util.Collections;
 } // @header 
 
-@members {
+@parser::members {
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -70,23 +68,13 @@ grammar CClass;
 
     private static CommonTokenStream reader2tokenStream(Reader reader)   
 		throws IOException {
-        ANTLRReaderStream antlrStream = new ANTLRReaderStream(reader);
+        ANTLRInputStream antlrStream = new ANTLRInputStream(reader);
         CClassLexer lexer = new CClassLexer(antlrStream);
         return new CommonTokenStream(lexer);
     }
 
-    public CClassParser(Reader reader)   
-		throws IOException {
+    public CClassParser(Reader reader) throws IOException {
         this(reader2tokenStream(reader));
-    }
-
-    public CClassParser(CommonTokenStream stream) {
-        super(stream);
-    }
-
-    public void ReInit(Reader reader)   
-		throws IOException {
-        setTokenStream(reader2tokenStream(reader));
     }
 
     /* -------------------------------------------------------------------- *
@@ -109,18 +97,18 @@ grammar CClass;
         Token token0 = this.getTokenStream().LT(-1);
         Token token1 = this.getTokenStream().LT(+1);
 
-        if (token1.getType() == Token.EOR_TOKEN_TYPE) {
+        //if (token1.getType() == Token.EOR_TOKEN_TYPE) {
             result.append("line "      + token0.getLine()  );
             result.append(", column "  + token0.getCharPositionInLine());
             result.append(", after \"" + token0);
             result.append("\": ");
-        } else {
-            result.append("line "        + token1.getLine()  );
-            result.append(", column "    + token1.getCharPositionInLine());
-            result.append(", between \"" + token0);
-            result.append("\" and \""    + token1);
-            result.append("\": ");
-       }
+        //} else {
+        //    result.append("line "        + token1.getLine()  );
+        //    result.append(", column "    + token1.getCharPositionInLine());
+        //    result.append(", between \"" + token0);
+         //   result.append("\" and \""    + token1);
+         //   result.append("\": ");
+       //}
         return result.toString();
     }
 
@@ -170,6 +158,10 @@ private void report(Exception exc) throws ParseException {
         this.classLoader = classLoader;
     }
 
+    public CClass getCClass(ClassLocator loc) {
+        return cClass(loc).res;
+    }
+
 } // @members 
 
 @rulecatch {
@@ -182,66 +174,26 @@ catch (RecognitionException e) {
 } // catch 
 } // @rulecatch 
 
-@lexer::header {
-    package eu.simuline.relana.parser;
-} // @lexer::header 
+//@lexer::header {
+//    package eu.simuline.relana.parser;
+//} // @lexer::header 
 
-@lexer::members {
-    // fail at first error 
-    @Override
-    public void displayRecognitionError(String[] tokenNames, 
-        RecognitionException e) {
-//        if (this.failFirstError) {
-                String hdr = getErrorHeader(e);
-                String msg = getErrorMessage(e, tokenNames);
-                throw new RuntimeException(hdr + ":" + msg);
+//@lexer::members {
+////    // fail at first error 
+//    @Override
+//    public void displayRecognitionError(String[] tokenNames, 
+//        RecognitionException e) {
+////        if (this.failFirstError) {
+//                String hdr = getErrorHeader(e);
+////                String msg = getErrorMessage(e, tokenNames);
+//                throw new RuntimeException(hdr + ":" + msg);
 //throw e;
 //        }
 //                super.displayRecognitionError(tokenNames, e);
 //                return;
-    }
-} // @lexer::members
+ //   }
+//} // @lexer::members
 
-
-// ======================================================================== 
-// Lexer 
-// ======================================================================== 
-
-WS : (' ' | '\t' | '\n' | '\r' | '\f') {skip();};
-
-SingleLineComment : '//' ~( '\r' | '\n' )* {skip();};
-
-MultiLineComment  : '/*' (options {greedy=false;} : .)* '*/' {skip();};
-
-PACKAGE:          'package';
-CCLASS:           'class';
-EXTENDS:          'extends';
-REDECLARE:        'redeclare';
-MAPS:             'maps';
-MAP:              'map';
-MAPSTO:           '|-->';
-IDDOMAIN:         'id:';
-COMPONENTS:       'components';
-EFFECTS:          'effects';
-INPUT:            'input';
-OUTPUT:           'output';
-REPLACE:          'replace'; 
-INV:              '!' ;
-COV:              ',' ;
-CONT:             '\'' ;
-END:              ';' ;
-SEP:              '.' ;
-UNION:            '|' ;
-INTERSECT:        '&' ;
-COMPLEMENT:       '~' ;
-NAME:         LETTER IDENTIFIER*;
-FLOAT:        NUMBER ('.' NUMBER)? (('E' | 'e') ('+' | '-')? NUMBER)?; 
-fragment NUMBER:           (DIGIT)+ ; 
-fragment IDENTIFIER:      (LETTER | DIGIT | '_') ;
-fragment LETTER:          (CAPITAL_LETTER | SMALL_LETTER) ;
-fragment DIGIT:           '0'..'9';
-fragment SMALL_LETTER:    'a'..'z';
-fragment CAPITAL_LETTER:  'A'..'Z';
 
 
 // ======================================================================== 
@@ -259,18 +211,37 @@ this.exceptionThrown = false;
 //Map<String,CClass.SClassDecl> effectsX;
 //Map<String,CClassLink> componentsX;
 this.loc = loc;
+List<String> pkgPath;
+CClass superClass;
+Map<String,CClass.SClassDecl> effectsX;
+Map<String,MapDecl> mapsX;
+Map<String,CClassLink> componentsX;
 Map<String,FormulaWrapper> incompEffects = 
 			   new HashMap<String,FormulaWrapper>();
 }
     : 
         (
-            PACKAGE  pkgPath=getPath END
+            PACKAGE  pkgPathC=getPath END
+            {
+                pkgPath = ((GetPathContext)
+                           ((CClassContext)_localctx).pkgPathC).res;
+            }
             CCLASS   cClassName=NAME 
-            superClass=getSuperClass 
+            superClassC=getSuperClass 
         
-            effectsX   =effects[incompEffects] 
-            mapsX      =maps 
-            componentsX=components 
+            effectsXC   =effects[incompEffects] 
+            mapsXC      =maps 
+            componentsXC=components 
+        {
+                superClass  = ((GetSuperClassContext)
+                    ((CClassContext)_localctx).superClassC).res;
+                effectsX     = ((EffectsContext)
+                  ((CClassContext)_localctx).effectsXC).effectsX;
+                mapsX        = ((MapsContext)
+                  ((CClassContext)_localctx).mapsXC).name2map;
+                componentsX  = ((ComponentsContext)
+                  ((CClassContext)_localctx).componentsXC).componentsX;
+        }
             '}' EOF
         )
         {
@@ -325,6 +296,8 @@ org.antlr.v4.runtime.ANTLRInputStream input = new org.antlr.v4.runtime.ANTLRInpu
                     } catch(IllegalArgumentException iaEx) {
                         //throw iaEx;// for debugging
                         fParser.report(iaEx.getMessage());
+                    } catch (IOException ioe) {
+                        fParser.report(ioe.getMessage());
                     }
                 } // for 
             }
@@ -348,9 +321,13 @@ org.antlr.v4.runtime.ANTLRInputStream input = new org.antlr.v4.runtime.ANTLRInpu
  * @throws IOException
  *    see {@link CClassLoader#loadSClass}. 
  */
-getSuperClass returns [CClass res] throws IOException 
-    :  (EXTENDS superPath = getPath())? '{' 
+getSuperClass returns [CClass res] //throws IOException 
+    :  (ext=EXTENDS superPathC = getPath())? '{' 
         {
+            List<String> superPath = $ext == null 
+                ? null 
+                : ((GetPathContext)
+                    ((GetSuperClassContext)_localctx).superPathC).res;
             // determine the superclass 
             if (superPath == null || 
                 (superPath.size() == 1 && 
@@ -359,10 +336,13 @@ getSuperClass returns [CClass res] throws IOException
                 $res = CClass.COMPONENT;
             } else {
                 // Here, it must be a library class. 
-
-                $res = this.classLoader
-                    .loadCClass(ClassLocator.getLocator(superPath),
-                                this.loc.getPackage());
+                try {
+                    $res = this.classLoader
+                        .loadCClass(ClassLocator.getLocator(superPath),
+                                    this.loc.getPackage());
+                } catch(IOException ioe) {
+                    report(ioe.getMessage());
+                }
              }
        }
     ;
@@ -377,15 +357,17 @@ getSuperClass returns [CClass res] throws IOException
  *     The outermost package is given first. 
  */
 getPath returns [List<String> res] 
-@init{$res = new ArrayList<String>();}
-    :       first=NAME {$res.add($first.text);} 
-        (SEP next=NAME {$res.add( $next.text);})*;
+@init{List<String> res0 = new ArrayList<String>();}
+@after{$res = Collections.unmodifiableList(res0);}
+    :       first=NAME {res0.add($first.text);} 
+        (SEP next=NAME {res0.add( $next.text);})*;
 
 
 
 maps returns [Map<String,MapDecl> name2map] 
-@init{$name2map = new HashMap<String,MapDecl>();}
-    : (MAPS (addMap[name2map])*)?
+@init{Map<String,MapDecl> name2map0 = new HashMap<String,MapDecl>();}
+@after{$name2map = name2map0;}
+    : (MAPS (addMap[name2map0])*)?
     ;
 
 
@@ -398,12 +380,17 @@ addMap[Map<String,MapDecl> name2map]
     : 
         (//<MAP> 
             (redeclare = REDECLARE)?
-            nameT = NAME ':' invImgP=getPath '-->' imgP=getPath 
+            nameT = NAME ':' invImgPC=getPath '-->' imgPC=getPath 
             '{' add2DefMap[setOfSrc2targ]* addToIdDom[idDomain]? '}' END
         )
         {
-            SClass invImgCls;
-            SClass    imgCls;
+
+            List<String> invImgP = ((GetPathContext)
+                    ((AddMapContext)_localctx).invImgPC).res;
+            List<String>    imgP = ((GetPathContext)
+                    ((AddMapContext)_localctx)   .imgPC).res;
+            SClass invImgCls = null;
+            SClass    imgCls = null;
             String mapName = $nameT.text;
             try {
                 invImgCls = this.classLoader
@@ -413,7 +400,6 @@ addMap[Map<String,MapDecl> name2map]
                 report("IOException while loading \"" 
                        + ClassLocator.getLocator(invImgP) 
                        + "\" in package this.loc.getPackage(): " + ioe + ". ");
-                invImgCls = null; // never reached. ****
             }
 
             try {
@@ -424,12 +410,11 @@ addMap[Map<String,MapDecl> name2map]
                 report("IOException while loading \"" 
                        + ClassLocator.getLocator(imgP) + 
                        "\" in package this.loc.getPackage(): " + ioe + ". ");
-                imgCls = null; // never reached. ****
             }
             
             setOfSrc2targ = Collections.unmodifiableMap(setOfSrc2targ);
             try {
-                MapDecl newMap = new MapDecl(redeclare != null,
+                MapDecl newMap = new MapDecl($redeclare != null,
                                              mapName,
                                              setOfSrc2targ,
                                              invImgCls,
@@ -437,13 +422,13 @@ addMap[Map<String,MapDecl> name2map]
                                              idDomain);
                 MapDecl oldMap = name2map.put(mapName,newMap);
                 if (oldMap != null) {
-                    report(nameT,"Name \"" + mapName + 
+                    report($nameT, "Name \"" + mapName + 
                            "\" used for two maps: " + oldMap + 
                            " and " + newMap + ". ");
                 }
             } catch(IllegalArgumentException iaEx) {
                 // throw iaEx;// for debugging 
-                report(nameT, iaEx.getMessage());
+                report($nameT, iaEx.getMessage());
             }
         }
     ;
@@ -501,9 +486,10 @@ addToIdDom[Set<Deficiency> idDomain]
 effects[Map<String,FormulaWrapper> incompEffects] 
 returns [Map<String,CClass.SClassDecl> effectsX] 
 @init {
-    $effectsX = new TreeMap<String,CClass.SClassDecl>();
-}
-    : ( EFFECTS effect[effectsX,incompEffects]* )?
+Map<String,CClass.SClassDecl> effectsX0 = 
+new TreeMap<String,CClass.SClassDecl>();}
+@after{$effectsX = effectsX0;}
+    : ( EFFECTS effect[effectsX0, incompEffects]* )?
     ;
 
 
@@ -519,7 +505,7 @@ returns [Map<String,CClass.SClassDecl> effectsX]
  *    Here only incomplete declarations are mentioned: 
  *    Each formula requires a second parsing step. 
  */
-effect[Map<String,CClass.SClassDecl> effects,
+effect[Map<String,CClass.SClassDecl> effectsMap,
        Map<String,FormulaWrapper>    incompEffects] 
 @init {
     Set<CClass.SClassModifier> accessModifiers = 
@@ -530,11 +516,13 @@ effect[Map<String,CClass.SClassDecl> effects,
         (
             (redeclare=REDECLARE)?
             addAccessModifier[accessModifiers]* 
-            path=getPath 
+            pathC=getPath 
             sNameT=NAME 
         ) 
         {
-            // get class of effect 
+            List<String> path = ((GetPathContext)
+                    ((EffectContext)_localctx).pathC).res;
+              // get class of effect 
             if (path.size() == 1 && 
                 path.get(0).equals(SClass.BOOLEAN.getName())) {
                 sClass = SClass.BOOLEAN;
@@ -556,16 +544,25 @@ effect[Map<String,CClass.SClassDecl> effects,
 //Token formT = null;
         }
         (
-            (distr=getDistr[sClass] | formT='(' form=skipFormula ')')?
+            (distrC=getDistr[sClass] | formT='(' formC=skipFormula ')')?
             END
         )
         {
+            ProbDistr distr = ((EffectContext)_localctx).distrC == null 
+            ? null
+            : ((GetDistrContext)
+               ((EffectContext)_localctx).distrC).distr;
+            String form = $formT == null 
+                ? null 
+                : ((SkipFormulaContext)
+                    ((EffectContext)_localctx).formC).res;
+
             // read in the rest: name, modifiers, distribution, formula if any. 
             String sName = $sNameT.text;
             assert sName != null;
-            CClass.SClassDecl oldDecl = effects
+            CClass.SClassDecl oldDecl = effectsMap
                 .put(sName,
-                     new CClass.SClassDecl(redeclare != null,
+                     new CClass.SClassDecl($redeclare != null,
                                            accessModifiers,
                                            sClass,
                                            sName,
@@ -578,7 +575,7 @@ effect[Map<String,CClass.SClassDecl> effects,
 
             // store formula for later analysis 
             if (form != null) {
-                assert formT != null;
+                assert $formT != null;
                 // for use of second pass parsing formulae 
                 int lineNumber = $formT.line;//beginLine;
                 int colnNumber = $formT.pos;//beginColumn;
@@ -698,10 +695,12 @@ replDistr[Map<Deficiency,ProbDistr> def2distr, SClass sClass]
             sClassInner = sClass.getDeclaredInnerClass(repl);
             assert sClassInner != null; // thrown exception otherwise. 
         }
-        distrInner=getDistr[sClassInner]
+        distrInnerC=getDistr[sClassInner]
         {
+            ProbDistr distrInner = ((GetDistrContext)
+                    ((ReplDistrContext)_localctx).distrInnerC).distr;
             //replace 
-            ProbDistr old = $def2distr.put(repl,distrInner);
+            ProbDistr old = $def2distr.put(repl, distrInner);
             if (old != null) {
                     report("Overwritten replacement of property \"" 
                         + $replDefT.text + "\". ");
@@ -777,8 +776,8 @@ appendFormula[String pre, StringBuffer res]
             ('<'  appendToken["<",res,">{"] '>' 
              '{' (appendToken["" ,res,""  ])* cls = '}')      // constant 
             | 
-            ( ( (NAME INV? (COV|CONT) ) | 
-                UNION | INTERSECT | COMPLEMENT) '(' )=>  
+            // ( ( (NAME INV? (COV|CONT) ) | 
+            //    UNION | INTERSECT | COMPLEMENT) '(' )=>  
             (     appendOp[res] 
               '(' appendFormula["(",res] 
             ( ',' appendFormula[",",res])* cls = ')' )  // compound
@@ -833,15 +832,15 @@ appendOp[StringBuffer buf]
             opT=COMPLEMENT 
         )
         {
-            if (opT == null) {
-                    assert funT != null && accT != null;
+            if ($opT == null) {
+                    assert $funT != null && $accT != null;
                     buf.append($funT.text);
-                    if (invT != null) {
+                    if ($invT != null) {
                             buf.append($invT.text);
                     }
                     buf.append($accT.text);
             } else {
-                assert funT == null && invT == null && accT == null;
+                assert $funT == null && $invT == null && $accT == null;
                 buf.append($opT.text);
             }
         }
@@ -857,9 +856,12 @@ appendOp[StringBuffer buf]
  */
 components returns [Map<String,CClassLink> componentsX]
 @init {
-    $componentsX = new TreeMap<String,CClassLink>();
+    Map<String,CClassLink> components0 = new TreeMap<String,CClassLink>();
 }
-    : (COMPONENTS component[$componentsX]*)?
+@after {
+    $componentsX = components0;
+}
+    : (COMPONENTS component[components0]*)?
     ;
 
 /**
@@ -887,4 +889,44 @@ component[Map<String,CClassLink> componentsX]
         }
     ;
 
+
+// ======================================================================== 
+// Lexer 
+// ======================================================================== 
+
+WS : (' ' | '\t' | '\n' | '\r' | '\f') -> skip;
+
+SingleLineComment : '//' ~( '\r' | '\n' )* -> skip;
+
+MultiLineComment  : '/*' .*? '*/' -> skip;
+
+PACKAGE:          'package';
+CCLASS:           'class';
+EXTENDS:          'extends';
+REDECLARE:        'redeclare';
+MAPS:             'maps';
+MAP:              'map';
+MAPSTO:           '|-->';
+IDDOMAIN:         'id:';
+COMPONENTS:       'components';
+EFFECTS:          'effects';
+INPUT:            'input';
+OUTPUT:           'output';
+REPLACE:          'replace'; 
+INV:              '!' ;
+COV:              ',' ;
+CONT:             '\'' ;
+END:              ';' ;
+SEP:              '.' ;
+UNION:            '|' ;
+INTERSECT:        '&' ;
+COMPLEMENT:       '~' ;
+NAME:         LETTER IDENTIFIER*;
+FLOAT:        NUMBER ('.' NUMBER)? (('E' | 'e') ('+' | '-')? NUMBER)?; 
+fragment NUMBER:           (DIGIT)+ ; 
+fragment IDENTIFIER:      (LETTER | DIGIT | '_') ;
+fragment LETTER:          (CAPITAL_LETTER | SMALL_LETTER) ;
+fragment DIGIT:           '0'..'9';
+fragment SMALL_LETTER:    'a'..'z';
+fragment CAPITAL_LETTER:  'A'..'Z';
 
