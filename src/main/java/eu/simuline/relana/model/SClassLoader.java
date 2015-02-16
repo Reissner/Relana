@@ -1,13 +1,12 @@
 package eu.simuline.relana.model;
 
 import eu.simuline.relana.parser.SClassParser;
-import org.antlr.runtime.RecognitionException;
+import org.antlr.v4.runtime.RecognitionException;
 
 import java.net.URL;
 import java.net.URISyntaxException;
 
 import java.io.File;
-import java.io.Reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
