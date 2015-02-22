@@ -38,7 +38,7 @@ public class RelanaTest {
     private final static String ROOT = 
     "file://" + 
 	System.getProperty("environment") + "/" +
-	System.getProperty("tstSrcAntlr3Dir") + 
+	System.getProperty("tstSrcAntlr4Dir") + 
 	"eu/simuline/relana/";
 
     /* -------------------------------------------------------------------- *
