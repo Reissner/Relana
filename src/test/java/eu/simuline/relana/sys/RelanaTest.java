@@ -19,8 +19,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
 
 /**
  * RelanaTest.java
@@ -96,10 +94,6 @@ public class RelanaTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(RelanaTest.class);
-    }
 
     /**
      * Runs the test case.

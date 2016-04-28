@@ -19,9 +19,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
-
 
 /**
  * DeficiencyMapTest.java
@@ -72,10 +69,6 @@ public class DeficiencyMapTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(DeficiencyMapTest.class);
-    }
 
     /**
      * Runs the test case.
