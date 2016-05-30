@@ -101,7 +101,7 @@ public class RelanaTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-	Actions.run(RelanaTest.class);
+	Actions.runFromMain();
     }
 
 } // RelanaTest
