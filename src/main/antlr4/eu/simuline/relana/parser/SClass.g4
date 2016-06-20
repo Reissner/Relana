@@ -72,13 +72,13 @@ grammar SClass;
     } // report
 
     /**
-     * To set the <code>SClassLoader<code>. 
+     * To set the <code>SClassLoader</code>. 
      * This is needed whenever the definition of the class currently read 
      * relies on definitions of other classes such as 
      * the superclass if it is given explicitly. 
      * 
      * @param classLoader
-     *    the current <code>SClassLoader<code>. 
+     *    the current <code>SClassLoader</code>. 
      */
     public void setClassLoader(SClassLoader classLoader) {
         this.classLoader = classLoader;
@@ -507,7 +507,7 @@ List<String> clsPath = null;
  *    the set of declared deficiencies. 
  *    These may be used to declare inner classes. 
  * @return
- *    an ordered subset of deficiencies out of code>newDefs</code> 
+ *    an ordered subset of deficiencies out of <code>newDefs</code> 
  *    with trivial ordering. 
  */
 getCheckedDeficiencies[Set<Deficiency> newDefs] 

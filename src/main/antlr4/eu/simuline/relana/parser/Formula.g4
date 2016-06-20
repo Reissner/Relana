@@ -90,13 +90,13 @@ grammar Formula;
     }
 
     /**
-     * To set the <code>CClassLoader<code>. 
+     * To set the <code>CClassLoader</code>. 
      * This is needed whenever the definition of the class currently read 
      * relies on definitions of other classes such as 
      * the superclass if it is given explicitly. 
      * 
      * @param classLoader
-     *    the current <code>SClassLoader<code>. 
+     *    the current <code>SClassLoader</code>. 
      */
     public void setClassLoader(CClassLoader classLoader) {
         this.classLoader = classLoader;
