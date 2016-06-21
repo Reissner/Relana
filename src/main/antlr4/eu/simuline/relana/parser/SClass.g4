@@ -95,7 +95,7 @@ grammar SClass;
      * 
      * @param needed
      *    points to a class to be loaded by {@link #classLoader}. 
-     * @throws Pars eException 
+     * @throws RuntimeException 
      *    if this class is parsed in order to declare a class <code>C</code>
      *    and <code>C</code> in turn is adressed in this class. 
      */
