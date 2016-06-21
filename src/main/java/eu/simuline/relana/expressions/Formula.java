@@ -158,8 +158,8 @@ public abstract class Formula {
 	 * fields.                                                          *
 	 * ---------------------------------------------------------------- */
 
-	protected Set<Deficiency> min;
-	protected Set<Deficiency> max;
+	private Set<Deficiency> min;
+	private Set<Deficiency> max;
 
 	private final Operation.Eval oper;
 	private final Set<Formula> args;

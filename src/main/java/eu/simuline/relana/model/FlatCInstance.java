@@ -239,18 +239,17 @@ public class FlatCInstance {
 	    // look for variables with probability distribution 
 	    // and essentially return the first found. 
 	    for (SInstance var: vars) {
-		if (var.getDistr() == null) {
-		    continue;
-		}
-		// Here, found variable var within formula form with distr. 
-//System.out.println("var: "+var);
-//System.out.println("var: "+var.getType());
+		if (var.getDistr() != null) {
+		    // Here, found variable var within formula form with distr. 
+		    //System.out.println("var: "+var);
+		    //System.out.println("var: "+var.getType());
 
-		Set<Deficiency> minDefs = var.getType().getMin();
-		assert !minDefs.isEmpty();
-		Iterator<Deficiency> iter = minDefs.iterator();
-//System.out.println("+form: "+form);
-		return new InstDef(var,iter.next());
+		    Set<Deficiency> minDefs = var.getType().getMin();
+		    assert !minDefs.isEmpty();
+		    Iterator<Deficiency> iter = minDefs.iterator();
+		    //System.out.println("+form: "+form);
+		    return new InstDef(var,iter.next());
+		}
 	    }
 	    // found no variables with probability distribution. 
 

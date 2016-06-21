@@ -25,14 +25,14 @@ public final class InstanceLocator {
      * Declared final to ensure that {@link #hashCode()} remains unchanged. 
      * In addition this list is unmodifyable. 
      */
-    protected final List<String> path;
+    private final List<String> path;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
     public InstanceLocator(List<String> path) {
-	if (path.size() == 0) {
+	if (path.isEmpty()) {
 	    throw new IllegalArgumentException
 		("Found empty location: []. ");
 	}
