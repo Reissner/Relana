@@ -59,15 +59,15 @@ public abstract class Formula {
 	}
 
 	public Formula remove(SInstance serv, Deficiency def) {
-	    return Const.this;
+	    return this;
 	}
 
 	public Formula add(SInstance serv, Deficiency def) {
-	    return Const.this;
+	    return this;
 	}
 
 	public Formula substitute(SInstance serv, Formula form) {
-	    return Const.this;
+	    return this;
 	}
 	
 	public Set<SInstance> getVars() {
@@ -124,7 +124,7 @@ public abstract class Formula {
 //System.out.println("this.var : "+this.var);
 //System.out.println(" (serv == this.var): "+(serv == this.var));
 
-	    return (serv == this.varS) ? form : Var.this;
+	    return (serv == this.varS) ? form : this;
 	}
 
 	public Set<SInstance> getVars() {
