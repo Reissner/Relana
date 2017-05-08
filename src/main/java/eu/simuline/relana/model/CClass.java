@@ -24,7 +24,7 @@ public class CClass implements CClassLink {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    public static enum SClassModifier {
+    public enum SClassModifier {
 
 	/* ---------------------------------------------------------------- *
 	 * constructor constants.                                           *

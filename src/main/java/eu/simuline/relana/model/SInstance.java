@@ -102,10 +102,9 @@ public final class SInstance {
 	    return null;
 	}
 	
-	SInstance res = new SInstance(newType,
-				      this.distr.add(def),
-				      this.name);
-	return res;
+	return new SInstance(newType,
+			     this.distr.add(def),
+			     this.name);
     }
 
     /**
@@ -125,11 +124,10 @@ public final class SInstance {
 	if ((this.distr == null) && (this.form != null)) {
 	    throw new IllegalArgumentException("****");
 	}
-	SInstance res = new SInstance(getType() .remove(def),
-				      this.distr.remove(def),
-				      this.name);
+	return new SInstance(getType() .remove(def),
+			     this.distr.remove(def),
+			     this.name);
 
-	return res;
     }
 
     SInstance substitute(SInstance serv, Formula form) {

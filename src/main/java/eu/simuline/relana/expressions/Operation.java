@@ -26,7 +26,7 @@ public abstract class Operation {
      * Comprises the basic set theoretic operations 
      * union, intersection and complement. 
      */
-    public static enum BaseOps {
+    public enum BaseOps {
 
 	/* ---------------------------------------------------------------- *
 	 * constructor constants.                                           *
@@ -253,7 +253,7 @@ public abstract class Operation {
 	}
     } // class CompOp 
 
-    static public enum Functor {
+    public enum Functor {
 
 	/* ---------------------------------------------------------------- *
 	 * constructor constants.                                           *
@@ -421,7 +421,7 @@ public abstract class Operation {
     } // class Maps
 
 
-    public static interface Eval {
+    public interface Eval {
 	// length == 1 if arity1() 
 	Set<Deficiency> eval(Set<Set<Deficiency>> param);
 	Operation getOperation();
