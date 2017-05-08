@@ -313,9 +313,8 @@ public class FlatCInstance {
 //System.out.println("this: "+this);
 //throw new IllegalStateException();
 
-	return                        cond  .multiply(cInstP.getProb(sPath))
-	    .add
-	    ((BigDecimal.ONE.subtract(cond)).multiply(cInstM.getProb(sPath)));
+	return                           cond .multiply(cInstP.getProb(sPath))
+	    .add(BigDecimal.ONE.subtract(cond).multiply(cInstM.getProb(sPath)));
     }
 
     public String toString() {

@@ -344,6 +344,7 @@ public class CClass implements CClassLink {
 	public SClassDecl getEffectDecl(String name) {
 	    return null;
 	}
+	@SuppressWarnings("PMD.SingletonClassReturningNewInstance")
 	public CInstance getInstance() {
 	    return new CInstance();
 	}
@@ -696,6 +697,9 @@ public class CClass implements CClassLink {
      * @return 
      *    a <code>CInstance</code> of this class. 
      */
+    @SuppressWarnings({
+	    "PMD.SingletonClassReturningNewInstance", 
+	    "PMD.SingleMethodSingleton"})
     public CInstance getInstance() {
 
 	// Here, superclass is not null 
