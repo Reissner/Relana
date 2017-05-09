@@ -227,7 +227,7 @@ public class CClassLoader {
 	throws IOException, RecognitionException {
 //System.out.println("loadCClass(");
 
-	CClassLink result = resolveLocInOcc(loc,null);//!!!!!!!
+	resolveLocInOcc(loc,null);//!!!!!!!
 	while (!this.unresolvedClasses.empty()) {
 	    ClassLocator loc2 = this.unresolvedClasses.pop();
 //System.out.println("-->loc2: "+loc2);
