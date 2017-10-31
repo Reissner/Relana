@@ -1,12 +1,46 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>eu.simuline.relana</groupId>
+  <groupId>eu.simuline</groupId>
   <artifactId>Relana</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Relana</name>
-  <url>http://maven.apache.org</url>
+
+  <description>
+    An example for a modelling software. 
+    This is in fact an old project. 
+    It is important not so much because of its content 
+    but to serve as a prototype to learn from. 
+  </description>
+
+  <url>http://www.simuline.eu</url><!-- maybe not specific enough -->
+  <organization>
+    <name>l2r.org</name>
+    <url>http://www.simuline.eu</url>
+  </organization>
+
+
+  <developers>
+    <developer>
+      <name>Ernst Reissner</name>
+      <email>Ernst.Reissner@simuline.eu</email>
+      <timezone>Europe/Berlin</timezone>
+    </developer>
+  </developers>
+  <!-- mailingLists></mailingLists-->
+
+  <!-- target repository. This will change. 
+  In the long run it shall be something in www.simuline.eu -->
+  <distributionManagement>
+    <repository>
+      <id>fileRepository</id>
+      <url>file:///home/ernst/Software/RepositoryTarget</url>
+    </repository>
+  </distributionManagement>
+
+
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
