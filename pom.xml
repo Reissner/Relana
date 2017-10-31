@@ -1,5 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="utf-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.simuline</groupId>
   <artifactId>Relana</artifactId>
@@ -30,6 +34,26 @@
   </developers>
   <!-- mailingLists></mailingLists-->
 
+  <!-- properties: ensures reproducibility -->
+  <properties>
+    <versionMvn>3.5.0</versionMvn>
+    <!-- antlr4, its runtime and mvn plugin all same version, 
+         tied to antlr-annotation and ST4 -->
+    <versionAntlr>4.7</versionAntlr><!-- tied to antlr 4.7 -->
+    <!--versionAntlrAnnot>4.3</versionAntlrAnnot--><!-- tied to antlr 4.7 -->
+    <versionAntlrST4>4.0.8</versionAntlrST4>  <!-- tied to antlr 4.7 -->
+    <versionAntlr3>3.5.2</versionAntlr3>  <!-- from ST4 -->
+    <versionJUnit>4.12</versionJUnit>
+    <!-- tied to junit 4.12, not needed -->
+    <!--versionHamcrestCore>1.3</versionHamcrestCore-->
+
+    <srcAntlr4Dir>src/main/antlr4/</srcAntlr4Dir>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+
+
+
   <!-- target repository. This will change. 
   In the long run it shall be something in www.simuline.eu -->
   <distributionManagement>
@@ -39,13 +63,86 @@
     </repository>
   </distributionManagement>
 
+  <build>
+    <plugins>
+     <!-- configuration for antlr4 -->
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>${versionAntlr}</version>
+	<configuration>
+	  <sourceDirectory>${srcAntlr4Dir}</sourceDirectory>
+	  <outputDirectory>src/main/java</outputDirectory>
+	  <!--visitor>true</visitor--><!-- needed for calc only -->
+	  <treatWarningsAsErrors>true</treatWarningsAsErrors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>antlr</id>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
+
+      <!-- configuration for the compile plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+            <fork>true</fork>
+
+          <verbose>false</verbose>
+	  <encoding>${project.build.sourceEncoding}</encoding><!--default-->
+	  <debug>${javac.debug}</debug>
+	  <debuglevel></debuglevel>
+	  <compilerArgs>
+	    <arg>-g</arg>
+  	    <arg>-Xlint:unchecked</arg>
+  	    <!--arg>-Xlint:deprecation</arg-->
+	  </compilerArgs>
+          <fork>false</fork>
+	  <showWarnings>false</showWarnings>
+        </configuration>
+      </plugin>
+
+
+    </plugins>
+  </build>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>${versionAntlr}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>ST4</artifactId>
+      <version>${versionAntlrST4}</version>
+    </dependency>
+
+    <!-- used by ST4 -->
+    <!-- https://mvnrepository.com/artifact/org.antlr/antlr-runtime -->
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr-runtime</artifactId>
+      <version>${versionAntlr3}</version>
+    </dependency>
+
+
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>${versionJUnit}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
