@@ -1,1 +1,0 @@
-java -enableassertions -classpath ~/Software/cls:~/Software/jars/junit.jar eu.simuline.relana.sys.Relana $*
