@@ -25,7 +25,6 @@
     <url>http://www.simuline.eu</url>
   </organization>
 
-
   <developers>
     <developer>
       <name>Ernst Reissner</name>
@@ -51,13 +50,11 @@
 
     <srcAntlr4Dir>src/main/antlr4/</srcAntlr4Dir>
     <tstResourcesDir>src/test/resources/</tstResourcesDir>
-    <tstModelDir>${project.build.testOutputDirectory}/</tstModelDir>
+    <tstModelDirRel>../filteredTestResources/</tstModelDirRel>
+    <tstModelDir>${project.build.testOutputDirectory}/${tstModelDirRel}</tstModelDir>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-
-
 
   <!-- target repository. This will change. 
   In the long run it shall be something in www.simuline.eu -->
@@ -69,11 +66,11 @@
   </distributionManagement>
 
   <build>
-
     <testResources>
       <testResource>
 	<!-- in the resources plugin there should be a link to the pom design 
 	allowing to specify the targetPath -->
+	<targetPath>${tstModelDirRel}</targetPath>
 	<!--targetPath>filteredTestResources</targetPath-->
 	<!-- why is this not default? -->
 	<directory>${tstResourcesDir}</directory>
