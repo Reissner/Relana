@@ -1,7 +1,0 @@
-
-<!--Rml library="file://${baseDir}/${project.build.testResources}/eu/simuline/relana/Library/" 
-     baseClass="TestPkg.CClassForSClass">
-</Rml-->
-<Rml library="file:///home/ernst/Software/Relana/src/test/resources/eu/simuline/relana/Library/" 
-     baseClass="TestPkg.CClassForSClass">
-</Rml>
