@@ -51,6 +51,7 @@
 
     <srcAntlr4Dir>src/main/antlr4/</srcAntlr4Dir>
     <tstResourcesDir>src/test/resources/</tstResourcesDir>
+    <tstModelDir>${basedir}/target/test-classes/</tstModelDir>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -212,7 +213,7 @@
 	  <!-- **** check whether this is strictly required.  -->
 	  <systemProperties>
 	    <property>
-	      <name>environment</name>     <value>${basedir}/target/test-classes/</value>
+	      <name>tstModelDir</name>     <value>${tstModelDir}</value>
 	    </property>
 	    <!--property>
 	      <name>srcJavaDir</name>      <value>${srcJavaDir}</value>
