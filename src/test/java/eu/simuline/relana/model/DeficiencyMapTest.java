@@ -34,8 +34,11 @@ import org.junit.runners.Suite.SuiteClasses;
 public class DeficiencyMapTest {
 
     private final static String ROOT = 
-    "file:///home/ernst/Software/tst/eu/simuline/relana/";
-
+    "file://" + 
+	System.getProperty("environment") + 
+	"target/test-classes/" + 
+	"eu/simuline/relana/";
+ 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
