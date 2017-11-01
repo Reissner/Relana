@@ -1,5 +1,5 @@
 
-package eu.simuline.relana.sys;
+package eu.simuline.relana.model;
 
 import eu.simuline.testhelpers.Actions;
 // import eu.simuline.testhelpers.Accessor;
