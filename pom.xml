@@ -47,9 +47,11 @@
     <versionJUnit>4.12</versionJUnit>
     <!-- tied to junit 4.12, not needed -->
     <!--versionHamcrestCore>1.3</versionHamcrestCore-->
+    <versionTestPlugins>2.20.1</versionTestPlugins>
 
     <srcAntlr4Dir>src/main/antlr4/</srcAntlr4Dir>
-    <versionTestPlugins>2.20.1</versionTestPlugins>
+    <tstResourcesDir>src/test/resources/</tstResourcesDir>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -66,6 +68,23 @@
   </distributionManagement>
 
   <build>
+
+    <testResources>
+      <testResource>
+	<!-- in the resources plugin there should be a link to the pom design 
+	allowing to specify the targetPath -->
+	<!--targetPath>filteredTestResources</targetPath-->
+	<!-- why is this not default? -->
+	<directory>${tstResourcesDir}</directory>
+        <filtering>true</filtering>
+	<!-- rml-files shall be copied and filtered, others just copied. -->
+        <!--includes>
+         <include>**/*.rml</include>
+ 	</includes-->
+      </testResource>
+    </testResources>
+
+
     <plugins>
       <!-- information about a project or the system -->
       <plugin>
@@ -94,6 +113,19 @@
         </executions>
       </plugin>
 
+      <!-- configuration for resources plugin -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+	<configuration>
+	  <escapeString>\</escapeString> <!-- \${java.home} -> ${java.home} -->
+          <!--nonFilteredFileExtensions>
+            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+          </nonFilteredFileExtensions-->
+	  <!--outputDirectory>${basedir}/target/</outputDirectory-->
+	</configuration>
+      </plugin>
 
       <!-- This plugin will set properties values 
 	   using dependency information -->
