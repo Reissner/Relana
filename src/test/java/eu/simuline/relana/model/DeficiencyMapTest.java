@@ -36,7 +36,6 @@ public class DeficiencyMapTest {
     private final static String ROOT = 
     "file://" + 
 	System.getProperty("environment") + 
-	"target/test-classes/" + 
 	"eu/simuline/relana/";
  
     /* -------------------------------------------------------------------- *

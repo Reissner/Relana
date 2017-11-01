@@ -212,11 +212,11 @@
 	  <!-- **** check whether this is strictly required.  -->
 	  <systemProperties>
 	    <property>
-	      <name>environment</name>     <value>${basedir}/</value>
+	      <name>environment</name>     <value>${basedir}/target/test-classes/</value>
 	    </property>
-	    <property>
+	    <!--property>
 	      <name>srcJavaDir</name>      <value>${srcJavaDir}</value>
-	    </property>
+	    </property-->
 	  </systemProperties>
 
         </configuration>
