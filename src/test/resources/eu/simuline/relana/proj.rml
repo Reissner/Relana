@@ -1,4 +1,4 @@
 
-<Rml library="file:///home/ernst/Software/src/test/resources/eu/simuline/relana/Library/" 
+<Rml library="file:///home/ernst/Software/Relana/src/test/resources/eu/simuline/relana/Library/" 
      baseClass="TestPkg.TestCClass">
 </Rml>
