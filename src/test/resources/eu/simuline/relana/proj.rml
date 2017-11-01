@@ -1,0 +1,4 @@
+
+<Rml library="file://${project.build.testOutputDirectory}/eu/simuline/relana/Library/" 
+     baseClass="TestPkg.TestCClass">
+</Rml>
