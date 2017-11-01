@@ -48,7 +48,13 @@
     <!--versionHamcrestCore>1.3</versionHamcrestCore-->
     <versionTestPlugins>2.20.1</versionTestPlugins>
 
+    <srcJavaDir>src/main/java/</srcJavaDir>
     <srcAntlr4Dir>src/main/antlr4/</srcAntlr4Dir>
+    <parserTargetDirRelana>
+    ${srcJavaDir}eu/simuline/relana/parser/
+    </parserTargetDirRelana>
+
+    <tstSrcJavaDir>src/test/java/</tstSrcJavaDir>
     <tstResourcesDir>src/test/resources/</tstResourcesDir>
     <tstModelDirRel>../filteredTestResources/</tstModelDirRel>
     <tstModelDir>${project.build.testOutputDirectory}/${tstModelDirRel}</tstModelDir>
@@ -124,6 +130,101 @@
 	  <!--outputDirectory>${basedir}/target/</outputDirectory-->
 	</configuration>
       </plugin>
+
+
+      <!-- configuration for clean plugin -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+	<configuration>
+	  <verbose>true</verbose>
+	  <filesets>
+	    <fileset>
+	      <directory>${parserTargetDirRelana}</directory>
+	      <includes>
+		<include>**/*Lexer.java</include>
+		<include>**/*Parser.java</include>
+		<include>*Listener.java</include>
+		<include>*Visitor.java</include>
+		<include>**/*.tokens</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <directory>${srcJavaDir}</directory>
+	      <includes>
+		<include>*Lexer.java</include>
+		<include>*Parser.java</include>
+		<include>*.tokens</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <directory>${srcJavaDir}</directory>
+	      <includes>
+		<include>**/semantic.cache</include>
+		<include>**/*.java~</include>
+		<include>**/prj.el~</include>
+		<include>**/*.m~</include>
+		<include>**/*.properties~</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <directory>${tstSrcJavaDir}</directory>
+	      <includes>
+		<include>**/semantic.cache</include>
+		<include>**/*.java~</include>
+		<include>**/prj.el~</include>
+		<include>**/*.m~</include>
+		<include>**/*.properties~</include>
+		<include>**/*.xml~</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <directory>${srcAntlr4Dir}</directory>
+	      <includes>
+		<include>**/*.g4~</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <directory>${tstResourcesDir}</directory>
+	      <includes>
+		<include>**/*~</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <directory>${basedir}</directory>
+	      <includes>
+		<include>**.xml~</include>
+		<include>**.txt~</include>
+		<include>junitvm*.properties</include>
+		<include>java.hprof.txt</include>
+		<include>*.tokens</include>
+	      </includes>
+	    </fileset>
+	    <fileset>
+	      <!-- directory auto written by auctex is not cleaned -->
+	      <directory>${basedir}/src/site/</directory>
+	      <includes>
+		<include>**/*.tex~</include>
+		<include>**/*.aux</include>
+		<include>**/*.log</include>
+		<include>**/*.out</include> <!-- written by hyperref package -->
+		<include>**/*.bbl</include> <!-- bibtex: bibliography -->
+		<include>**/*.blg</include> <!-- bibtex: log-file -->
+		<include>**/*.toc</include> <!-- table of contents -->
+		<include>**/*.lof</include> <!-- list of figures -->
+		<include>**/*.lot</include> <!-- list of tables -->
+		<include>**/*.dvi</include>
+		<include>**/*.pdf</include>
+		<include>**/*.synctex.gz</include>
+	      </includes>
+	      <excludes>
+		<exclude>external/**/*.pdf</exclude>
+	      </excludes>
+	    </fileset>
+	  </filesets>
+	</configuration>
+     </plugin>
+
 
       <!-- This plugin will set properties values 
 	   using dependency information -->
