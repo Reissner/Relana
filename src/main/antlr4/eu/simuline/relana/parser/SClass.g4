@@ -21,6 +21,7 @@ grammar SClass;
 
     import java.io.Reader;
     import java.io.IOException;
+    import java.io.InputStream;
 } // @parser::header 
 
 //@lexer::header {
@@ -41,15 +42,15 @@ grammar SClass;
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
-    private static CommonTokenStream reader2tokenStream(Reader reader)  
-		throws IOException {
-        ANTLRInputStream antlrStream = new ANTLRInputStream(reader);
-        SClassLexer lexer = new SClassLexer(antlrStream);
-        return new CommonTokenStream(lexer);
+    private static CommonTokenStream inputStream2tokenStream(InputStream str) 
+        throws IOException {
+	    CharStream input = CharStreams.fromStream(str);
+        SClassLexer lexer = new SClassLexer(input);
+         return new CommonTokenStream(lexer);
     }
 
-    public SClassParser(Reader reader) throws IOException {
-        this(reader2tokenStream(reader));
+    public SClassParser(InputStream str) throws IOException {
+        this(inputStream2tokenStream(str));
     }
 
 

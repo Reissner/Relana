@@ -20,6 +20,7 @@ grammar CClass;
     import java.io.Reader;
     import java.io.IOException;
     import java.io.StringReader;
+    import java.io.InputStream;
 
     import java.util.List;
     import java.util.ArrayList;
@@ -66,16 +67,17 @@ grammar CClass;
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
-    private static CommonTokenStream reader2tokenStream(Reader reader)   
-		throws IOException {
-        ANTLRInputStream antlrStream = new ANTLRInputStream(reader);
-        CClassLexer lexer = new CClassLexer(antlrStream);
+    private static CommonTokenStream inputStream2tokenStream(InputStream str) 
+        throws IOException {
+	    CharStream input = CharStreams.fromStream(str);
+        CClassLexer lexer = new CClassLexer(input);
         return new CommonTokenStream(lexer);
     }
 
-    public CClassParser(Reader reader) throws IOException {
-        this(reader2tokenStream(reader));
+    public CClassParser(InputStream str) throws IOException {
+        this(inputStream2tokenStream(str));
     }
+
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -280,10 +282,10 @@ Map<String,FormulaWrapper> incompEffects =
                 for (Map.Entry<String,FormulaWrapper> entry :
                          incompEffects.entrySet()) {
                     try {
-                        Reader str = new StringReader(entry.getValue().formula);
-org.antlr.v4.runtime.ANTLRInputStream input = new org.antlr.v4.runtime.ANTLRInputStream(str);
+                        CharStream input = CharStreams
+                            .fromString(entry.getValue().formula);
                         FormulaLexer lexer = new FormulaLexer(input);
- 	org.antlr.v4.runtime.CommonTokenStream tokens = new org.antlr.v4.runtime.CommonTokenStream(lexer);
+                        CommonTokenStream tokens = new CommonTokenStream(lexer);
                         fParser = new FormulaParser(tokens);
 //fParser = new FormulaParser(str);
                         fParser.setClassLoader(this.classLoader);
@@ -296,8 +298,6 @@ org.antlr.v4.runtime.ANTLRInputStream input = new org.antlr.v4.runtime.ANTLRInpu
                     } catch(IllegalArgumentException iaEx) {
                         //throw iaEx;// for debugging
                         fParser.report(iaEx.getMessage());
-                    } catch (IOException ioe) {
-                        fParser.report(ioe.getMessage());
                     }
                 } // for 
             }
