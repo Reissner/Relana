@@ -333,6 +333,51 @@
         </configuration>
      </plugin>
 
+
+      <!-- javadoc plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <configuration>
+	  <!--phase>generate-sources</phase--> <!-- this is the default -->
+	  <sourcepath>
+	    ${project.basedir}/src/main/java:${project.basedir}/src/test/java
+	  </sourcepath>
+	  <tags>
+	    <tag>
+	      <name>To.Do</name>
+	      <!-- todo tag for all places -->
+	      <placement>a</placement>
+	      <head>what is to be done in the present code fragment. </head>
+	    </tag>
+	  </tags>
+	  <excludePackageNames>
+	    eu.simuline.junit
+	  </excludePackageNames>
+	  <breakiterator>true</breakiterator>
+	  <!-- does not work with current plugin version: bug already filed 
+	  -->
+	  <links>
+	    <link>file:///usr/share/javadoc/java-1.8.0-openjdk/api/</link>
+	    <link>http://www.antlr.org/api/JavaTool/</link>
+	    <link>http://www.antlr.org/api/Java/</link>
+	    <link>http://www.stringtemplate.org/api/</link>
+	    <link>https://jna.java.net/javadoc/</link>
+	    <link>http://junit.sourceforge.net/javadoc</link>
+	  </links>
+          <show>private</show>
+	  <!-- **** myDefault should be linked to ${basedir}/config/MathJax.. -->
+	  <additionalparam>-Xdoclint:html -Xdoclint:reference --allow-script-in-comments</additionalparam>
+	  <header>Relana
+<!--&lt;script type="text/javascript" \
+	  src="file:///${basedir}/jars/MathJax/latest/MathJax.js?config=myDefault"&gt; &lt;/script&gt;-->
+	  </header>
+	</configuration>
+      </plugin>
+
+
+
     </plugins>
   </build>
 
