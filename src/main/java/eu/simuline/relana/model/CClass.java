@@ -14,8 +14,19 @@ import java.util.HashMap;
 
 /**
  * Represents a component class. 
+ * Like a java-class this has a name {@link #cName}, 
+ * a package {@link #pkg} and a superclass {@link #superClass} 
+ * which is again a {@link CClass}. 
+ * As this is a component class, it has named components 
+ * and the mapping from names to components is given by {@link #subComponents}. 
+ * Observe that the values are not {@link CClass}es 
+ * but {@link CClassLink}s as the components may not be resolved 
+ * if this class is resolved 
+ * as a component may be again of this {@link CClass}. **** 
+ * Maps and effects **** are to be explained later. 
+ * <code>x</code>
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class CClass implements CClassLink {

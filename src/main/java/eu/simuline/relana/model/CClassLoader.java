@@ -26,7 +26,7 @@ import java.util.HashSet;
  *
  * Created: Thu Apr 14 23:35:25 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class CClassLoader {
@@ -292,20 +292,3 @@ public class CClassLoader {
 
 } // CClassLoader
 
-
-// warning: [options] bootstrap class path not set in conjunction with -source 1.6
-// CClassLoader.java:121: warning: [rawtypes] found raw type: Set
-// 	Set resolvationPoints() {
-// 	^
-//   missing type arguments for generic class Set<E>
-//   where E is a type-variable:
-//     E extends Object declared in interface Set
-// CClassLoader.java:255: warning: [rawtypes] found raw type: Iterator
-// 	    Iterator iter = res.resolvationPoints().iterator();
-// 	    ^
-//   missing type arguments for generic class Iterator<E>
-//   where E is a type-variable:
-//     E extends Object declared in interface Iterator
-// 3 warnings
-
-// Compilation finished at Mon Oct 21 17:13:53

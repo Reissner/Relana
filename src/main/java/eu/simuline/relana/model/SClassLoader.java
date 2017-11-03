@@ -22,7 +22,7 @@ import java.util.HashMap;
  *
  * Created: Wed Apr 20 21:56:45 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class SClassLoader {

@@ -28,12 +28,26 @@ import java.util.List;
 import java.util.Arrays;
 
 /**
- * Relana's main class containing the main method. 
- *
+ * Relana's main class containing the main method only. 
+ * The main method is intended to be invoked with a single argument 
+ * which is interpreted as the url of a project file <code>*.rml</code> 
+ * which is read by an instance of {@link Project}. 
+ * A project describes the classes of a whole model and highlights 
+ * a single component class as the "base class" 
+ * which holds the overall model. 
+ * <p>
+ * The base class may not specify input 
+ * as the whole model shall be closed in itself. 
+ * **** all variables must be declared as output. **** 
+ * Then an instance is created and flattened, eliminating all structures 
+ * not required for computations. 
+ * Finally the observables each of which are instances of a service classes, 
+ * are extracted and their probability is computed. 
+ * This is the output. 
  *
  * Created: Thu Apr 28 21:46:41 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class Relana {// NOPMD 

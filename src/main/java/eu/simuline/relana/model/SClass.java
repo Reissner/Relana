@@ -11,12 +11,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 /**
- * Describes classes of Effects. 
+ * Describes classes of Effects ('services'). 
+ * Like a java-class this has a name {@link #sName}, 
+ * a package {@link #pkg} and a superclass {@link #superClass} 
+ * which is again an {@link SClass}. 
  *
  *
  * Created: Thu Apr 14 19:35:08 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class SClass {

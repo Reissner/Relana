@@ -19,12 +19,15 @@ import org.xml.sax.Attributes;
 
 
 /**
- * Project.java
- *
+ * Enables an xml parser to read a relana project file 
+ * like <code>src/test/resources/eu/simuline/relana/proj.rml</code> 
+ * serving both as {@link ContentHandler} and as {@link ParseExceptionHandler} 
+ * as it implements {@link ProjectDesc} to hold the result of reading, 
+ * i.e. the content. 
  *
  * Created: Thu Apr 28 22:03:26 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class Project 
