@@ -1,0 +1,35 @@
+<project  
+    xmlns="http://maven.apache.org/DECORATION/1.6.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd"
+    name="Relana">
+
+  <!-- no banner -->
+
+  <publishDate position="right"/>
+  <version position="right"/>
+
+  <!-- no poweredBy -->
+
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-default-skin</artifactId>
+    <version>1.2</version>
+  </skin>
+
+  <body>
+    <!--menu name='Documentation'>
+      <item name='operations' href='./operations/overview.html'/>
+      <item name='quality'    href='./quality/overview.html'/>
+    </menu-->
+
+    <menu ref='modules'/>
+    <menu ref='parent'/>
+    <menu ref='reports'/>
+
+    <!--footer>All rights reserved.</footer-->
+
+  </body>
+  
+</project>
