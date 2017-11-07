@@ -10,8 +10,9 @@
   <artifactId>Relana</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>Relana</name>
 
+  <!-- information for generating a site -->
+  <name>Relana</name>
   <description>
     An example for a modelling software. 
     This is in fact an old project. 
@@ -20,6 +21,15 @@
   </description>
 
   <url>http://www.simuline.eu</url><!-- maybe not specific enough -->
+  <licenses>
+    <license>
+      <name>The Relana-License, Version 1.0</name>
+      <url>http://www.simuline.eu/Relana/LICENSE-1.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>This license grants the author a lot of control 
+      on usage, study, modification and distribution of Relana. </comments>
+    </license>
+  </licenses>
   <organization>
     <name>l2r.org</name>
     <url>http://www.simuline.eu</url>
