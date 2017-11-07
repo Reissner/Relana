@@ -1,0 +1,14 @@
+
+Copyright (C) 2013 Ernst Reissner 
+
+Study of Relana is free, 
+except that the author must be notified of publications mentioning Relana. 
+In contrast, sublicensing of Relana is prohibited 
+and distribution are restricted to the author. 
+Currently, also modification is restricted to the author. 
+
+Who wants to use Relana is encouraged to ask the author 
+for a license to a restricted group of users. 
+
+This license is valid only 
+if uploaded to <url>http://www.simuline.eu/Relana/LICENSE-1.0.txt</url>
