@@ -229,7 +229,7 @@ Map<String,FormulaWrapper> incompEffects =
                            ((CClassContext)_localctx).pkgPathC).res;
             }
             CCLASS   cClassName=NAME 
-            superClassC=getSuperClass 
+            superClassC=getSuperClass '{' 
         
             effectsXC   =effects[incompEffects] 
             mapsXC      =maps 
@@ -322,7 +322,7 @@ Map<String,FormulaWrapper> incompEffects =
  *    see {@link CClassLoader#loadSClass}. 
  */
 getSuperClass returns [CClass res] //throws IOException 
-    :  (ext=EXTENDS superPathC = getPath())? '{' 
+    :  (ext=EXTENDS superPathC = getPath())? 
         {
             List<String> superPath = $ext == null 
                 ? null 
