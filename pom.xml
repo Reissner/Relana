@@ -7,7 +7,7 @@
   <groupId>eu.simuline</groupId>
   <artifactId>Relana</artifactId>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
 
   <!-- information for generating a site -->
   <name>Relana</name>
@@ -91,10 +91,9 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:svn:file:///SVN_Archive/tags/Relana-1.0</connection>
-    <developerConnection>scm:svn:file:///SVN_Archive/tags/Relana-1.0</developerConnection>
-    <tag>HEAD</tag> <!-- the default -->
-    <url>file:///SVN_Archive/tags/Relana-1.0</url><!-- publicly browseable -->
+    <connection>scm:svn:file:///SVN_Archive</connection>
+    <developerConnection>scm:svn:file:///SVN_Archive</developerConnection> <!-- the default -->
+    <url>file:///SVN_Archive</url><!-- publicly browseable -->
   </scm>
 
   <build>
