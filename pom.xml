@@ -82,7 +82,7 @@
     <site>
       <id>fileSite</id>
       <!--url>file:///home/ernst/Software/RepositoryTarget/Site</url-->
-      <url>ftp://www.simuline.eu/public_ftp/RepositoryTarget/Site</url>
+      <url>ftp://www.simuline.eu/public_html/Relana</url>
     </site>
 
     <repository>
