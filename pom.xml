@@ -79,13 +79,33 @@
   <!-- target repository. This will change. 
   In the long run it shall be something in www.simuline.eu -->
   <distributionManagement>
+    <site>
+      <id>fileSite</id>
+      <!--url>file:///home/ernst/Software/RepositoryTarget/Site</url-->
+      <url>ftp://www.simuline.eu/public_ftp/RepositoryTarget/Site</url>
+    </site>
+
     <repository>
       <id>fileRepository</id>
-      <url>file:///home/ernst/Software/RepositoryTarget</url>
+      <!--url>file:///home/ernst/Software/RepositoryTarget</url-->
+      <url>ftp://www.simuline.eu/public_ftp/RepositoryTarget</url>
     </repository>
   </distributionManagement>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ftp</artifactId>
+         <version>2.10</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-file</artifactId>
+         <version>2.10</version>
+      </extension>
+    </extensions>
+
     <resources>
       <resource>
 	<directory>${resourcesDir}</directory>
@@ -429,9 +449,21 @@
         <version>3.0.2</version>
         <configuration>
           <archive>
-            <manifestFile>
+            <!--manifestFile>
 	    ${project.build.outputDirectory}/META-INF/MANIFEST.MF
-	    </manifestFile>
+	    </manifestFile-->
+	    <manifest>
+	      <addDefaultImplementationEntries>
+		true
+	      </addDefaultImplementationEntries>
+	      <addDefaultSpecificationEntries>
+		true
+	      </addDefaultSpecificationEntries>
+	      <mainClass>eu.simuline.relana.sys.Relana</mainClass>
+	    </manifest>
+	    <manifestEntries>
+	      <codebase>https://www.simuline.eu</codebase>
+	    </manifestEntries>
           </archive>
         </configuration>
       </plugin>
