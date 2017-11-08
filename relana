@@ -1,1 +1,5 @@
+# invoke as 
+# ./relana file:///home/ernst/Software/Relana/target/filteredTestResources/eu/simuline/relana/proj.rml
+# from the base directory of this project 
+
 java -enableassertions -jar ~/Software/Relana/target/Relana-1.0-SNAPSHOT-jar-with-dependencies.jar $*
