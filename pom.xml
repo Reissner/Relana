@@ -92,6 +92,13 @@
     </repository>
   </distributionManagement>
 
+  <scm>
+    <connection>scm:svn:file:///SVN_Archive</connection>
+    <developerConnection>scm:svn:file:///SVN_Archive</developerConnection>
+    <tag>HEAD</tag> <!-- the default -->
+    <url>file:///SVN_Archive</url><!-- publicly browseable -->
+  </scm>
+
   <build>
     <extensions>
       <extension>
