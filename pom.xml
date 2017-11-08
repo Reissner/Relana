@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- coordinates for model and artifact -->
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.simuline</groupId>
   <artifactId>Relana</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <!-- information for generating a site -->
   <name>Relana</name>
@@ -93,10 +91,10 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:svn:file:///SVN_Archive</connection>
-    <developerConnection>scm:svn:file:///SVN_Archive</developerConnection>
+    <connection>scm:svn:file:///SVN_Archive/tags/Relana-1.0</connection>
+    <developerConnection>scm:svn:file:///SVN_Archive/tags/Relana-1.0</developerConnection>
     <tag>HEAD</tag> <!-- the default -->
-    <url>file:///SVN_Archive</url><!-- publicly browseable -->
+    <url>file:///SVN_Archive/tags/Relana-1.0</url><!-- publicly browseable -->
   </scm>
 
   <build>
@@ -351,7 +349,7 @@
           <verbose>false</verbose>
 	  <encoding>${project.build.sourceEncoding}</encoding><!--default-->
 	  <debug>${javac.debug}</debug>
-	  <debuglevel></debuglevel>
+	  <debuglevel />
 	  <compilerArgs>
 	    <arg>-g</arg>
   	    <arg>-Xlint:unchecked</arg>
