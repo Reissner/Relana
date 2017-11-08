@@ -1,1 +1,1 @@
-java -enableassertions -classpath ~/Software/Relana/target/Relana-1.0-SNAPSHOT-jar-with-dependencies.jar eu.simuline.relana.sys.Relana $*
+java -enableassertions -jar ~/Software/Relana/target/Relana-1.0-SNAPSHOT-jar-with-dependencies.jar $*
