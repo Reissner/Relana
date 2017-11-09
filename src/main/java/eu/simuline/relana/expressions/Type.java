@@ -11,22 +11,23 @@ import java.util.HashMap;
 import java.util.Stack;
 
 /**
- * Type.java
+ * A type maps declared {@link Deficiency}s to their nodes 
+ * and defines minimum and maximum {@link Deficiency}s. 
  *
  *
  * Created: Fri Apr 29 11:18:57 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public final class Type {
 
-    public final static Type EMPTY = new Type();
-    public final static Type BOOLEAN;
+    public static final Type EMPTY = new Type();
+    public static final Type BOOLEAN;
 
     static {
-	Map<Deficiency,DeficiencyNode> deficiency2ordering = 
-	    new HashMap<Deficiency,DeficiencyNode>();
+	Map<Deficiency, DeficiencyNode> deficiency2ordering = 
+	    new HashMap<Deficiency, DeficiencyNode>();
 	deficiency2ordering.put(Deficiency.UNDET,
 				new DeficiencyNode(Deficiency.UNDET));
 	BOOLEAN = new Type(deficiency2ordering);
@@ -45,18 +46,18 @@ public final class Type {
      * It is required that this relation extends that 
      * given by {@link eu.simuline.relana.model.SClass#superClass}. 
      */
-    Map<Deficiency,DeficiencyNode> deficiency2ordering;
+    private Map<Deficiency, DeficiencyNode> deficiency2ordering;
     // **** valid after verification only {@link #initMMDefics} 
-    Set<Deficiency> minDefs;
+    private Set<Deficiency> minDefs;
     // **** valid after verification only {@link #initMMDefics} 
-    Set<Deficiency> maxDefs;
+    private Set<Deficiency> maxDefs;
 
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
-    public Type(Map<Deficiency,DeficiencyNode> deficiency2ordering) {
+    public Type(Map<Deficiency, DeficiencyNode> deficiency2ordering) {
 	this.deficiency2ordering = deficiency2ordering;
 	assert consistency();
 	initMMDefics();
@@ -69,7 +70,7 @@ public final class Type {
 
     // empty type 
     public Type() {
-	this(new HashMap<Deficiency,DeficiencyNode>());
+	this(new HashMap<Deficiency, DeficiencyNode>());
     }
 
     /* -------------------------------------------------------------------- *
@@ -84,18 +85,18 @@ public final class Type {
     private boolean consistency() {
 	for (DeficiencyNode node : this.deficiency2ordering.values()) {
 	    for (DeficiencyNode succ : node.getSuccessors()) {
-		if (this.deficiency2ordering.get(succ.getDeficiency()) != 
-		    succ) {
-System.out.println("succ.getDeficiency(): "+succ.getDeficiency());
-System.out.println("succ: "+ succ);
+		if (this.deficiency2ordering.get(succ.getDeficiency()) 
+		    != succ) {
+//System.out.println("succ.getDeficiency(): "+succ.getDeficiency());
+//System.out.println("succ: "+ succ);
 		    return false;
 		}
 	    }
 	    for (DeficiencyNode pred : node.getPredecessors()) {
-		if (this.deficiency2ordering.get(pred.getDeficiency()) != 
-		    pred) {
-System.out.println("pred.getDeficiency(): "+pred.getDeficiency());
-System.out.println("pred: "+ pred);
+		if (this.deficiency2ordering.get(pred.getDeficiency()) 
+		    != pred) {
+//System.out.println("pred.getDeficiency(): "+pred.getDeficiency());
+//System.out.println("pred: "+ pred);
 		    return false;
 		}
 	    }
@@ -103,7 +104,7 @@ System.out.println("pred: "+ pred);
 	return true;
     }
 
-    public Map<Deficiency,DeficiencyNode> getDeficiency2ordering() {
+    public Map<Deficiency, DeficiencyNode> getDeficiency2ordering() {
 	return this.deficiency2ordering;
     }
 
@@ -127,10 +128,10 @@ System.out.println("pred: "+ pred);
 	return new Type();
     }
 
-    protected Map<Deficiency,DeficiencyNode> copy() {
-	Map<Deficiency,DeficiencyNode> newDeficiency2ordering = 
-	    new HashMap<Deficiency,DeficiencyNode>();
-	for (Map.Entry<Deficiency,DeficiencyNode> entry 
+    protected Map<Deficiency, DeficiencyNode> copy() {
+	Map<Deficiency, DeficiencyNode> newDeficiency2ordering = 
+	    new HashMap<Deficiency, DeficiencyNode>();
+	for (Map.Entry<Deficiency, DeficiencyNode> entry 
 		 : this.deficiency2ordering.entrySet()) {
 	    newDeficiency2ordering.put(entry.getKey(),
 				       new DeficiencyNode(entry.getValue()));
@@ -140,10 +141,10 @@ System.out.println("pred: "+ pred);
 
 	DeficiencyNode node;
 	Set<DeficiencyNode> predSuccs, predSuccsNew;
-	for (Map.Entry<Deficiency,DeficiencyNode> entry 
+	for (Map.Entry<Deficiency, DeficiencyNode> entry 
 		 : newDeficiency2ordering.entrySet()) {
 	    node = entry.getValue();
-	    
+
 	    predSuccs = node.getPredecessors();
 	    predSuccsNew = new HashSet<DeficiencyNode>();
 	    for (DeficiencyNode pred : predSuccs) {
@@ -167,7 +168,7 @@ System.out.println("pred: "+ pred);
 	return newDeficiency2ordering;
     }
 
-    protected DeficiencyNode remove(Map<Deficiency,DeficiencyNode> def2ord,
+    protected DeficiencyNode remove(Map<Deficiency, DeficiencyNode> def2ord,
 				    Deficiency def) {
 	DeficiencyNode node = def2ord.remove(def);
 	if (node == null) {
@@ -186,7 +187,6 @@ System.out.println("pred: "+ pred);
 	}
 	return node;
     }
-
 
     /**
      * Returns whether the given set of deficiencies 
@@ -232,9 +232,9 @@ System.out.println("pred: "+ pred);
 
 
     public Type getInverse() {
-	Map<Deficiency,DeficiencyNode> invDeficiency2ordering = 
-	    new HashMap<Deficiency,DeficiencyNode>();
-	for (Map.Entry<Deficiency,DeficiencyNode> entry 
+	Map<Deficiency, DeficiencyNode> invDeficiency2ordering = 
+	    new HashMap<Deficiency, DeficiencyNode>();
+	for (Map.Entry<Deficiency, DeficiencyNode> entry 
 		 : this.deficiency2ordering.entrySet()) {
 	    invDeficiency2ordering.put(entry.getKey(),
 				       entry.getValue().getInverse());
@@ -250,8 +250,8 @@ System.out.println("pred: "+ pred);
 	return this.maxDefs;
     }
 
-    public void addAll(Map<Deficiency,DeficiencyNode> deficiency2ordering) {
-	for (Map.Entry<Deficiency,DeficiencyNode> entry 
+    public void addAll(Map<Deficiency, DeficiencyNode> deficiency2ordering) {
+	for (Map.Entry<Deficiency, DeficiencyNode> entry 
 		 : deficiency2ordering.entrySet()) {
 	    DeficiencyNode node = 
 		this.deficiency2ordering.get(entry.getKey());
@@ -261,9 +261,9 @@ System.out.println("pred: "+ pred);
 	    } else {
 		node = new DeficiencyNode(node);
 	    }
-	    
+
 	    node.addAll(entry.getValue());
-	    this.deficiency2ordering.put(entry.getKey(),node);
+	    this.deficiency2ordering.put(entry.getKey(), node);
 	}
 	initMMDefics();
     }
@@ -302,8 +302,8 @@ System.out.println("pred: "+ pred);
 
 
     public Type remove(Deficiency def) {
-	Map<Deficiency,DeficiencyNode> newDef2ord = copy();
-	remove(newDef2ord,def);
+	Map<Deficiency, DeficiencyNode> newDef2ord = copy();
+	remove(newDef2ord, def);
 	return new Type(newDef2ord);
     }
 
@@ -321,13 +321,13 @@ System.out.println("pred: "+ pred);
      */
     public Type removeAndAbove(Deficiency def) {
 	
-	Map<Deficiency,DeficiencyNode> newDef2ord = copy();
+	Map<Deficiency, DeficiencyNode> newDef2ord = copy();
 
 	Stack<Deficiency> defsToBeRemoved = new Stack<Deficiency>();
 	defsToBeRemoved.push(def);
 	while (!defsToBeRemoved.empty()) {
 	    def = defsToBeRemoved.pop();
-	    DeficiencyNode node = remove(newDef2ord,def);
+	    DeficiencyNode node = remove(newDef2ord, def);
 	    for (DeficiencyNode pred : node.getPredecessors()) {
 		defsToBeRemoved.push(pred.getDeficiency());
 	    }
@@ -362,7 +362,7 @@ System.out.println("pred: "+ pred);
 	DeficiencyNode node;
 	while (!toBeAdded.empty()) {
 	    node = toBeAdded.pop();
-	    
+
 	    result.add(node.getDeficiency());
 	    toBeAdded.addAll(node.getSuccessors());
 	}
@@ -382,7 +382,7 @@ System.out.println("pred: "+ pred);
 	}
 	// Here, the types coincide as types. 
 
-	for (Map.Entry<Deficiency,DeficiencyNode> entry 
+	for (Map.Entry<Deficiency, DeficiencyNode> entry 
 		 : this.deficiency2ordering.entrySet()) {
 	    if (!other.deficiency2ordering.get(entry.getKey())
 		.equals(entry.getValue())) {

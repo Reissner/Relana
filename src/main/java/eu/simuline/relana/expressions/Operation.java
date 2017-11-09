@@ -12,12 +12,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 /**
- * Operation.java
+ * Represents the operations as intersection, union, complement, 
+ * covariant and contravariant functors and maps. 
  *
  *
  * Created: Fri Apr 29 01:57:48 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class Operation {
@@ -60,10 +61,10 @@ public abstract class Operation {
 	 * class constants and initializer.                                 *
 	 * ---------------------------------------------------------------- */
 
-	private final static Map<String,BaseOps> KEY2OP;
+	private static final Map<String, BaseOps> KEY2OP;
 
 	static {
-	    KEY2OP = new HashMap<String,BaseOps>();
+	    KEY2OP = new HashMap<String, BaseOps>();
 	    KEY2OP.put(Intersection.toString(), Intersection);
 	    KEY2OP.put(Union       .toString(), Union       );
 	    KEY2OP.put(Complement  .toString(), Complement  );
@@ -73,7 +74,7 @@ public abstract class Operation {
 	 * fields.                                                          *
 	 * ---------------------------------------------------------------- */
 
-	protected Operation oper;
+	private Operation oper;
 
 	/* ---------------------------------------------------------------- *
 	 * methods.                                                          *
@@ -96,7 +97,7 @@ public abstract class Operation {
     /**
      * Defines the basic set theoretic intersection. 
      */
-    static class IntsOp extends Operation implements Eval {
+    static final class IntsOp extends Operation implements Eval {
 	//private Type type;
 	IntsOp() {
 	    //this.type = type;
@@ -109,6 +110,7 @@ public abstract class Operation {
 	boolean arity1() {
 	    return false;
 	}
+
 	public Type retType(Set<FormulaDecl> args) {
 	    Iterator<FormulaDecl> iter = args.iterator();
 	    if (!iter.hasNext()) {
@@ -131,6 +133,7 @@ public abstract class Operation {
 	    }
 	    return proto;
 	}
+
 	public Set<Deficiency> eval(Set<Set<Deficiency>> param) {
 	    Iterator<Set<Deficiency>> iter = param.iterator();
 	    assert iter.hasNext();
@@ -140,9 +143,11 @@ public abstract class Operation {
 	    }
 	    return result;
 	}
+
 	public Eval getEval(Type type) {
 	    return this;
 	}
+
 	public Operation getOperation() {
 	    return this;
 	}
@@ -159,7 +164,7 @@ public abstract class Operation {
     /**
      * Defines the basic set theoretic union complement. 
      */
-    static class UnionOp extends Operation implements Eval {
+    static final class UnionOp extends Operation implements Eval {
 	boolean arity1() {
 	    return false;
 	}
@@ -210,7 +215,7 @@ public abstract class Operation {
     /**
      * Defines the basic set theoretic complement. 
      */
-    static class CompOp extends Operation {
+    static final class CompOp extends Operation {
 	boolean arity1() {
 	    return true;
 	}
@@ -266,7 +271,7 @@ public abstract class Operation {
 	    public String twistIsotone() {
 		return "twist-isotone";
 	    }
-	    Set<Deficiency> eval(DeficiencyMap map,Set<Deficiency> defs) {
+	    Set<Deficiency> eval(DeficiencyMap map, Set<Deficiency> defs) {
 		return map.cov(defs);
 	    }
 	    Type source(DeficiencyMap map) {
@@ -286,7 +291,7 @@ public abstract class Operation {
 	    public String twistIsotone() {
 		return "isotone";
 	    }
-	    Set<Deficiency> eval(DeficiencyMap map,Set<Deficiency> defs) {
+	    Set<Deficiency> eval(DeficiencyMap map, Set<Deficiency> defs) {
 		return map.cont(defs);
 	    }
 	    Type source(DeficiencyMap map) {
@@ -304,15 +309,15 @@ public abstract class Operation {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	abstract public boolean isAllowed(DeficiencyMap map);
-	abstract public String twistIsotone();
+	public abstract boolean isAllowed(DeficiencyMap map);
+	public abstract String twistIsotone();
 	abstract Type source(DeficiencyMap map);
 	abstract Type target(DeficiencyMap map);
 
 	Set<Deficiency> eval(Set<Set<Deficiency>> param,
 			     DeficiencyMap map) {
 	    assert param.size() == 1;
-	    return eval(map,param.iterator().next());
+	    return eval(map, param.iterator().next());
 	}
 	abstract Set<Deficiency> eval(DeficiencyMap map,
 				      Set<Deficiency> defs);
@@ -330,10 +335,10 @@ public abstract class Operation {
 	//abstract Operation getOperation(DeficiencyMap map);
 	abstract String getSymbol();
 
-	private final static Map<String,Operation.Functor> ACC2FUNCT;
+	private static final Map<String, Operation.Functor> ACC2FUNCT;
 
 	static { 
-	    ACC2FUNCT = new HashMap<String,Operation.Functor>();
+	    ACC2FUNCT = new HashMap<String, Operation.Functor>();
 	    ACC2FUNCT.put(Operation.Functor.Covariant    .getSymbol(),
 			  Operation.Functor.Covariant);
 	    ACC2FUNCT.put(Operation.Functor.Contravariant.getSymbol(),
@@ -343,10 +348,9 @@ public abstract class Operation {
 	public static Functor covCont(String acc) {
 	    return ACC2FUNCT.get(acc);
 	}
-
     } // enum Functor 
-    
-    public static class Maps extends Operation implements Operation.Eval {
+
+    public final static class Maps extends Operation implements Operation.Eval {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -390,10 +394,10 @@ public abstract class Operation {
 	    return true;
 	}
 	public Type retType(Set<FormulaDecl> args) {
-	    return this.funct.retType(args,this);
+	    return this.funct.retType(args, this);
 	}
 	public Set<Deficiency> eval(Set<Set<Deficiency>> param) {
-	    return this.funct.eval(param,this.map);
+	    return this.funct.eval(param, this.map);
 	}
 
 	public Operation.Eval getEval(Type type) {
@@ -420,12 +424,14 @@ public abstract class Operation {
 	}
     } // class Maps
 
-
+    /**
+     *
+     */
     public interface Eval {
 	// length == 1 if arity1() 
 	Set<Deficiency> eval(Set<Set<Deficiency>> param);
 	Operation getOperation();
-    } // class Eval 
+    } // interface Eval 
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -458,7 +464,7 @@ public abstract class Operation {
 					 boolean isInverted,
 					 DeficiencyMap map, 
 					 Functor funct) {
-	return new Maps(funName,isInverted,map,funct);
+	return new Maps(funName, isInverted, map, funct);
     }
 
 } // Operation

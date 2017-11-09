@@ -8,12 +8,15 @@ import java.util.Set;
 import java.util.HashSet;
 
 /**
- * Formula
+ * Represents a formula which is either a constant, a variable 
+ * or composed via an operator. 
+ * In contrast to a formula declaration represented by {@link FormulaDecl}, 
+ * a formula is within the context of an {@link SInstance}. 
  *
  *
  * Created: Fri Apr 29 10:56:37 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class Formula {
@@ -22,11 +25,13 @@ public abstract class Formula {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    public final static Formula EMPTY_EXPRESSION = 
-    Const.create(new HashSet<Deficiency>(),
-		 Type.getEmpty());
+    public static final Formula EMPTY_EXPRESSION = 
+	Const.create(new HashSet<Deficiency>(), Type.getEmpty());
 
-    public final static class Const extends Formula {
+    /**
+     * Represents a constant interpreted as atomic formula. 
+     */
+    public static final class Const extends Formula {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -39,13 +44,14 @@ public abstract class Formula {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	public Const(Set<Deficiency> val,Type type) {
+	@SuppressWarnings("checkstyle:MethodParamPad")
+	public Const(Set<Deficiency> val, Type type) {
 	    this.val  = val;
 	    this.type = type;
 	    if (this.type != null && !this.type.isValid(val)) {
 		throw new IllegalArgumentException
-		    ("invalid set " +this.val + 
-		     " for type " + this.type + ". ");
+		    ("invalid set " + this.val 
+		     + " for type " + this.type + ". ");
 	    }
 
 	}
@@ -54,8 +60,8 @@ public abstract class Formula {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	private static Const create(Set<Deficiency> val,Type type) {
-	    return new Const(val,type);
+	private static Const create(Set<Deficiency> val, Type type) {
+	    return new Const(val, type);
 	}
 
 	public Formula remove(SInstance serv, Deficiency def) {
@@ -83,24 +89,27 @@ public abstract class Formula {
 	    return this.val;
 	}
 	public String toString() {
-	    return "<>{"+this.val+"}";
+	    return "<>{" + this.val + "}";
 	}
     } // class Const 
 
-    public final static class Var extends Formula {
+    /**
+     * Represents a variable interpreted as atomic formula. 
+     */
+    public static final class Var extends Formula {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
 	 * ---------------------------------------------------------------- */
 
 	private final SInstance varS;
-	String name;
+	private String name;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	public Var(SInstance varS,String name) {
+	public Var(SInstance varS, String name) {
 	    this.varS = varS;
 	    this.name = name;
 	}
@@ -152,7 +161,10 @@ public abstract class Formula {
 	}
     } // class Var 
 
-    public final static class Comp extends Formula {
+    /**
+     * Represents a compound formula, i.e. one defined via an operation. 
+     */
+    public static final class Comp extends Formula {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -202,7 +214,7 @@ public abstract class Formula {
 	 * ---------------------------------------------------------------- */
 
 	private static Comp create(Operation.Eval oper, 
-					 Set<Formula> args) {
+				   Set<Formula> args) {
 	    return new Comp(oper, args);
 	}
 
@@ -211,7 +223,7 @@ public abstract class Formula {
 	    for (Formula form : args) {
 		newArgs.add(form.remove(serv, def));
 	    }
-	    return getFormula(this.oper,newArgs);
+	    return getFormula(this.oper, newArgs);
 	}
 
 	public Formula add(SInstance serv, Deficiency def) {
@@ -219,7 +231,7 @@ public abstract class Formula {
 	    for (Formula form : args) {
 		newArgs.add(form.add(serv, def));
 	    }
-	    return getFormula(this.oper,newArgs);
+	    return getFormula(this.oper, newArgs);
 	}
 
 	public Formula substitute(SInstance serv, Formula form) {
@@ -227,7 +239,7 @@ public abstract class Formula {
 	    for (Formula arg : this.args) {
 		newArgs.add(arg.substitute(serv, form));
 	    }
-	    return getFormula(this.oper,newArgs);
+	    return getFormula(this.oper, newArgs);
 	}
 
 	public Set<SInstance> getVars() {
@@ -252,7 +264,10 @@ public abstract class Formula {
 
 	public String toString() {
 	    StringBuffer res = new StringBuffer();
-	    res.append("" + this.oper + "(" + this.args + ")");
+	    res.append(this.oper);
+	    res.append("(");
+	    res.append(this.args);
+	    res.append(")");
 	    return res.toString();
 	}
     } // class Comp 
@@ -271,9 +286,9 @@ public abstract class Formula {
     }
 
     public static Formula getFormula(Operation.Eval oper, Set<Formula> args) {
-	Formula res = Comp.create(oper,args);
+	Formula res = Comp.create(oper, args);
 	return (res.getMin().size() == res.getMax().size())
-	    ? Const.create(res.getMin(),null)
+	    ? Const.create(res.getMin(), null)
 	    : res;
     }
 
