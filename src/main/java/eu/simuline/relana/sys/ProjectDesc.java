@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * Created: Thu Apr 28 21:52:33 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 
@@ -50,5 +50,4 @@ public interface ProjectDesc {
      * @return a <code>Set</code> value
      */
     Set<InstanceLocator> getOutputEffects();
-    
-}// ProjectDesc
+} // ProjectDesc

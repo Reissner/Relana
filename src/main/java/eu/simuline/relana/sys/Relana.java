@@ -50,11 +50,10 @@ import java.util.Arrays;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public abstract class Relana {// NOPMD 
+public abstract class Relana { // NOPMD 
     public Relana() {
 	// is empty. 
     } // Relana constructor
-
 
     public static void main(String[] args) 
 	throws MalformedURLException, IOException, SAXException, 
@@ -76,12 +75,12 @@ public abstract class Relana {// NOPMD
 	projectParser.setContentHandler(project);
 	projectParser.setExceptionHandler(project);
 	projectParser.parse(new BufferedReader(projectStr));
-System.out.println("project: "+project);
+System.out.println("project: " + project);
 
 	// load class and make sure that no input-effects occur. 
 	CClassLoader loader = new CClassLoader(project.getLibrary());
 	CClass cClass = loader.loadCClass(project.getBaseClass());
-System.out.println("cClass: "+cClass);
+System.out.println("cClass: " + cClass);
 	Set<CClass.SClassDecl> decls = cClass.getEffectsRec();
 	//InstanceLocator loc;
 	for (CClass.SClassDecl decl : decls) {
@@ -93,11 +92,11 @@ System.out.println("cClass: "+cClass);
 
 	// instantiate and get all output-variables under observation. 
 	FlatCInstance flatCInstance = cClass.getInstance().flatten();
-System.out.println("cInstance: "+flatCInstance);
+System.out.println("cInstance: " + flatCInstance);
 
 	// verify whether all output effects are indeed declared as output 
 	Set<InstanceLocator> outServ = project.getOutputEffects();
-System.out.println("outServ: "+outServ);
+System.out.println("outServ: " + outServ);
 	Map<List<String>,SInstance> observables = 
 	    new HashMap<List<String>,SInstance>();
 	for (InstanceLocator loc : outServ) {
@@ -114,7 +113,7 @@ System.out.println("outServ: "+outServ);
 	
 	// Here, observables contains all stuff under consideration. 
 
-System.out.println("observables: "+observables);
+System.out.println("observables: " + observables);
 System.out.println("\nprobabilities: ");
 
 	for (List<String> obs : observables.keySet()) {

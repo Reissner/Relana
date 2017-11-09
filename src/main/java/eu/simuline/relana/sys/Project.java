@@ -30,7 +30,7 @@ import org.xml.sax.Attributes;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class Project 
+public final class Project 
     implements ProjectDesc, ContentHandler, ParseExceptionHandler {
 
     /* --------------------------------------------------------------------- *
@@ -49,11 +49,10 @@ public class Project
 	// InstanceLocator overwrites hashCode and is immutable 
 	this.outputEffects = new HashSet<InstanceLocator>();
     } // Project constructor
-    
+
     /* --------------------------------------------------------------------- *
      * getter methods implementing ProjectDesc                               *
      * --------------------------------------------------------------------- */
-
  
 // Implementation of eu.simuline.relana.sys.ProjectDesc
 
@@ -160,7 +159,7 @@ public class Project
 
     public void foundMultipleAttribute(String attrName,
 				       Object oldAttrValue) {
-	StringBuffer res = new StringBuffer(70);
+	StringBuilder res = new StringBuilder();
 	res.append("Found second value for attribute \"");
 	res.append(attrName);
 	res.append("\"; overwritten ");
@@ -193,8 +192,7 @@ public class Project
      * --------------------------------------------------------------------- */
 
     public String toString() {
-	StringBuffer res = new StringBuffer(50);
-
+	StringBuilder res = new StringBuilder();
 	res.append("\n<Rml library=\"");
 	res.append(getLibrary().toString());
 	res.append("\" baseClass=\"");
@@ -202,6 +200,4 @@ public class Project
 	res.append("\">\n</Rml>\n");
 	return res.toString();
     }
-
-  
 } // Project
