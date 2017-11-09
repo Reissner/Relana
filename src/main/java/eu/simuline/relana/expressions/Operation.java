@@ -129,7 +129,7 @@ public abstract class Operation {
 		    throw new IllegalArgumentException
 			("Expected all the same types; found " + args + 
 			 " with types " + argTypes + ". ");
-		}	
+		}
 	    }
 	    return proto;
 	}
@@ -165,9 +165,11 @@ public abstract class Operation {
      * Defines the basic set theoretic union complement. 
      */
     static final class UnionOp extends Operation implements Eval {
+
 	boolean arity1() {
 	    return false;
 	}
+
 	public Type retType(Set<FormulaDecl> args) {
 	    Iterator<FormulaDecl> iter = args.iterator();
 	    if (!iter.hasNext()) {
@@ -186,10 +188,11 @@ public abstract class Operation {
 		    throw new IllegalArgumentException
 			("Expected all the same types; found " + args + 
 			 " with types " + argTypes + ". ");
-		}	
+		}
 	    }
 	    return proto;
 	}
+
 	public Set<Deficiency> eval(Set<Set<Deficiency>> param) {
 	    Set<Deficiency> result = new HashSet<Deficiency>();
 	    for (Set<Deficiency> set : param) {
@@ -197,9 +200,11 @@ public abstract class Operation {
 	    }
 	    return result;
 	}
+
 	public Eval getEval(Type type) {
 	    return this;
 	}
+
 	public Operation getOperation() {
 	    return this;
 	}
@@ -350,7 +355,7 @@ public abstract class Operation {
 	}
     } // enum Functor 
 
-    public final static class Maps extends Operation implements Operation.Eval {
+    public static final class Maps extends Operation implements Operation.Eval {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
