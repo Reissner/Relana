@@ -35,12 +35,12 @@ public class CInstance {
     /**
      * Maps the names of the effects to their instances. 
      */
-    private final Map<String,SInstance> effects;
+    private final Map<String, SInstance> effects;
 
     /**
      * Maps the names of the subcomponents to their instances. 
      */
-    private final Map<String,CInstance> components;
+    private final Map<String, CInstance> components;
 
 
     /* -------------------------------------------------------------------- *
@@ -53,8 +53,8 @@ public class CInstance {
      * (only for class {@link CClass#COMPONENT}). 
      */
     public CInstance() {
-	this.effects   = new TreeMap<String,SInstance>();
-	this.components = new TreeMap<String,CInstance>();
+	this.effects   = new TreeMap<String, SInstance>();
+	this.components = new TreeMap<String, CInstance>();
     } // CInstance constructor
 
     /* -------------------------------------------------------------------- *
@@ -69,8 +69,8 @@ public class CInstance {
      * @param sInst 
      *    an <code>SInstance</code> saved under the given name. 
      */
-    void addEffect(String name,SInstance sInst) {
-	this.effects.put(name,sInst);
+    void addEffect(String name, SInstance sInst) {
+	this.effects.put(name, sInst);
     }
 
     /**
@@ -81,11 +81,11 @@ public class CInstance {
      * @param cInst 
      *    an <code>SInstance</code> saved under the given name. 
      */
-    void addComponent(String name,CInstance cInst) {
-	this.components.put(name,cInst);
+    void addComponent(String name, CInstance cInst) {
+	this.components.put(name, cInst);
     }
 
-    Map<String,SInstance> getEffects() {
+    Map<String, SInstance> getEffects() {
 	return this.effects;
     }
 
@@ -102,31 +102,31 @@ public class CInstance {
 
 
     public FlatCInstance flatten() {
-	Map<List<String>,SInstance> longName2effect = 
-	    new TreeMap<List<String>,SInstance>(FlatCInstance.PATH_CMP);
+	Map<List<String>, SInstance> longName2effect = 
+	    new TreeMap<List<String>, SInstance>(FlatCInstance.PATH_CMP);
 
 	// flatten subcomponents 
 	String prefix;
 	List<String> longName;
-	Map<List<String>,SInstance> effects;
-	for (Map.Entry<String,CInstance> cEntry 
+	Map<List<String>, SInstance> effects;
+	for (Map.Entry<String, CInstance> cEntry 
 		 : this.components.entrySet()) {
 	    effects = cEntry.getValue().flatten().getEffects();
 	    prefix = cEntry.getKey();
-	    for (Map.Entry<List<String>,SInstance> sEntry 
+	    for (Map.Entry<List<String>, SInstance> sEntry 
 		     : effects.entrySet()) {
 		
 		    longName = new ArrayList<String>(sEntry.getKey());
-		    longName.add(0,prefix);
-		    longName2effect.put(longName,sEntry.getValue());
+		    longName.add(0, prefix);
+		    longName2effect.put(longName, sEntry.getValue());
 	    }
 	}
 	
 	// add top-level effects 
-	for (Map.Entry<String,SInstance> sEntry : this.effects.entrySet()) {
+	for (Map.Entry<String, SInstance> sEntry : this.effects.entrySet()) {
 	    longName = new ArrayList<String>();
 	    longName.add(sEntry.getKey());
-	    longName2effect.put(longName,sEntry.getValue());
+	    longName2effect.put(longName, sEntry.getValue());
 	}
 	
 	return new FlatCInstance(longName2effect);

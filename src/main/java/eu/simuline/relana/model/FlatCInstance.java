@@ -35,8 +35,8 @@ public class FlatCInstance {
 
     final static Comparator<List<String>> PATH_CMP = 
     new Comparator<List<String>>() {
-	    public int compare(List<String> list1,List<String> list2) {
-		for (int i = 0; i < Math.min(list1.size(),list2.size()); i++) {
+	    public int compare(List<String> list1, List<String> list2) {
+		for (int i = 0; i < Math.min(list1.size(), list2.size()); i++) {
 		    int res = list1.get(i).compareTo(list2.get(i));
 		    if (res != 0) {
 			return res;
@@ -54,13 +54,13 @@ public class FlatCInstance {
     /**
      * Maps the names of the effects to their instances. 
      */
-    private final Map<List<String>,SInstance> effects;
+    private final Map<List<String>, SInstance> effects;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
-    public FlatCInstance(Map<List<String>,SInstance> effects) {
+    public FlatCInstance(Map<List<String>, SInstance> effects) {
 	this.effects = effects;
     } // FlatCInstance constructor
 
@@ -68,7 +68,7 @@ public class FlatCInstance {
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
-    Map<List<String>,SInstance> getEffects() {
+    Map<List<String>, SInstance> getEffects() {
 	return this.effects;
     }
 
@@ -104,8 +104,8 @@ public class FlatCInstance {
 	    return substitute(serv, Formula.EMPTY_EXPRESSION);
 	}
 
-	Formula newVar = new Formula.Var(newServ,serv.name);
-	return substitute(serv,newVar);
+	Formula newVar = new Formula.Var(newServ, serv.name);
+	return substitute(serv, newVar);
     }
 
     /**
@@ -130,23 +130,23 @@ public class FlatCInstance {
 	Set<Deficiency> defSet = 
 	    new HashSet<Deficiency>();
 	defSet.add(def);
-	Formula newConst = new Formula.Const(defSet,serv.getType());
+	Formula newConst = new Formula.Const(defSet, serv.getType());
 	assert serv.getType().isValid(defSet);
 
 	if (serv.getType().asSet().size() == 1) {
 	    // def is the only remaining effect 
 	    // and removing it implies removing the whole effect. 
-	    return substitute(serv,newConst);
+	    return substitute(serv, newConst);
 	}
 	// Here, serv may assume more than one non-empty set. 
 
-	// replace formula "serv" by formula "|({def},newServ)", 
+	// replace formula "serv" by formula "|({def}, newServ)", 
 	// where newServ evolves out of serv by changing the type: 
 	// removing def and all deficiencies above. 
 
 	// newServ is the effect that occurs by REMOVING def 
 	SInstance newServ = serv.add(def);
-	Formula newVar = new Formula.Var(newServ,serv.name);
+	Formula newVar = new Formula.Var(newServ, serv.name);
 	Set<Formula> args = new HashSet<Formula>();
 	args.add(newConst);
 	args.add(newVar);
@@ -154,7 +154,7 @@ public class FlatCInstance {
 	    getFormula(Operation.getOperation(Operation.BaseOps.Union)
 		       .getEval(null), args);
 	
-	return substitute(serv,newComp);
+	return substitute(serv, newComp);
     }
 
     /**
@@ -172,12 +172,12 @@ public class FlatCInstance {
      *    in all effects using {@link SInstance#substitute}. 
      */
     FlatCInstance substitute(SInstance serv, Formula form) {
-	Map<List<String>,SInstance> effects = 
-	    new TreeMap<List<String>,SInstance>(PATH_CMP);
-	for (Map.Entry<List<String>,SInstance> entry 
+	Map<List<String>, SInstance> effects = 
+	    new TreeMap<List<String>, SInstance>(PATH_CMP);
+	for (Map.Entry<List<String>, SInstance> entry 
 		 : this.effects.entrySet()) {
 	    effects.put(entry.getKey(),
-			 entry.getValue().substitute(serv,form));
+			 entry.getValue().substitute(serv, form));
 	}
 	
 	return new FlatCInstance(effects);
@@ -248,7 +248,7 @@ public class FlatCInstance {
 		    assert !minDefs.isEmpty();
 		    Iterator<Deficiency> iter = minDefs.iterator();
 		    //System.out.println("+form: "+form);
-		    return new InstDef(var,iter.next());
+		    return new InstDef(var, iter.next());
 		}
 	    }
 	    // found no variables with probability distribution. 
@@ -258,7 +258,7 @@ public class FlatCInstance {
 	    Formula varForm;
 	    for (SInstance var: vars) {
 		varForm = var.getFormula();
-		form = form.substitute(var,varForm);
+		form = form.substitute(var, varForm);
 	    }
 	    serv.setFormula(form);
 	}
@@ -306,8 +306,8 @@ public class FlatCInstance {
 	// create copies of this FlatCInstance 
 	// by assuming that def occurs within serv 
 	// and that it does not occur, respectively. 
-	FlatCInstance cInstP = add   (instDef.serv,instDef.def);
-	FlatCInstance cInstM = remove(instDef.serv,instDef.def);
+	FlatCInstance cInstP = add   (instDef.serv, instDef.def);
+	FlatCInstance cInstM = remove(instDef.serv, instDef.def);
 //System.out.println("cInstP: "+cInstP);
 //System.out.println("cInstM: "+cInstM);
 //System.out.println("this: "+this);

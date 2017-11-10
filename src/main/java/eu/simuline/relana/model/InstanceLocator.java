@@ -41,12 +41,11 @@ public final class InstanceLocator {
 		throw new IllegalArgumentException
 		    ("Found empty name in locator: " + path + ". ");
 	    }
-	    
 	}
 	
 	this.path = Collections.unmodifiableList(path);
     } // InstanceLocator constructor
-    
+
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
@@ -57,7 +56,7 @@ public final class InstanceLocator {
 
     public static InstanceLocator getLocator(String path) {
 	return getLocator
-	    (new ArrayList<String>(Arrays.asList(path.split("[.]",-1))));
+	    (new ArrayList<String>(Arrays.asList(path.split("[.]", -1))));
     }
 
     /**
@@ -71,7 +70,7 @@ public final class InstanceLocator {
 	if (!(other instanceof InstanceLocator)) {
 	    return false;
 	}
-	return this.path.equals(((InstanceLocator)other).getPath());
+	return this.path.equals(((InstanceLocator) other).getPath());
     }
 
     // immutable to allow InstanceLocators as elements of hashsets. 

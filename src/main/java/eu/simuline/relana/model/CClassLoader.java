@@ -47,7 +47,7 @@ public class CClassLoader {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	Occurrence(ClassLocator loc,String component) {
+	Occurrence(ClassLocator loc, String component) {
 	    this.loc = loc;
 	    this.component = component;
 	}
@@ -123,7 +123,7 @@ public class CClassLoader {
 	    return false;
 	}
 
-	public CClassLink setComponent(String name,CClass cClass) {
+	public CClassLink setComponent(String name, CClass cClass) {
 	    return null;
 	}
 
@@ -149,7 +149,7 @@ public class CClassLoader {
 
     private final URL library;
 
-    private final Map<ClassLocator,CClassLink> name2class;
+    private final Map<ClassLocator, CClassLink> name2class;
 
     private final Stack<ClassLocator> unresolvedClasses;
 
@@ -162,8 +162,8 @@ public class CClassLoader {
     public CClassLoader(URL library) {
 	this.library = library;
 
-	this.name2class = new HashMap<ClassLocator,CClassLink>();
-	this.name2class.put(new ClassLocator("Component",Package.BUILD_IN),
+	this.name2class = new HashMap<ClassLocator, CClassLink>();
+	this.name2class.put(new ClassLocator("Component", Package.BUILD_IN),
 			    CClass.COMPONENT);
 	this.unresolvedClasses = new Stack<ClassLocator>();
 
@@ -175,13 +175,13 @@ public class CClassLoader {
      * -------------------------------------------------------------------- */
 
 
-    public SClass loadSClass(ClassLocator loc,Package pkg) 
+    public SClass loadSClass(ClassLocator loc, Package pkg) 
 	throws IOException, RecognitionException {
-	return this.scLoader.loadSClass(loc,pkg);
+	return this.scLoader.loadSClass(loc, pkg);
     }
 
     // **** copy from SClassParser **** used for superclass only. 
-    public CClass loadCClass(ClassLocator loc,Package pkg) 
+    public CClass loadCClass(ClassLocator loc, Package pkg) 
 	throws IOException, RecognitionException {
 	URL url = null;
 	List<String> pkgPath = pkg.getPath();
@@ -205,7 +205,7 @@ public class CClassLoader {
 	    try {
 		url = new URL(this.library + 
 			      currLoc.getPackage().getPathName()
-			      .replace('.','/') + 
+			      .replace('.', '/') + 
 			      currLoc.getName() + ".ccl");
 		File clsDoc = new File(url.toURI());
 		if (clsDoc.exists()) {
@@ -226,7 +226,7 @@ public class CClassLoader {
 	throws IOException, RecognitionException {
 //System.out.println("loadCClass(");
 
-	resolveLocInOcc(loc,null);//!!!!!!!
+	resolveLocInOcc(loc, null);//!!!!!!!
 	while (!this.unresolvedClasses.empty()) {
 	    ClassLocator loc2 = this.unresolvedClasses.pop();
 //System.out.println("-->loc2: "+loc2);
@@ -234,7 +234,7 @@ public class CClassLoader {
 
 	    InputStream str = new URL(this.library + 
 				      loc2.getPackage().getPathName()
-				      .replace('.','/')  + 
+				      .replace('.', '/')  + 
 				      loc2.getName() + ".ccl")
 		.openStream();
 //System.out.println("file: "+path);
@@ -245,17 +245,17 @@ public class CClassLoader {
 //System.out.println("XXthis.unresolvedClasses: "+ this.unresolvedClasses);
 
 	    ClassResolver res = (ClassResolver)
-		this.name2class.put(loc2,cClass);
+		this.name2class.put(loc2, cClass);
 	    for (Occurrence occ : res.resolvationPoints()) {
 		this.name2class.get(occ.getLoc())
-		    .setComponent(occ.compName(),cClass);
+		    .setComponent(occ.compName(), cClass);
 	    }
 
 //System.out.println("XX2this.unresolvedClasses: "+ this.unresolvedClasses);
 	}
 	// Here, all links are resolved. 
 //System.out.println("XX3this.unresolvedClasses: "+ this.unresolvedClasses);
-	CClass cClass = (CClass)resolveLocInOcc(loc,null);
+	CClass cClass = (CClass)resolveLocInOcc(loc, null);
 	cClass.verify();
 	return cClass;
     }
@@ -263,7 +263,7 @@ public class CClassLoader {
     public CClassLink resolveLocInOcc(ClassLocator toBeResolved, 
 				      ClassLocator loc,
 				      String comp) {
-	return  resolveLocInOcc(toBeResolved,new Occurrence(loc,comp));
+	return  resolveLocInOcc(toBeResolved, new Occurrence(loc, comp));
     }
 
     private CClassLink resolveLocInOcc(ClassLocator loc, Occurrence occ) {
@@ -276,7 +276,7 @@ public class CClassLoader {
 	    resolvation = new ClassResolver(loc);
 	    this.unresolvedClasses.push(loc);
 //System.out.println("this.unresolvedClasses: "+ this.unresolvedClasses);
-	    this.name2class.put(loc,resolvation);
+	    this.name2class.put(loc, resolvation);
 	    // Here, it is as if resovation were not null. 
 	}
 

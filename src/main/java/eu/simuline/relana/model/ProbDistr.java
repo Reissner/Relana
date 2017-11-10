@@ -45,7 +45,7 @@ public class ProbDistr {
 	    String andOr() {
 		return "AND";
 	    }
-	    String condEventName(String event,SortedSet<String> conds) {
+	    String condEventName(String event, SortedSet<String> conds) {
 		return neg() + event + "|" + andOr() + conds;
 	    }
 	    String neg() {
@@ -66,7 +66,7 @@ public class ProbDistr {
 	    String andOr() {
 		return "OR";
 	    }
-	    String condEventName(String event,SortedSet<String> conds) {
+	    String condEventName(String event, SortedSet<String> conds) {
 		return andOr() + conds + "|" + neg() + event;
 	    }
 	    String neg() {
@@ -99,13 +99,13 @@ public class ProbDistr {
 	 * Maps a deficiency to essentially a set of deficiencies 
 	 * it depends on. 
 	 */
-	private final Map<Deficiency,DeficiencySetNode> extOrdering;
+	private final Map<Deficiency, DeficiencySetNode> extOrdering;
 
 	/**
 	 * Maps a deficiency which is either minimal or conditional 
 	 * to its probability. 
 	 */
-	private final Map<Deficiency,BigDecimal> def2prob;
+	private final Map<Deficiency, BigDecimal> def2prob;
 
 	/**
 	 * The <code>Deficiency</code>s in the key set of {@link #def2prob} 
@@ -123,9 +123,9 @@ public class ProbDistr {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	Validator(Map<Deficiency,BigDecimal> def2prob) {
-	    this.extOrdering = new HashMap<Deficiency,DeficiencySetNode>();
-	    this.def2prob = new HashMap<Deficiency,BigDecimal>(def2prob);
+	Validator(Map<Deficiency, BigDecimal> def2prob) {
+	    this.extOrdering = new HashMap<Deficiency, DeficiencySetNode>();
+	    this.def2prob = new HashMap<Deficiency, BigDecimal>(def2prob);
 	    this.invalids = new HashSet<Deficiency>();
 	    this.degenerates = new HashSet<Deficiency>();
 	}
@@ -134,8 +134,8 @@ public class ProbDistr {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	void put(Deficiency def,BigDecimal prob) {
-	    this.def2prob.put(def,prob);
+	void put(Deficiency def, BigDecimal prob) {
+	    this.def2prob.put(def, prob);
 	    int cmp = prob.compareTo(BigDecimal.ONE);
 	    if (cmp == 0) {
 		this.degenerates.add(def);
@@ -145,8 +145,8 @@ public class ProbDistr {
 	    }
 	}
 
-	void put(Deficiency def,DeficiencySetNode dsn) {
-	    this.extOrdering.put(def,dsn);
+	void put(Deficiency def, DeficiencySetNode dsn) {
+	    this.extOrdering.put(def, dsn);
 	}
 
 	DeficiencySetNode get(Deficiency def) {
@@ -161,17 +161,17 @@ public class ProbDistr {
 	    return !this.degenerates.isEmpty();
 	}
 
-	Map<Deficiency,BigDecimal> error() {
+	Map<Deficiency, BigDecimal> error() {
 	    return warningError(this.invalids);
 	}
-	Map<Deficiency,BigDecimal> warning() {
+	Map<Deficiency, BigDecimal> warning() {
 	    return warningError(this.degenerates);
 	}
-	Map<Deficiency,BigDecimal> warningError(Set<Deficiency> invOrDeg) {
-	    Map<Deficiency,BigDecimal> def2prob = 
-		new HashMap<Deficiency,BigDecimal>();
+	Map<Deficiency, BigDecimal> warningError(Set<Deficiency> invOrDeg) {
+	    Map<Deficiency, BigDecimal> def2prob = 
+		new HashMap<Deficiency, BigDecimal>();
 	    for (Deficiency def : invOrDeg) {
-		def2prob.put(def,this.def2prob.get(def));
+		def2prob.put(def, this.def2prob.get(def));
 	    }
 	    
 	    return def2prob;
@@ -219,16 +219,16 @@ public class ProbDistr {
      */
     private Type type;
 
-    private Map<Deficiency,BigDecimal> def2prob;
+    private Map<Deficiency, BigDecimal> def2prob;
 
-    private Map<Inverter,Validator> validators;
+    private Map<Inverter, Validator> validators;
 
     /* ---------------------------------------------------------------- *
      * constructors.                                                    *
      * ---------------------------------------------------------------- */
 
     public ProbDistr(Type type,
-		     Map<Deficiency,BigDecimal> def2prob) {
+		     Map<Deficiency, BigDecimal> def2prob) {
 
 	checkIn01(def2prob);
 
@@ -244,21 +244,21 @@ public class ProbDistr {
     // also, keys of old2ProbDistr and of def2prob are disjoint 
     // finally, union of keys are exactly deficiencies of type sClass. 
     public ProbDistr(Type type,
-		     Map<Deficiency,ProbDistr> old2ProbDistr,
-		     Map<Deficiency,BigDecimal> def2prob) {
-	this(type,def2prob);
+		     Map<Deficiency, ProbDistr> old2ProbDistr,
+		     Map<Deficiency, BigDecimal> def2prob) {
+	this(type, def2prob);
 	for (ProbDistr distr : old2ProbDistr.values()) {
 	    this.def2prob.putAll(distr.def2prob);
 	}
     }
 
 
-    private static void checkIn01(Map<Deficiency,BigDecimal> def2prob) {
+    private static void checkIn01(Map<Deficiency, BigDecimal> def2prob) {
 	for (BigDecimal prob : def2prob.values()) {
 	    if (prob.compareTo(BigDecimal.ONE ) >= 0 || 
 		prob.compareTo(BigDecimal.ZERO) <= 0) {
 		throw new IllegalArgumentException
-		("Expected probability in (0,1) but found " + prob + ". ");
+		("Expected probability in (0, 1) but found " + prob + ". ");
 	    }
 	}
     }
@@ -300,7 +300,7 @@ public class ProbDistr {
 		// deep copy 
 		DeficiencyNode cpNode = 
 		    new DeficiencyNode(node.getDeficiency());
-		inv.addSuccsPreds(node,cpNode);
+		inv.addSuccsPreds(node, cpNode);
 		//cpNode.addSuccessors(node.getSuccessors());
 		nMinNodes.add(cpNode);
 	    }
@@ -309,10 +309,10 @@ public class ProbDistr {
 	// with(out) successors to be processed 
 
 	// copy the probabilities of the minimal deficiencies 
-	Map<Deficiency,BigDecimal> minDef2prob = 
-	    new HashMap<Deficiency,BigDecimal>();
+	Map<Deficiency, BigDecimal> minDef2prob = 
+	    new HashMap<Deficiency, BigDecimal>();
 	for (Deficiency minDef : minDefs) {
-	    minDef2prob.put(minDef,inv.filterProb(getProb(minDef)));
+	    minDef2prob.put(minDef, inv.filterProb(getProb(minDef)));
 	}
 	    
 	return new Validator(minDef2prob);
@@ -341,7 +341,7 @@ public class ProbDistr {
 	// in the very beginning, this includes all but the "minimal" node. 
 	Set<DeficiencyNode> nMinNodes = new HashSet<DeficiencyNode>();
 	// the resulting map 
-	Validator val = init(inv,minDefs,nMinNodes);
+	Validator val = init(inv, minDefs, nMinNodes);
 	// Here, all variables above are initialized. 
 
 	while (!minDefs.isEmpty()) {
@@ -356,8 +356,8 @@ public class ProbDistr {
 	    Set<Deficiency> predDefs = DeficiencyNode.unwrap
 		(inv.getSuccsPreds(node));
 
-	    // between node n and its successors s1,...,sn 
-	    // we have to insert &(s1,...,sn) and n|&(s1,...,sn) 
+	    // between node n and its successors s1, ..., sn 
+	    // we have to insert &(s1, ..., sn) and n|&(s1, ..., sn) 
 
 	    // of the elements in predDefs get the names and 
 	    // union subseqDefs of their representations as sets. 
@@ -385,16 +385,16 @@ public class ProbDistr {
 					    namesBelow);
 	    Deficiency condDef = new Deficiency(name);
 	    BigDecimal condProb = inv.filterProb(getProb(node.getDeficiency()))
-		.divide(andProb,MathContext.DECIMAL128);
-	    val.put(condDef,condProb);
+		.divide(andProb, MathContext.DECIMAL128);
+	    val.put(condDef, condProb);
 
 	    // add DeficiencySetNode for node 
 	    Set<Deficiency> subseqCondDefs = 
 		new HashSet<Deficiency>(subseqDefs);
 	    subseqCondDefs.add(condDef);
 	    DeficiencySetNode condDefN = 
-		new DeficiencySetNode(node.getDeficiency(),subseqCondDefs);
-	    val.put(node.getDeficiency(),condDefN);
+		new DeficiencySetNode(node.getDeficiency(), subseqCondDefs);
+	    val.put(node.getDeficiency(), condDefN);
 
 	    // update minDefs and nMinNode 
 	    Iterator<DeficiencyNode> iter = nMinNodes.iterator();
@@ -440,14 +440,14 @@ public class ProbDistr {
     }
 
     public void validate() {
-	this.validators = new EnumMap<Inverter,Validator>(Inverter.class);
+	this.validators = new EnumMap<Inverter, Validator>(Inverter.class);
 	validateUp(Inverter.Identity);
 	validateUp(Inverter.Invert);
     }
 
     private void validateUp(Inverter inv) {
 	Validator val = getValidator(inv);
-	this.validators.put(inv,getValidator(inv));
+	this.validators.put(inv, getValidator(inv));
 	if (!val.isValid()) {
 	    throw new IllegalStateException("invalid: "+val.error());
 	}

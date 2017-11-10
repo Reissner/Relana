@@ -32,7 +32,7 @@ public class SClassLoader {
 
     private final URL library;
 
-    private final Map<ClassLocator,SClass> name2class;
+    private final Map<ClassLocator, SClass> name2class;
 
     //private SClassParser scParser;
 
@@ -42,7 +42,7 @@ public class SClassLoader {
 
     public SClassLoader(URL library) {
 	this.library = library;
-	this.name2class = new HashMap<ClassLocator,SClass>();
+	this.name2class = new HashMap<ClassLocator, SClass>();
 	this.name2class.put(new ClassLocator(SClass.BOOL_S_CLASS_NAME,
 					     Package.BUILD_IN),
 			    SClass.BOOLEAN);
@@ -56,7 +56,7 @@ public class SClassLoader {
 
     public SClass loadSClass(ClassLocator loc,
 			     Package pkg,
-			     Map<ClassLocator,ClassLocator> subclassDep) 
+			     Map<ClassLocator, ClassLocator> subclassDep) 
 	throws IOException, RecognitionException {
 	
 	URL url = null;
@@ -81,11 +81,11 @@ public class SClassLoader {
 	    try {
 		url = new URL(this.library + 
 			      currLoc.getPackage().getPathName()
-			      .replace('.','/') + 
+			      .replace('.', '/') + 
 			      currLoc.getName() + ".scl");
 		File clsDoc = new File(url.toURI());
 		if (clsDoc.exists()) {
-		    return resolveSClass(currLoc,subclassDep);
+		    return resolveSClass(currLoc, subclassDep);
 		}
 	    } catch (URISyntaxException e) {
 		throw new IOException// NOPMD
@@ -103,15 +103,15 @@ public class SClassLoader {
     public SClass loadSClass(ClassLocator loc,
 			     Package pkg) 
 	throws IOException, RecognitionException {
-	return loadSClass(loc,pkg,new HashMap<ClassLocator,ClassLocator>());
+	return loadSClass(loc, pkg, new HashMap<ClassLocator, ClassLocator>());
     }
 
     private SClass resolveSClass(ClassLocator loc,
-				 Map<ClassLocator,ClassLocator> subclassDep) 
+				 Map<ClassLocator, ClassLocator> subclassDep) 
 	throws IOException, RecognitionException {
 	InputStream str = new URL(this.library + 
 				  loc.getPackage().getPathName()
-				  .replace('.','/') + 
+				  .replace('.', '/') + 
 				  loc.getName() + ".scl")
 	    .openStream();
 	SClassParser scParser = new SClassParser(str);
@@ -119,7 +119,7 @@ public class SClassLoader {
 	SClass sClass = scParser.getSClass(loc, subclassDep);
 
 	sClass.verify();
-	this.name2class.put(loc,sClass);
+	this.name2class.put(loc, sClass);
 	return sClass;
     }    
 } // SClassLoader

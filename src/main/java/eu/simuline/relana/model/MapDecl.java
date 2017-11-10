@@ -20,7 +20,7 @@ public class MapDecl {
 
     private boolean isRedeclare;  // NOPMD ****
     private String mapName;  // NOPMD ****
-    private final Map<Set<Deficiency>,Deficiency> setOfNew2old;
+    private final Map<Set<Deficiency>, Deficiency> setOfNew2old;
     public SClass source;
 
     public SClass target;
@@ -44,7 +44,7 @@ public class MapDecl {
 
     public MapDecl(boolean isRedeclare,
 		   String mapName,
-		   Map<Set<Deficiency>,Deficiency> setOfNew2old,
+		   Map<Set<Deficiency>, Deficiency> setOfNew2old,
 		   SClass source,
 		   SClass target,
 		   Set<Deficiency> idDom) {

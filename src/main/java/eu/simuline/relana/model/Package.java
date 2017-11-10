@@ -24,9 +24,9 @@ public class Package {
      * starting with an underscore 
      * which distinguishes it from all packages in a library. 
      */
-    public final static Package BUILD_IN = new Package("_BuiltInPackage",null);
+    public final static Package BUILD_IN = new Package("_BuiltInPackage", null);
 
-    final static Package ROOT = new Package("",null);
+    final static Package ROOT = new Package("", null);
 
 //     static {
 // 	//PACKAGES = new HashMap();
@@ -51,7 +51,7 @@ public class Package {
     /**
      * Maps the names of the subPackages to the subPackages. 
      */
-    private final Map<String,Package> subPackages;
+    private final Map<String, Package> subPackages;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -60,7 +60,7 @@ public class Package {
     private Package(String name, Package superPackage) {
 	this.name = name;
 	this.superPackage = superPackage;
-	this.subPackages = new HashMap<String,Package>();
+	this.subPackages = new HashMap<String, Package>();
     } // Package constructor
 
     /* -------------------------------------------------------------------- *
@@ -120,7 +120,7 @@ public class Package {
     }
 
     Package addSubPackage(String name) {
-	return this.subPackages.put(name,new Package(name,this));
+	return this.subPackages.put(name, new Package(name, this));
     }
 
     Package subPackage(String name) {

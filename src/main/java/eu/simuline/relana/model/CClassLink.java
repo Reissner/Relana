@@ -13,7 +13,7 @@ public interface CClassLink {
 
     String getName();
     boolean isResolved();
-    CClassLink setComponent(String name,CClass cClass);
+    CClassLink setComponent(String name, CClass cClass);
     void addOccurrence(CClassLoader.Occurrence occ);
 
-}// CClassLink
+} // CClassLink 

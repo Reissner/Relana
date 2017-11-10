@@ -58,10 +58,10 @@ public class CClass implements CClassLink {
 	 * <code>output</code> maps to {@link #OUTPUT}. 
 	 * </ul>
 	 */
-	final static Map<String,SClassModifier> NAME2MOD;
+	final static Map<String, SClassModifier> NAME2MOD;
 
 	static {
-	    NAME2MOD = new HashMap<String,SClassModifier>();
+	    NAME2MOD = new HashMap<String, SClassModifier>();
 	    NAME2MOD.put("input",   INPUT);
 	    NAME2MOD.put("output", OUTPUT);
 	}
@@ -339,9 +339,9 @@ public class CClass implements CClassLink {
     new CClass("Component",
 	       Package.BUILD_IN,
 	       null,
-	       new HashMap<String,MapDecl>(),
-	       new HashMap<String,CClassLink>(),
-	       new HashMap<String,CClass.SClassDecl>()) {
+	       new HashMap<String, MapDecl>(),
+	       new HashMap<String, CClassLink>(),
+	       new HashMap<String, CClass.SClassDecl>()) {
 
 	// maybe there should be an exception ****
 	public MapDecl getMapDecl(String name) {
@@ -395,17 +395,17 @@ public class CClass implements CClassLink {
     /**
      * The maps declared in this class. 
      */
-    private final Map<String,MapDecl> maps;
+    private final Map<String, MapDecl> maps;
 
     /**
      * Maps the names of the subcomponents to their classes. 
      */
-    private final Map<String,CClassLink> subComponents;
+    private final Map<String, CClassLink> subComponents;
 
     /**
      * Maps the names of the effects to their classes. 
      */
-    private final Map<String,SClassDecl> effects;
+    private final Map<String, SClassDecl> effects;
 
     /**
      * The location of the description of this class within the library. 
@@ -419,12 +419,12 @@ public class CClass implements CClassLink {
     public static CClass getCClass(String cName,
 				   Package pkg,
 				   CClass superClass,
-				   Map<String,MapDecl> maps,
-				   Map<String,CClassLink> subComponents,
-				   Map<String,SClassDecl> effects
+				   Map<String, MapDecl> maps,
+				   Map<String, CClassLink> subComponents,
+				   Map<String, SClassDecl> effects
 //,		  ClassLocator loc
 	) {
-	return new CClass(cName,pkg,superClass,
+	return new CClass(cName, pkg, superClass,
 			  maps,
 			  subComponents,
 			  effects);
@@ -433,9 +433,9 @@ public class CClass implements CClassLink {
     public CClass(String cName,
 		  Package pkg,
 		  CClass superClass,
-		  Map<String,MapDecl> maps,
-		  Map<String,CClassLink> subComponents,
-		  Map<String,SClassDecl> effects
+		  Map<String, MapDecl> maps,
+		  Map<String, CClassLink> subComponents,
+		  Map<String, SClassDecl> effects
 //,		  ClassLocator loc
 ) {
 	this.cName = cName;
@@ -509,7 +509,7 @@ public class CClass implements CClassLink {
      * @return 
      *    {@link #subComponents}. 
      */
-    private Map<String,CClassLink> getName2ComponentClss() {
+    private Map<String, CClassLink> getName2ComponentClss() {
 	return this.subComponents;
     }
 
@@ -561,7 +561,7 @@ public class CClass implements CClassLink {
 	return curr.getEffectDecl(path.get(ind));
     }
 
-    private Map<String,SClassDecl> getName2Effects() {
+    private Map<String, SClassDecl> getName2Effects() {
 	return this.effects;
     }
 
@@ -584,16 +584,16 @@ public class CClass implements CClassLink {
 	    res.add(decl);
 	}
 	/*
-	for (Map.Entry<String,CClassLink> entry 
+	for (Map.Entry<String, CClassLink> entry 
 		 : this.subComponents.entrySet()) {
-	    Map<ClassLocator,SClassDecl> resInner = 
+	    Map<ClassLocator, SClassDecl> resInner = 
 		entry.getValue().getEffectsRec();
 	    String prefix = entry.getKey();
-	    Map<ClassLocator,SClassDecl> resInnerPre = 
-		new HashMap<ClassLocator,SClassDecl>();
-	    for (Map.Entry<ClassLocator,SClassDecl> ld : resInner.entrySet()) {
+	    Map<ClassLocator, SClassDecl> resInnerPre = 
+		new HashMap<ClassLocator, SClassDecl>();
+	    for (Map.Entry<ClassLocator, SClassDecl> ld : resInner.entrySet()) {
 		List<String> l = new ArrayList<String>(ld.getKey().getPath());
-		l.add(0,prefix);
+		l.add(0, prefix);
 
 	    }
 	    
@@ -606,8 +606,8 @@ public class CClass implements CClassLink {
 
     // replacement of CClassLink by CClass. 
     public CClassLink setComponent(String name, CClass cClass) {
-//System.out.println(": "+this.subComponents.put(name,cClass).getClass());
-	return this.subComponents.put(name,cClass);
+//System.out.println(": "+this.subComponents.put(name, cClass).getClass());
+	return this.subComponents.put(name, cClass);
     }
 
 
@@ -618,7 +618,7 @@ public class CClass implements CClassLink {
 	// verify that a effect is declared only 
 	// if not already declared in superclass 
 	SClassDecl overwritten, overwrite;
-	for (Map.Entry<String,SClassDecl> entry 
+	for (Map.Entry<String, SClassDecl> entry 
 		 : getName2Effects().entrySet()) {
 	    overwrite   = entry.getValue();
 	    overwritten = getSuperClass().getEffectDecl(entry.getKey());
@@ -718,34 +718,34 @@ public class CClass implements CClassLink {
 
 	// instantiate and add subcomponents 
 	CClass cClass;
-	for (Map.Entry<String,CClassLink> cEntry 
+	for (Map.Entry<String, CClassLink> cEntry 
 		 : this.subComponents.entrySet()) {
 	    cClass = (CClass)cEntry.getValue();
 	    //cInstance = cClass.getInstance();
 	    cInstance.addComponent(cEntry.getKey(),
 				   cClass.getInstance());
-	    //name2cInstance.put(cEntry.getKey(),cInstance);
+	    //name2cInstance.put(cEntry.getKey(), cInstance);
 	}
 
 	// instantiate and add effects 
 	SInstance sInstance;
 	SClassDecl decl;
-	Map<SClassDecl,SInstance> declWithFormulae = 
-	    new HashMap<SClassDecl,SInstance>();
-	for (Map.Entry<String,SClassDecl> sEntry
+	Map<SClassDecl, SInstance> declWithFormulae = 
+	    new HashMap<SClassDecl, SInstance>();
+	for (Map.Entry<String, SClassDecl> sEntry
 		 : this.effects.entrySet()) {
 	    decl = sEntry.getValue();
 	    sInstance = decl.getSInstance();
 
-	    //name2sInstance.put(sEntry.getKey(),sInstance);
-	    cInstance.addEffect(sEntry.getKey(),sInstance);
+	    //name2sInstance.put(sEntry.getKey(), sInstance);
+	    cInstance.addEffect(sEntry.getKey(), sInstance);
 	    if (decl.getFormulaDecl() != null) {
-		declWithFormulae.put(decl,sInstance);
+		declWithFormulae.put(decl, sInstance);
 	    }
 	}
 
 	// resolve formulae 
-	for (Map.Entry<SClassDecl,SInstance> entry 
+	for (Map.Entry<SClassDecl, SInstance> entry 
 		 : declWithFormulae.entrySet()) {
 	    entry.getValue().setFormula(entry.getKey()
 					.getFormulaDecl().resolve(cInstance));
@@ -764,7 +764,7 @@ public class CClass implements CClassLink {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(150);
+	StringBuffer res = new StringBuffer();
 
 	res.append("\n<CClass name=\"");
 	res.append(this.cName);
@@ -773,7 +773,7 @@ public class CClass implements CClassLink {
 	res.append("\" superClass=\"");
 	res.append(this.superClass.getName());
 	res.append("\">\n");
-	for (Map.Entry<String,MapDecl> entry 
+	for (Map.Entry<String, MapDecl> entry 
 		 : this.maps.entrySet()) {
 	    res.append("<map name=\"");
 	    res.append(entry.getKey());
@@ -781,7 +781,7 @@ public class CClass implements CClassLink {
 	    res.append(entry.getValue());
 	    res.append("</map>");
 	}
-	for (Map.Entry<String,CClassLink> entry 
+	for (Map.Entry<String, CClassLink> entry 
 		 : this.subComponents.entrySet()) {
 	    res.append("<component name=\"");
 	    res.append(entry.getKey());

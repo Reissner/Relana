@@ -11,7 +11,7 @@ package eu.simuline.relana.model;
  */
 public final class Deficiency {
 
-    public final static Deficiency UNDET = new Deficiency("UNDET");
+    public static final Deficiency UNDET = new Deficiency("UNDET");
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *

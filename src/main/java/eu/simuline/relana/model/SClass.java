@@ -49,7 +49,7 @@ public class SClass {
      */
     private final SClass superClass;
 
-    private final Map<Deficiency,SClass> oldDef2innerClasses;
+    private final Map<Deficiency, SClass> oldDef2innerClasses;
 
     private final DeficiencyMap map;
 
@@ -60,7 +60,7 @@ public class SClass {
      * It is required that this relation extends that 
      * given by {@link #superClass}. 
      */
-    private final Map<Deficiency,DeficiencyNode> deficiency2ordering;
+    private final Map<Deficiency, DeficiencyNode> deficiency2ordering;
 
     private final Type type;
 
@@ -74,8 +74,8 @@ public class SClass {
 	this.sName = BOOL_S_CLASS_NAME;
 	this.pkg = Package.BUILD_IN;
 	this.superClass = null;
-	this.oldDef2innerClasses = new HashMap<Deficiency,SClass>();
-	this.deficiency2ordering = new HashMap<Deficiency,DeficiencyNode>();
+	this.oldDef2innerClasses = new HashMap<Deficiency, SClass>();
+	this.deficiency2ordering = new HashMap<Deficiency, DeficiencyNode>();
 	DeficiencyNode node = new DeficiencyNode(Deficiency.UNDET);
 	this.deficiency2ordering.put(Deficiency.UNDET, node);
 
@@ -84,11 +84,11 @@ public class SClass {
 	this.map = null;//DeficiencyMap.ID_BOOL;
     }
 
-    private SClass(String sName,//**** common superclass with CClass 
+    private SClass(String sName, //**** common superclass with CClass 
 		   Package pkg,
 		   SClass superClass,
-		   Map<Deficiency,SClass> oldDef2innerClasses,
-		   Map<Deficiency,DeficiencyNode> deficiency2ordering) {
+		   Map<Deficiency, SClass> oldDef2innerClasses,
+		   Map<Deficiency, DeficiencyNode> deficiency2ordering) {
 	this.sName = sName;
 	this.pkg = pkg;
 	this.superClass = superClass;
@@ -98,8 +98,8 @@ public class SClass {
 	this.type = createType();
 	verifyMMDefics();
 	if (isInner()) {
-	    Map<Set<Deficiency>,Deficiency> mapAll2Undet = 
-		new HashMap<Set<Deficiency>,Deficiency>();
+	    Map<Set<Deficiency>, Deficiency> mapAll2Undet = 
+		new HashMap<Set<Deficiency>, Deficiency>();
 	    mapAll2Undet.put(deficiency2ordering.keySet(),
 			     Deficiency.UNDET);
 	    this.map = DeficiencyMap
@@ -131,17 +131,17 @@ public class SClass {
      *    a map from the set of deficiencies of a class 
      *    back to the overwritten deficiency in the enclosing class. 
      */
-    private static Map<Set<Deficiency>,Deficiency> 
-	getMap(Map<Deficiency,SClass> oldDef2intCls) {
+    private static Map<Set<Deficiency>, Deficiency> 
+	getMap(Map<Deficiency, SClass> oldDef2intCls) {
 
-	Map<Set<Deficiency>,Deficiency> setOfNew2old = 
-	    new HashMap<Set<Deficiency>,Deficiency>();
-	for (Map.Entry<Deficiency,SClass> entry : 
+	Map<Set<Deficiency>, Deficiency> setOfNew2old = 
+	    new HashMap<Set<Deficiency>, Deficiency>();
+	for (Map.Entry<Deficiency, SClass> entry : 
 		 oldDef2intCls.entrySet()) {
 	    Deficiency oldDef = entry.getKey();
 	    Set<Deficiency> newDefs = 
 		entry.getValue().getDeclaredDeficiency2ordering().keySet();
-	    setOfNew2old.put(newDefs,oldDef);
+	    setOfNew2old.put(newDefs, oldDef);
 
 	}
 	return setOfNew2old;
@@ -196,7 +196,7 @@ public class SClass {
 	SClass innerCls;
 	Type innerType;
 	Set<Deficiency> inter;
-	for (Map.Entry<Deficiency,SClass> entry 
+	for (Map.Entry<Deficiency, SClass> entry 
 		 : getDeclaredInnerClasses().entrySet()) {
 	    innerCls = entry.getValue();
 
@@ -228,7 +228,7 @@ public class SClass {
 	return this.superClass;
     }
 
-    public Map<Deficiency,SClass> getDeclaredInnerClasses() {
+    public Map<Deficiency, SClass> getDeclaredInnerClasses() {
 	return this.oldDef2innerClasses;
     }
 
@@ -248,7 +248,7 @@ public class SClass {
     }
 
     // **** used internally and by ProbDistr. 
-    Map<Deficiency,DeficiencyNode> getDeclaredDeficiency2ordering() {
+    Map<Deficiency, DeficiencyNode> getDeclaredDeficiency2ordering() {
 	return this.deficiency2ordering;
     }
 
@@ -314,9 +314,9 @@ public class SClass {
     public static SClass getSClass(String sName,
 				   Package pkg,
 				   SClass superClass,
-				   Map<Deficiency,SClass> oldDef2innerClasses,
-				   Map<Deficiency,DeficiencyNode> def2ord) {
-	return new SClass(sName,pkg,superClass,
+				   Map<Deficiency, SClass> oldDef2innerClasses,
+				   Map<Deficiency, DeficiencyNode> def2ord) {
+	return new SClass(sName, pkg, superClass,
 			  oldDef2innerClasses,
 			  def2ord);	
     } // SClass constructor
@@ -348,7 +348,7 @@ public class SClass {
 			 " maps both to " + def1super + ". ");
 		}
 		
-		if (!getSuperClass().getType().implies(def1super,def2super)) {
+		if (!getSuperClass().getType().implies(def1super, def2super)) {
 		    throw new VerifyException
 			("Relation \"" + def1 + "==>" + def2 + 
 			 "\" not reflected by superclass " + getSuperClass() + 
@@ -432,7 +432,7 @@ public class SClass {
 	res.append("\">\n<Deficiencies>\n");
 	res.append(this.deficiency2ordering.keySet().toString());
 	res.append("\n</Deficiencies>\n\n<InnerClasses>\n");
-	for (Map.Entry<Deficiency,SClass> entry 
+	for (Map.Entry<Deficiency, SClass> entry 
 		 : this.oldDef2innerClasses.entrySet()) {
 	    res.append("<InnerClass name=\"");
 	    res.append(entry.getKey().getName());

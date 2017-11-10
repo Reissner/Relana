@@ -33,7 +33,7 @@ public class DeficiencyMap {
      * whereas the values are elements 
      * of the set represented by {@link #target}. 
      */
-    private final Map<Set<Deficiency>,Deficiency> setOfNew2old;
+    private final Map<Set<Deficiency>, Deficiency> setOfNew2old;
 
     /**
      * The source of this map. 
@@ -74,7 +74,7 @@ public class DeficiencyMap {
      * -------------------------------------------------------------------- */
 
     public static 
-    DeficiencyMap getSubclassMap(Map<Set<Deficiency>,Deficiency> setOfNew2old,
+    DeficiencyMap getSubclassMap(Map<Set<Deficiency>, Deficiency> setOfNew2old,
 				 SClass source,
 				 SClass target) {
 
@@ -99,7 +99,7 @@ public class DeficiencyMap {
 	return result;
     }
 
-    public DeficiencyMap(Map<Set<Deficiency>,Deficiency> setOfNew2old,
+    public DeficiencyMap(Map<Set<Deficiency>, Deficiency> setOfNew2old,
 			 SClass source,
 			 SClass target,
 			 Set<Deficiency> idDom) {
@@ -190,9 +190,9 @@ public class DeficiencyMap {
 /*
     public static DeficiencyMap getBooleanMap(SClass source,
 					      Set<Deficiency> domain) {
-	Map<Set<Deficiency>,Deficiency> setOfNew2old = 
-	    new HashMap<Set<Deficiency>,Deficiency>();
-	setOfNew2old.put(domain,Deficiency.UNDET);
+	Map<Set<Deficiency>, Deficiency> setOfNew2old = 
+	    new HashMap<Set<Deficiency>, Deficiency>();
+	setOfNew2old.put(domain, Deficiency.UNDET);
 	return new DeficiencyMap(setOfNew2old,
 				 source,
 				 SClass.BOOLEAN,
@@ -225,7 +225,7 @@ public class DeficiencyMap {
 	    (sourceTarget.getDeclaredDeficiency2ordering().keySet())
 	    : map.getDomain();
 
-	return new DeficiencyMap(new HashMap<Set<Deficiency>,Deficiency>(),
+	return new DeficiencyMap(new HashMap<Set<Deficiency>, Deficiency>(),
 				 sourceTarget,
 				 sourceTarget,
 				 idDom);
@@ -246,21 +246,21 @@ public class DeficiencyMap {
 		("This map is not invertible: " + this + ". ");
 	}
 	
-	Map<Set<Deficiency>,Deficiency> invSetOfNew2old = 
-	    new HashMap<Set<Deficiency>,Deficiency>();
+	Map<Set<Deficiency>, Deficiency> invSetOfNew2old = 
+	    new HashMap<Set<Deficiency>, Deficiency>();
 	Set<Deficiency> oneDefSet;
 	Deficiency def;
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : this.setOfNew2old.entrySet()) {
 	    assert entry.getKey().size() == 1;
 	    oneDefSet = new HashSet<Deficiency>();
 	    oneDefSet.add(entry.getValue());
 	    def = entry.getKey().iterator().next();
-	    invSetOfNew2old.put(oneDefSet,def);
+	    invSetOfNew2old.put(oneDefSet, def);
 	}
 	
 	return new DeficiencyMap(invSetOfNew2old,
-				 this.target,// exchanged. 
+				 this.target, // exchanged. 
 				 this.source,
 				 this.idDom);
     }
@@ -287,25 +287,25 @@ public class DeficiencyMap {
 		 this.target  .getName() + ". ");
 	}
 	
-	Map<Set<Deficiency>,Deficiency> setOfNew2old = 
-	    new HashMap<Set<Deficiency>,Deficiency>();
+	Map<Set<Deficiency>, Deficiency> setOfNew2old = 
+	    new HashMap<Set<Deficiency>, Deficiency>();
 	// handle all images in the value set of second.setOfNew2old 
 	Set<Deficiency> invImg;
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : second.setOfNew2old.entrySet()) {
 
 	    invImg = this.cont(entry.getKey());
-	    setOfNew2old.put(invImg,entry.getValue());
+	    setOfNew2old.put(invImg, entry.getValue());
 	}
 	// Handle all images in second.idDom 
 	// which are in the image set of this.setOfNew2old 
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : this.setOfNew2old.entrySet()) {
 	    if (!second.idDom.contains(entry.getValue())) {
 		continue;
 	    }
 	    // Here, entry.getValue() is in second.idDom
-	    setOfNew2old.put(entry.getKey(),entry.getValue());
+	    setOfNew2old.put(entry.getKey(), entry.getValue());
 	}
 	// handle all images this.idDom and in second.idDom 
 	Set<Deficiency> idDom = new HashSet<Deficiency>(this.idDom);
@@ -313,9 +313,9 @@ public class DeficiencyMap {
 
 	// move from setOfNew2old to idDom whatever possible 
 	Deficiency cand;
-	Iterator<Map.Entry<Set<Deficiency>,Deficiency>> iter = 
+	Iterator<Map.Entry<Set<Deficiency>, Deficiency>> iter = 
 	    setOfNew2old.entrySet().iterator();
-	Map.Entry<Set<Deficiency>,Deficiency> entry;
+	Map.Entry<Set<Deficiency>, Deficiency> entry;
 	while (iter.hasNext()) {
 	    entry = iter.next();
 	    if (entry.getKey().size() != 1) {
@@ -354,7 +354,7 @@ public class DeficiencyMap {
 	    return def;
 	}
 	
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : this.setOfNew2old.entrySet()) {
 	    if (entry.getKey().contains(def)) {
 		return entry.getValue();
@@ -383,7 +383,7 @@ public class DeficiencyMap {
 	    return result;
 	}
 
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : this.setOfNew2old.entrySet()) {
 	    if (entry.getValue().equals(def)) {
 		return entry.getKey();
@@ -436,7 +436,7 @@ public class DeficiencyMap {
 		return false;
 	    }
 	    for (Deficiency def2 : cone) {
-		if (!this.target.getType().implies(map(def1),map(def2))) {
+		if (!this.target.getType().implies(map(def1), map(def2))) {
 		    return false;
 		}
 	    }
@@ -482,7 +482,7 @@ public class DeficiencyMap {
 	Set<Deficiency> result = new HashSet<Deficiency>();
 
 	Set<Deficiency> inter;
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : this.setOfNew2old.entrySet()) {
 	    inter = new HashSet<Deficiency>(entry.getKey());
 	    inter.retainAll(defsToMap);
@@ -508,7 +508,7 @@ public class DeficiencyMap {
     public Set<Deficiency> cont(Set<Deficiency> defs) {
 	assert this.target.getType().isValid(defs);
 	Set<Deficiency> result = new HashSet<Deficiency>();
-	for (Map.Entry<Set<Deficiency>,Deficiency> entry 
+	for (Map.Entry<Set<Deficiency>, Deficiency> entry 
 		 : this.setOfNew2old.entrySet()) {
 	    if (defs.contains(entry.getValue())) {
 		result.addAll(entry.getKey());

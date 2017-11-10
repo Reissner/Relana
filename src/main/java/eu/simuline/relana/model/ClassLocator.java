@@ -34,13 +34,13 @@ public class ClassLocator {
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
-    public ClassLocator(String name,Package pkg) {
+    public ClassLocator(String name, Package pkg) {
 	this.name = name;
 	this.pkg = pkg;
     } // ClassLocator constructor
     
     public ClassLocator(ClassLocator other) {
-	this(other.name,other.pkg);
+	this(other.name, other.pkg);
     } // ClassLocator constructor
     
     /* -------------------------------------------------------------------- *
@@ -51,12 +51,12 @@ public class ClassLocator {
 	String name = path.get(path.size()-1);/// ****
 	return new ClassLocator(name,
 				Package.getPackage
-				(path.subList(0,path.size()-1)));
+				(path.subList(0, path.size()-1)));
     }
 
     public static ClassLocator getLocator(String path) {
 	return getLocator
-	    (new ArrayList<String>(Arrays.asList(path.split("[.]",-1))));
+	    (new ArrayList<String>(Arrays.asList(path.split("[.]", -1))));
     }
 
     public String getName() {

@@ -81,19 +81,19 @@ public final class DeficiencyNode {
     public void addPredecessor(DeficiencyNode deficiencyNode) {
 	this.predecessors.add(deficiencyNode);
     }
-    
+
     public void addSuccessor(DeficiencyNode deficiencyNode) {
 	this.successors.add(deficiencyNode);
     }
-    
+
     public void addPredecessors(Set<DeficiencyNode> nodes) {
 	this.predecessors.addAll(nodes);
     }
-    
+
     public void addSuccessors(Set<DeficiencyNode> nodes) {
 	this.successors.addAll(nodes);
     }
-    
+
     public void addAll(DeficiencyNode other) {
 	if (!other.getDeficiency().equals(getDeficiency())) {
 	    throw new IllegalArgumentException
@@ -112,7 +112,7 @@ public final class DeficiencyNode {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(90);
+	StringBuffer res = new StringBuffer();
 	res.append("\n<DeficiencyNode deficiency=\"");
 	res.append(this.deficiency);
 	res.append("\">");
@@ -140,7 +140,7 @@ public final class DeficiencyNode {
 	if (!(obj instanceof DeficiencyNode)) {
 	    return false;
 	}
-	DeficiencyNode other = (DeficiencyNode)obj;
+	DeficiencyNode other = (DeficiencyNode) obj;
 	return 
 	    getDeficiency  ().equals(other.getDeficiency  ()) && 
 	    getPredecessors().equals(other.getPredecessors()) && 
