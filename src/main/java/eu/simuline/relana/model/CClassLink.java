@@ -1,8 +1,8 @@
 package eu.simuline.relana.model;
 
 /**
- * CClassLink.java
- *
+ * Represents a link to a {@link CClass} which also implements this interface. 
+ * It is needed for resolution of {@link CClass}es. 
  *
  * Created: Fri Apr 15 13:55:39 2005
  *

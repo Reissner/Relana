@@ -35,6 +35,10 @@ public class CClass implements CClassLink {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
+    /**
+     * Enumerates the class modifier for an {@link SClass}: 
+     * input and output. 
+     */
     public enum SClassModifier {
 
 	/* ---------------------------------------------------------------- *
@@ -376,7 +380,7 @@ public class CClass implements CClassLink {
     /**
      * The Name of this <code>CClass</code>. 
      */
-    protected String cName;
+    private String cName;
 
     /**
      * The package of this class. 

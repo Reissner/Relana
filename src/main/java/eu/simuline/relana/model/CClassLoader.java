@@ -28,14 +28,14 @@ import java.util.HashSet;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class CClassLoader {
+public final class CClassLoader {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
     /**
-     * Represemts the occurrence of an instance of a {@link CClass} 
+     * Represents the occurrence of an instance of a {@link CClass} 
      * as a component of a {@link CInstance}. 
      */
     static final class Occurrence {
@@ -89,6 +89,9 @@ public class CClassLoader {
 
     } // class Occurrence 
 
+    /**
+     * Resolver for {@link CClassLink}s. ****
+     */
     static class ClassResolver implements CClassLink {
 
 	/* ---------------------------------------------------------------- *
