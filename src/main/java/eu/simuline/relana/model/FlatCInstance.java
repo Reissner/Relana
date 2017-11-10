@@ -33,7 +33,7 @@ public class FlatCInstance {
      * constants.                                                           *
      * -------------------------------------------------------------------- */
 
-    final static Comparator<List<String>> PATH_CMP = 
+    static final Comparator<List<String>> PATH_CMP = 
     new Comparator<List<String>>() {
 	    public int compare(List<String> list1, List<String> list2) {
 		for (int i = 0; i < Math.min(list1.size(), list2.size()); i++) {
@@ -42,8 +42,8 @@ public class FlatCInstance {
 			return res;
 		    }
 		}
-		
-		return list1.size()-list2.size();
+
+		return list1.size() - list2.size();
 	    }
 	};
 
@@ -234,8 +234,8 @@ public class FlatCInstance {
 	// loops up to <code>this.effects.keySet().size()</code> times. 
 	for (int ind = 0; ind < this.effects.keySet().size(); ind++) {
 	    vars = form.getVars();
-//System.out.println("form: "+form);
-//System.out.println("vars: "+vars);
+//System.out.println("form: " + form);
+//System.out.println("vars: " + vars);
 	    // look for variables with probability distribution 
 	    // and essentially return the first found. 
 	    for (SInstance var: vars) {
@@ -268,8 +268,6 @@ public class FlatCInstance {
 	return null;
     }
 
-
-
     /**
      * Returns the probability 
      * that the effect specified by <code>sPath</code> 
@@ -295,11 +293,11 @@ public class FlatCInstance {
 	    // the formula attached with serv is constant 
 	    // (at least after substitution done by instDefic) 
 	    Set<Deficiency> defs = serv.getFormula().getConst();
-	    assert defs != null;// i.e. serv.getFormula() is a constant. 
+	    assert defs != null; // i.e. serv.getFormula() is a constant. 
 	    return defs.isEmpty() ? BigDecimal.ZERO : BigDecimal.ONE;
 	}
 	// Here, instDef != null 
-	
+
 	// cond is the probability that instDef.def occurs. 
 	BigDecimal cond = instDef.serv.getDistr().getProb(instDef.def);
 
@@ -308,9 +306,9 @@ public class FlatCInstance {
 	// and that it does not occur, respectively. 
 	FlatCInstance cInstP = add   (instDef.serv, instDef.def);
 	FlatCInstance cInstM = remove(instDef.serv, instDef.def);
-//System.out.println("cInstP: "+cInstP);
-//System.out.println("cInstM: "+cInstM);
-//System.out.println("this: "+this);
+//System.out.println("cInstP: " + cInstP);
+//System.out.println("cInstM: " + cInstM);
+//System.out.println("this: " + this);
 //throw new IllegalStateException();
 
 	return                           cond .multiply(cInstP.getProb(sPath))
@@ -318,7 +316,7 @@ public class FlatCInstance {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(60);
+	StringBuffer res = new StringBuffer();
 	res.append("\n<FlatCInstance><Effects>");
 	res.append(this.effects);
 	res.append("</Effects>\n</FlatCInstance>\n");

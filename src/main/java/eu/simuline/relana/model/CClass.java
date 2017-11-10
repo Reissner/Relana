@@ -58,7 +58,7 @@ public class CClass implements CClassLink {
 	 * <code>output</code> maps to {@link #OUTPUT}. 
 	 * </ul>
 	 */
-	final static Map<String, SClassModifier> NAME2MOD;
+	static final Map<String, SClassModifier> NAME2MOD;
 
 	static {
 	    NAME2MOD = new HashMap<String, SClassModifier>();
@@ -95,7 +95,7 @@ public class CClass implements CClassLink {
      * and also optionally, a probability distribution {@link #distr} 
      * or a formula declaration {@link #form}. 
      */
-    public final static class SClassDecl {
+    public static final class SClassDecl {
 
 	/* ---------------------------------------------------------------- *
 	 * attributes.                                                      *
@@ -172,7 +172,7 @@ public class CClass implements CClassLink {
 		    ("SClass " + name + " is declared as input " + 
 		     "and at the same time a probability distribution " + 
 		     "is attached. ");
-	    }	    
+	    }
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -221,7 +221,6 @@ public class CClass implements CClassLink {
 		     "\" with type " + this.sClass.getType() + 
 		     " which is not assignment compatible. ");
 	    }
-	    
 	}
 
 	public SClass getSClass() {
@@ -298,12 +297,12 @@ public class CClass implements CClassLink {
 	}
 
 	public String toString() {
-	    StringBuffer res = new StringBuffer(32);
+	    StringBuffer res = new StringBuffer();
 	    res.append('\n');
 	    if (this.isRedeclare) {
 		res.append("redeclare");
-	    }	    
-	    
+	    }
+
 	    res.append(this.modifiers);
 	    res.append(getSClass().getName());
 	    res.append(getName());
@@ -311,7 +310,7 @@ public class CClass implements CClassLink {
 		res.append(" distr: ");
 		res.append(this.distr.toString());
 	    }
-	    
+
 	    if (this.form != null) {
 		res.append(" formula: ");
 		res.append(this.form.toString());
@@ -335,7 +334,7 @@ public class CClass implements CClassLink {
      * constants.                                                           *
      * -------------------------------------------------------------------- */
 
-    public final static CClass COMPONENT = 
+    public static final CClass COMPONENT = 
     new CClass("Component",
 	       Package.BUILD_IN,
 	       null,
@@ -524,7 +523,7 @@ public class CClass implements CClassLink {
     public CClassLink getComponentCls(List<String> path) {
 	CClass curr = this;
 	for (String key : path) {
-	    curr = (CClass)curr.getComponentCls(key);
+	    curr = (CClass) curr.getComponentCls(key);
 	}
 	
 	return curr;
@@ -553,8 +552,8 @@ public class CClass implements CClassLink {
     public SClassDecl getEffectDecl(List<String> path) {
 	CClass curr = this;
 	int ind = 0;
-	for (; ind < path.size()-1; ind++) {
-	    curr = (CClass)curr.getComponentCls(path.get(ind));
+	for (; ind < path.size() - 1; ind++) {
+	    curr = (CClass) curr.getComponentCls(path.get(ind));
 	    // **** also in superclass?
 	}
 	
@@ -596,7 +595,7 @@ public class CClass implements CClassLink {
 		l.add(0, prefix);
 
 	    }
-	    
+
 	    res.put(ClassLocator.getLocator(entry.getKey()),
 		    entry.getValue());
 	}
@@ -669,8 +668,6 @@ public class CClass implements CClassLink {
 		// Here, compMap is a subclass map 
 		//    overwritten.getSClass()  --> overwrite.getSClass()
 
-
-
 		// **** here the maps between the variables could be installed 
 		// but this would be bad design. 
 	    } else {
@@ -720,7 +717,7 @@ public class CClass implements CClassLink {
 	CClass cClass;
 	for (Map.Entry<String, CClassLink> cEntry 
 		 : this.subComponents.entrySet()) {
-	    cClass = (CClass)cEntry.getValue();
+	    cClass = (CClass) cEntry.getValue();
 	    //cInstance = cClass.getInstance();
 	    cInstance.addComponent(cEntry.getKey(),
 				   cClass.getInstance());

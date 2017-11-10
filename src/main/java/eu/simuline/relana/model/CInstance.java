@@ -89,17 +89,13 @@ public class CInstance {
 	return this.effects;
     }
 
-
     public SInstance getEffect(List<String> path) {
 	CInstance comp = this;
-	for (int i = 0; i < path.size()-1; i++) {
+	for (int i = 0; i < path.size() - 1; i++) {
 	    comp = comp.components.get(path.get(i));
 	}
-	
-	return comp.effects.get(path.get(path.size()-1));
+	return comp.effects.get(path.get(path.size() - 1));
     }
-
-
 
     public FlatCInstance flatten() {
 	Map<List<String>, SInstance> longName2effect = 
@@ -115,13 +111,12 @@ public class CInstance {
 	    prefix = cEntry.getKey();
 	    for (Map.Entry<List<String>, SInstance> sEntry 
 		     : effects.entrySet()) {
-		
 		    longName = new ArrayList<String>(sEntry.getKey());
 		    longName.add(0, prefix);
 		    longName2effect.put(longName, sEntry.getValue());
 	    }
 	}
-	
+
 	// add top-level effects 
 	for (Map.Entry<String, SInstance> sEntry : this.effects.entrySet()) {
 	    longName = new ArrayList<String>();
@@ -133,7 +128,7 @@ public class CInstance {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(48);
+	StringBuffer res = new StringBuffer();
 	res.append("\n<CInstance><Effects>");
 	res.append(this.effects);
 	res.append("</Effects>\n</CInstance>\n");

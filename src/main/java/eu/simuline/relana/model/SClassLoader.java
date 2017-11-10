@@ -46,13 +46,11 @@ public class SClassLoader {
 	this.name2class.put(new ClassLocator(SClass.BOOL_S_CLASS_NAME,
 					     Package.BUILD_IN),
 			    SClass.BOOLEAN);
+    }
 
-    } // SClassLoader constructor
-    
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
-
 
     public SClass loadSClass(ClassLocator loc,
 			     Package pkg,
@@ -121,5 +119,6 @@ public class SClassLoader {
 	sClass.verify();
 	this.name2class.put(loc, sClass);
 	return sClass;
-    }    
+    }
+
 } // SClassLoader

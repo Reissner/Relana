@@ -165,7 +165,7 @@ public class DeficiencyMap {
 	Deficiency def;
 	while (iter.hasNext()) {
 	    setDef = iter.next();
-	    switch (setDef.size()) {// NOPMD
+	    switch (setDef.size()) { // NOPMD
 		case 0:
 		    // size == 0: this is superfluous. 
 		    throw new IllegalArgumentException
@@ -186,7 +186,7 @@ public class DeficiencyMap {
 	    }
 	}
     }
-    
+
 /*
     public static DeficiencyMap getBooleanMap(SClass source,
 					      Set<Deficiency> domain) {
@@ -218,7 +218,7 @@ public class DeficiencyMap {
      *    on the set of deficiencies of <code>sourceTarget</code>. 
      */
     public static DeficiencyMap identity(SClass sourceTarget) {
-	System.out.println("sourceTarget: "+sourceTarget);
+	System.out.println("sourceTarget: " + sourceTarget);
 	DeficiencyMap map = sourceTarget.getDeficiencyMap();
 	Set<Deficiency> idDom = (map == null) 
 	    ? new HashSet<Deficiency>
@@ -326,17 +326,16 @@ public class DeficiencyMap {
 	    if (!cand.equals(entry.getValue())) {
 		continue;
 	    }
-	    
+
 	    idDom.add(cand);
 	    iter.remove();
 	}
-	
+
 	return new DeficiencyMap(setOfNew2old,
 				 this.source,
 				 second.target,
 				 idDom);
     }
-
 
     // **** null if def is not in the domain. 
     /**
@@ -420,7 +419,6 @@ public class DeficiencyMap {
     SClass getTarget() {
 	return this.target;
     }
-
 
     /**
      * Returns whether this map is isotone. 
@@ -525,7 +523,7 @@ public class DeficiencyMap {
 
 
     public String toString() {
-	StringBuffer res = new StringBuffer(70);
+	StringBuffer res = new StringBuffer();
 	res.append("<DeficiencyMap source=\"");
 	res.append(source.getPathName());
 	res.append("\" target=\"");

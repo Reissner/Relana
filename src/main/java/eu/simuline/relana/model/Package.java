@@ -24,9 +24,9 @@ public class Package {
      * starting with an underscore 
      * which distinguishes it from all packages in a library. 
      */
-    public final static Package BUILD_IN = new Package("_BuiltInPackage", null);
+    public static final Package BUILD_IN = new Package("_BuiltInPackage", null);
 
-    final static Package ROOT = new Package("", null);
+    static final Package ROOT = new Package("", null);
 
 //     static {
 // 	//PACKAGES = new HashMap();
@@ -157,7 +157,7 @@ public class Package {
 	    knot = knot.subPackage(path.get(i));
 	    assert knot != null;
 	}
-	
+
 	return knot;
     }
 
@@ -181,5 +181,4 @@ public class Package {
 */
 	return  res.toString();
     }
-    
 } // Package

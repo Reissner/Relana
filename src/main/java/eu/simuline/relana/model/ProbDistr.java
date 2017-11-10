@@ -30,6 +30,10 @@ public class ProbDistr {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
+    /**
+     * Enumeration of inverters: the trivial inverter 
+     * and the canonical inverter. 
+     */
     enum Inverter {
 	Identity() {
 	    BigDecimal filterProb(BigDecimal prob) {
@@ -164,20 +168,20 @@ public class ProbDistr {
 	Map<Deficiency, BigDecimal> error() {
 	    return warningError(this.invalids);
 	}
+
 	Map<Deficiency, BigDecimal> warning() {
 	    return warningError(this.degenerates);
 	}
+
 	Map<Deficiency, BigDecimal> warningError(Set<Deficiency> invOrDeg) {
 	    Map<Deficiency, BigDecimal> def2prob = 
 		new HashMap<Deficiency, BigDecimal>();
 	    for (Deficiency def : invOrDeg) {
 		def2prob.put(def, this.def2prob.get(def));
 	    }
-	    
+
 	    return def2prob;
 	}
-
-
 
 	BigDecimal getProb(Set<Deficiency> defs) {
 	    Set<Deficiency> elDefs = new HashSet<Deficiency>();
@@ -192,7 +196,7 @@ public class ProbDistr {
 	}
 
 	public String toString() {
-	    StringBuffer res = new StringBuffer(80);
+	    StringBuffer res = new StringBuffer();
 	    res.append("<Validator>\nextOrdering: ");
 	    res.append(extOrdering);
 	    res.append("\ndef2prob: ");
@@ -205,7 +209,6 @@ public class ProbDistr {
 	    return res.toString();
 	}
     } // class Validator 
-
 
     /* ---------------------------------------------------------------- *
      * attributes.                                                      *
@@ -235,7 +238,7 @@ public class ProbDistr {
 	this.type = type;
 	this.def2prob = def2prob;
     }
-    
+
     // already checked by parser: 
     // old2ProbDistr 
     // keys exactly the inner classes, 
@@ -251,7 +254,6 @@ public class ProbDistr {
 	    this.def2prob.putAll(distr.def2prob);
 	}
     }
-
 
     private static void checkIn01(Map<Deficiency, BigDecimal> def2prob) {
 	for (BigDecimal prob : def2prob.values()) {
@@ -288,7 +290,6 @@ public class ProbDistr {
     private Validator init(Inverter inv,
 			   Stack<Deficiency> minDefs,
 			   Set<DeficiencyNode> nMinNodes) {
-
 	// look for minimum and maximum. 
 	for (DeficiencyNode node
 		 : getType()
@@ -314,7 +315,7 @@ public class ProbDistr {
 	for (Deficiency minDef : minDefs) {
 	    minDef2prob.put(minDef, inv.filterProb(getProb(minDef)));
 	}
-	    
+
 	return new Validator(minDef2prob);
     }
 
@@ -330,7 +331,6 @@ public class ProbDistr {
      *    a <code>Validator</code>. 
      */
    Validator getValidator(Inverter inv) {
-
 	// minDefs are the Deficiencies 
 	// all successors of which are already processed. 
 	// In the beginning this is just the minimal Deficiency. 
@@ -345,7 +345,6 @@ public class ProbDistr {
 	// Here, all variables above are initialized. 
 
 	while (!minDefs.isEmpty()) {
-
 	    // pop element from minDefs and create corresponding 
 	    // DeficiencySetNode. 
 
@@ -375,7 +374,7 @@ public class ProbDistr {
 	    DeficiencySetNode andDefN = 
 		new DeficiencySetNode(new Deficiency(inv.andOr() + namesBelow),
 				      subseqDefs);
-	    
+
 	    BigDecimal andProb = andDefN.getProb(val.def2prob);
 	    // maybe in later implementations andDefN is also added, 
 	    // but for now, andDefN is no longer needed. 
@@ -419,8 +418,6 @@ public class ProbDistr {
 	return val;
     }
 
-
- 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
@@ -449,10 +446,10 @@ public class ProbDistr {
 	Validator val = getValidator(inv);
 	this.validators.put(inv, getValidator(inv));
 	if (!val.isValid()) {
-	    throw new IllegalStateException("invalid: "+val.error());
+	    throw new IllegalStateException("invalid: " + val.error());
 	}
 	if (val.isDegenerate()) {
-	    System.out.println("degenerate: "+val.warning());
+	    System.out.println("degenerate: " + val.warning());
 	}
    }
 
@@ -466,14 +463,11 @@ public class ProbDistr {
 	return this;
     }
 
-
     public String toString() {
-	StringBuffer res = new StringBuffer(30);
+	StringBuffer res = new StringBuffer();
 	res.append("\n<ProbDistr>");
 	res.append(this.def2prob);
 	res.append("\n</ProbDistr>");
 	return res.toString();
-
     }
- 
 } // ProbDistr

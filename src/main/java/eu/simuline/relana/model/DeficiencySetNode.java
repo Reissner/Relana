@@ -83,7 +83,7 @@ public class DeficiencySetNode {
      *    or equivalently the probability of the simultaneous occurence of 
      *    {@link #deficiencySet}, independence assumed. 
      */
-    public BigDecimal getProb(Map<Deficiency,BigDecimal> def2prob) {
+    public BigDecimal getProb(Map<Deficiency, BigDecimal> def2prob) {
 	BigDecimal res = BigDecimal.ONE;
 	for (Deficiency def : this.deficiencySet) {
 	    res = res.multiply(def2prob.get(def));
@@ -92,7 +92,7 @@ public class DeficiencySetNode {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(60);
+	StringBuffer res = new StringBuffer();
 	res.append("<DeficiencySetNode deficiency=\"");
 	res.append(this.deficiency);
 	res.append("\">");

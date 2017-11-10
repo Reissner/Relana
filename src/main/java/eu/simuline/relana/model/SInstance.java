@@ -6,12 +6,12 @@ import eu.simuline.relana.expressions.Formula;
 import java.util.Set;
 
 /**
- * SInstance.java
+ * Represents the instance of an {@link SClass}. 
  *
  *
  * Created: Thu Apr 14 22:51:12 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public final class SInstance {
@@ -24,9 +24,12 @@ public final class SInstance {
      * The <code>SClass</code> of this instance. 
      */
     private final Type type;
+
     private final ProbDistr distr;
+
     private Formula form;
-    String name;// for debugging
+
+    String name; // for debugging
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -39,8 +42,8 @@ public final class SInstance {
 	this.name = name;
 	assert !type.equals(Type.getEmpty());
 	
-    } // SInstance constructor
-    
+    }
+
     public void setFormula(Formula form) {
 	this.form = form;
     }
@@ -140,7 +143,7 @@ public final class SInstance {
     }
 
     // prevent overwriting: enable for (Weak)HashSet/Map 
-    public boolean equals(Object obj) {//final 
+    public boolean equals(Object obj) { //final 
 	return super.equals(obj);
     }
 
@@ -150,7 +153,7 @@ public final class SInstance {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(50);
+	StringBuffer res = new StringBuffer();
 	res.append("\n<SInstance name=\"");
 	res.append(this.name);
 	res.append("\">\nformula: ");

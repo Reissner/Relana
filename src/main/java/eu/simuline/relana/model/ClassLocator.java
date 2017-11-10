@@ -38,20 +38,20 @@ public class ClassLocator {
 	this.name = name;
 	this.pkg = pkg;
     } // ClassLocator constructor
-    
+
     public ClassLocator(ClassLocator other) {
 	this(other.name, other.pkg);
     } // ClassLocator constructor
-    
+
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
     public static ClassLocator getLocator(List<String> path) {
-	String name = path.get(path.size()-1);/// ****
+	int idxLast = path.size() - 1;
+	String name = path.get(idxLast);/// ****
 	return new ClassLocator(name,
-				Package.getPackage
-				(path.subList(0, path.size()-1)));
+				Package.getPackage(path.subList(0, idxLast)));
     }
 
     public static ClassLocator getLocator(String path) {
@@ -77,7 +77,7 @@ public class ClassLocator {
 	if (!(other instanceof ClassLocator)) {
 	    return false;
 	}
-	return getName().equals(((ClassLocator)other).getName());
+	return getName().equals(((ClassLocator) other).getName());
     }
 
     public int hashCode() {

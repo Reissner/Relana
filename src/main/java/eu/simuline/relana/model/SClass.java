@@ -22,11 +22,10 @@ import java.util.Iterator;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class SClass {
+public final class SClass {
 
-    public final static String BOOL_S_CLASS_NAME = "B";
-    public final static SClass BOOLEAN = new SClass();
-
+    public static final String BOOL_S_CLASS_NAME = "B";
+    public static final SClass BOOLEAN = new SClass();
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *
@@ -81,7 +80,7 @@ public class SClass {
 
 	this.type = Type.BOOLEAN;
 	verifyMMDefics();
-	this.map = null;//DeficiencyMap.ID_BOOL;
+	this.map = null; // DeficiencyMap.ID_BOOL;
     }
 
     private SClass(String sName, //**** common superclass with CClass 
@@ -347,7 +346,7 @@ public class SClass {
 			 getSuperClass() + 
 			 " maps both to " + def1super + ". ");
 		}
-		
+
 		if (!getSuperClass().getType().implies(def1super, def2super)) {
 		    throw new VerifyException
 			("Relation \"" + def1 + "==>" + def2 + 
@@ -420,7 +419,7 @@ public class SClass {
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(250);
+	StringBuffer res = new StringBuffer();
 	res.append("<SClass name=\"");
 	res.append(getName());
 	res.append("\" \npackage=\"");
@@ -468,7 +467,7 @@ public class SClass {
 	if (!(obj instanceof SClass)) {
 	    return false;
 	}
-	return getPathName().equals(((SClass)obj).getPathName());
+	return getPathName().equals(((SClass) obj).getPathName());
     }
 
     public int hashCode() {

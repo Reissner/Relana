@@ -64,14 +64,12 @@ public class MapDecl {
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
-
-    
     public DeficiencyMap getMap() {
 	return this.map;
     }
 
     public String toString() {
-	StringBuffer res = new StringBuffer(50);
+	StringBuffer res = new StringBuffer();
 	res.append("<MapDecl source=\"");
 	res.append(source.getPathName().toString());
 	res.append("\" target=\"");

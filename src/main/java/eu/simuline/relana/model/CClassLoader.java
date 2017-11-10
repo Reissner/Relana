@@ -34,7 +34,11 @@ public class CClassLoader {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    final static class Occurrence {
+    /**
+     * Represemts the occurrence of an instance of a {@link CClass} 
+     * as a component of a {@link CInstance}. 
+     */
+    static final class Occurrence {
 
 	/* ---------------------------------------------------------------- *
 	 * attributes.                                                      *
@@ -64,7 +68,7 @@ public class CClassLoader {
 	}
 
 	public String toString() {
-	    StringBuffer res = new StringBuffer(25);
+	    StringBuffer res = new StringBuffer();
 	    res.append("<Occurrence>");
 	    res.append(this.loc.toString());
 	    res.append(this.component);
@@ -128,7 +132,7 @@ public class CClassLoader {
 	}
 
 	public String toString() {
-	    StringBuffer res = new StringBuffer(40);
+	    StringBuffer res = new StringBuffer();
 	    res.append("<ClassResolver>\n");
 	    res.append(this.loc.toString());
 	    res.append('\n');
@@ -168,12 +172,11 @@ public class CClassLoader {
 	this.unresolvedClasses = new Stack<ClassLocator>();
 
 	this.scLoader = new SClassLoader(this.library);
-    } // CClassLoader constructor
-    
+    } // CClassLoader constructor 
+
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
-
 
     public SClass loadSClass(ClassLocator loc, Package pkg) 
 	throws IOException, RecognitionException {
@@ -199,7 +202,7 @@ public class CClassLoader {
 
 	    CClassLink cClass = this.name2class.get(currLoc);
 	    if (cClass != null && cClass.isResolved()) {
-		return (CClass)cClass;
+		return (CClass) cClass;
 	    }
 	    // Here, class currLoc may not yet be resolved. 
 	    try {
@@ -226,11 +229,10 @@ public class CClassLoader {
 	throws IOException, RecognitionException {
 //System.out.println("loadCClass(");
 
-	resolveLocInOcc(loc, null);//!!!!!!!
+	resolveLocInOcc(loc, null); //!!!!!!!
 	while (!this.unresolvedClasses.empty()) {
 	    ClassLocator loc2 = this.unresolvedClasses.pop();
 //System.out.println("-->loc2: "+loc2);
-	    
 
 	    InputStream str = new URL(this.library + 
 				      loc2.getPackage().getPathName()
@@ -255,7 +257,7 @@ public class CClassLoader {
 	}
 	// Here, all links are resolved. 
 //System.out.println("XX3this.unresolvedClasses: "+ this.unresolvedClasses);
-	CClass cClass = (CClass)resolveLocInOcc(loc, null);
+	CClass cClass = (CClass) resolveLocInOcc(loc, null);
 	cClass.verify();
 	return cClass;
     }
@@ -283,7 +285,6 @@ public class CClassLoader {
 	if (occ != null) {
 	    resolvation.addOccurrence(occ);
 	}
-	    
 
 //System.out.println("...resolveLocInOcc("+loc);
 	return resolvation;

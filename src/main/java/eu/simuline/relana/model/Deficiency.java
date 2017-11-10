@@ -26,8 +26,8 @@ public final class Deficiency {
 
     public Deficiency(String name) {
 	this.name = name;
-    } // Deficiency constructor
-    
+    }
+
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
@@ -45,7 +45,7 @@ public final class Deficiency {
 	if (!(obj instanceof Deficiency)) {
 	    return false;
 	}
-	return getName().equals(((Deficiency)obj).getName());
+	return getName().equals(((Deficiency) obj).getName());
     }
 
     // HashCode is immutable. 
