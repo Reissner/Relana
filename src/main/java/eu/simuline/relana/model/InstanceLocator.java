@@ -11,7 +11,7 @@ import java.util.Collections;
  *
  * Created: Thu Apr 14 23:42:03 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public final class InstanceLocator {

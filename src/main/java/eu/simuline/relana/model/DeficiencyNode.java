@@ -10,7 +10,7 @@ import java.util.HashSet;
  *
  * Created: Thu Apr 14 19:49:45 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 

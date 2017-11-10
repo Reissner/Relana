@@ -6,7 +6,7 @@ package eu.simuline.relana.model;
  *
  * Created: Wed Apr 20 23:38:10 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class VerifyException extends RuntimeException {

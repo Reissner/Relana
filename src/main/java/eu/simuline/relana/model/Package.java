@@ -12,7 +12,7 @@ import java.util.HashMap;
  *
  * Created: Tue Apr 19 13:47:17 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class Package {

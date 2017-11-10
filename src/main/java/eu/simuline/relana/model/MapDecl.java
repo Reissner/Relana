@@ -9,7 +9,7 @@ import java.util.Set;
  *
  * Created: Mon May 23 18:54:29 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class MapDecl {
