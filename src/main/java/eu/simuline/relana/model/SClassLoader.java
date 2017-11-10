@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class SClassLoader {
+public final class SClassLoader {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *

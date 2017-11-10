@@ -15,7 +15,7 @@ import java.util.Iterator;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class DeficiencyMap {
+public final class DeficiencyMap {
 
     /* -------------------------------------------------------------------- *
      * constants.                                                           *
@@ -39,13 +39,13 @@ public class DeficiencyMap {
      * The source of this map. 
      * @see #domain
      */
-    public SClass source;
+    private SClass source;
 
     /**
      * The target of this map. 
      * @see #range
      */
-    public SClass target;
+    private SClass target;
 
     /**
      * The elements of {@link #source} 
@@ -67,7 +67,7 @@ public class DeficiencyMap {
      * the set represented by {@link #source} 
      * and the set represented by {@link #target}. 
      */
-    public Set<Deficiency> idDom;
+    private Set<Deficiency> idDom;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -158,7 +158,7 @@ public class DeficiencyMap {
     } // DeficiencyMap constructor
 
 
-    final void checkInvImg01() {
+    void checkInvImg01() {
 	// check inverse images of size 0 or 1. 
 	Iterator<Set<Deficiency>> iter = this.setOfNew2old.keySet().iterator();
 	Set<Deficiency> setDef;
@@ -203,7 +203,6 @@ public class DeficiencyMap {
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
-
 
     /**
      * Returns the identity map with the given source and target 
@@ -398,7 +397,7 @@ public class DeficiencyMap {
      * @return 
      *    the domain of this map. 
      */
-    final Set<Deficiency> getDomain() {
+    Set<Deficiency> getDomain() {
 	return this.domain;
     }
 
@@ -408,15 +407,23 @@ public class DeficiencyMap {
      * @return 
      *    the range of this map. 
      */
-    final Set<Deficiency> getRange() {
+    Set<Deficiency> getRange() {
 	return this.range;
     }
 
-    SClass getSource() {
+    /**
+     * Returns the source of this map. 
+     * @see #source
+     */
+    public SClass getSource() {
 	return this.source;
     }
 
-    SClass getTarget() {
+    /**
+     * Returns the target of this map. 
+     * @see #target
+     */
+    public SClass getTarget() {
 	return this.target;
     }
 

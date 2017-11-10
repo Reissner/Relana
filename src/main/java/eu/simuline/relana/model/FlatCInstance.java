@@ -27,7 +27,7 @@ import java.util.Comparator;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class FlatCInstance {
+public final class FlatCInstance {
 
     /* -------------------------------------------------------------------- *
      * constants.                                                           *
@@ -104,7 +104,7 @@ public class FlatCInstance {
 	    return substitute(serv, Formula.EMPTY_EXPRESSION);
 	}
 
-	Formula newVar = new Formula.Var(newServ, serv.name);
+	Formula newVar = new Formula.Var(newServ, serv.getName());
 	return substitute(serv, newVar);
     }
 
@@ -146,7 +146,7 @@ public class FlatCInstance {
 
 	// newServ is the effect that occurs by REMOVING def 
 	SInstance newServ = serv.add(def);
-	Formula newVar = new Formula.Var(newServ, serv.name);
+	Formula newVar = new Formula.Var(newServ, serv.getName());
 	Set<Formula> args = new HashSet<Formula>();
 	args.add(newConst);
 	args.add(newVar);
@@ -190,9 +190,9 @@ public class FlatCInstance {
      * The variable of the {@link SInstance} is replaced by another one, 
      * eliminating the given {@link Deficiency}. 
      */
-    static class InstDef {
-	SInstance serv;
-	Deficiency def;
+    private static class InstDef {
+	private final SInstance serv;
+	private final Deficiency def;
 	InstDef(SInstance serv, Deficiency def) {
 	    this.serv = serv;
 	    this.def = def;

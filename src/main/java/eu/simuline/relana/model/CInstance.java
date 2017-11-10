@@ -25,8 +25,7 @@ import java.util.ArrayList;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class CInstance {
-
+public final class CInstance {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *

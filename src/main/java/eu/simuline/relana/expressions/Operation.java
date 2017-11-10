@@ -284,10 +284,10 @@ public abstract class Operation {
 		return map.cov(defs);
 	    }
 	    Type source(DeficiencyMap map) {
-		return map.source.getType();
+		return map.getSource().getType();
 	    }
 	    Type target(DeficiencyMap map) {
-		return map.target.getType();
+		return map.getTarget().getType();
 	    }
 	    String getSymbol() {
 		return ",";
@@ -304,10 +304,10 @@ public abstract class Operation {
 		return map.cont(defs);
 	    }
 	    Type source(DeficiencyMap map) {
-		return map.target.getType();
+		return map.getTarget().getType();
 	    }
 	    Type target(DeficiencyMap map) {
-		return map.source.getType();
+		return map.getSource().getType();
 	    }
 	    String getSymbol() {
 		return "'";

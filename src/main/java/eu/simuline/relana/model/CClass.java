@@ -699,7 +699,6 @@ public class CClass implements CClassLink {
 		("Found components declared in class \"" + getName() + 
 		    "\" and in a superclass: " + names + ". ");
 	}
-	
     }
 
     /**

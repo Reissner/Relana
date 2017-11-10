@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * MapDecl.java
+ * Represents the declaration of a map. 
  *
  *
  * Created: Mon May 23 18:54:29 2005
@@ -12,18 +12,18 @@ import java.util.Set;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class MapDecl {
+public final class MapDecl {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *
      * -------------------------------------------------------------------- */
 
-    private boolean isRedeclare;  // NOPMD ****
-    private String mapName;  // NOPMD ****
+    private boolean isRedeclare; // NOPMD ****
+    private String mapName; // NOPMD ****
     private final Map<Set<Deficiency>, Deficiency> setOfNew2old;
-    public SClass source;
+    private SClass source;
 
-    public SClass target;
+    private SClass target;
 
     /**
      * The set of deficiencies mapped identically. 
@@ -31,7 +31,7 @@ public class MapDecl {
      * the set represented by {@link #source} 
      * and the set represented by {@link #target}. 
      */
-    public Set<Deficiency> idDom;
+    private Set<Deficiency> idDom;
 
     /**
      * The <code>map</code> declared here. 

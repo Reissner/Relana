@@ -13,7 +13,7 @@ import java.util.Arrays;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class ClassLocator {
+public final class ClassLocator {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *

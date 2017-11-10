@@ -14,7 +14,7 @@ import java.util.Map;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class DeficiencySetNode {
+public final class DeficiencySetNode {
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *

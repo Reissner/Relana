@@ -16,7 +16,7 @@ import java.util.Stack;
 import java.util.Iterator;
 
 /**
- * ProbDistr.java
+ * Represents a probability distribution. 
  *
  *
  * Created: Mon Apr 25 00:33:44 2005
@@ -24,7 +24,7 @@ import java.util.Iterator;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class ProbDistr {
+public final class ProbDistr {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
