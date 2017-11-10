@@ -2,8 +2,8 @@ package eu.simuline.relana.sys;
 
 import eu.simuline.relana.model.ClassLocator;
 import eu.simuline.relana.model.InstanceLocator;
-import eu.simuline.relana.model.CClass;// for javadoc only 
-import eu.simuline.relana.model.SClass;// for javadoc only 
+import eu.simuline.relana.model.CClass; // for javadoc only 
+import eu.simuline.relana.model.SClass; // for javadoc only 
 
 import java.net.URL;
 

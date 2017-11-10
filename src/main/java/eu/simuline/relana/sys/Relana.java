@@ -97,8 +97,8 @@ System.out.println("cInstance: " + flatCInstance);
 	// verify whether all output effects are indeed declared as output 
 	Set<InstanceLocator> outServ = project.getOutputEffects();
 System.out.println("outServ: " + outServ);
-	Map<List<String>,SInstance> observables = 
-	    new HashMap<List<String>,SInstance>();
+	Map<List<String>, SInstance> observables = 
+	    new HashMap<List<String>, SInstance>();
 	for (InstanceLocator loc : outServ) {
 	    SInstance serv = flatCInstance.getEffect(loc);
 	    CClass.SClassDecl decl = cClass.getEffectDecl(loc.getPath());
@@ -108,7 +108,7 @@ System.out.println("outServ: " + outServ);
 	    }
 	    // this works with HashMap observables, 
 	    // because loc.getPath() yields an unmodifyable list. 
-	    observables.put(loc.getPath(),serv);
+	    observables.put(loc.getPath(), serv);
 	}
 	
 	// Here, observables contains all stuff under consideration. 

@@ -376,7 +376,7 @@ public final class Type {
 	    return false;
 	}
 
-	Type other = (Type)obj;
+	Type other = (Type) obj;
 	if (!asSet().equals(other.asSet())) {
 	    return false;
 	}

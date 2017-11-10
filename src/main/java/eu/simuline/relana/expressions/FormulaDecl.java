@@ -93,7 +93,7 @@ public abstract class FormulaDecl {
 	Comp(Operation oper, Set<FormulaDecl> args) {
 	    this.oper = oper;
 	    this.args = args;
-	    retType();// for tests only 
+	    retType(); // for tests only 
 	}
 
 	public Type retType() {

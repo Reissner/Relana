@@ -263,6 +263,10 @@ public abstract class Operation {
 	}
     } // class CompOp 
 
+    /**
+     * Enumerates the kinds of functors covariant and contravariant ones. 
+     * **** 
+     */
     public enum Functor {
 
 	/* ---------------------------------------------------------------- *
@@ -355,6 +359,10 @@ public abstract class Operation {
 	}
     } // enum Functor 
 
+    /**
+     * Represents an operation defined by a covariant/contravariant functor. 
+     * **** 
+     */
     public static final class Maps extends Operation implements Operation.Eval {
 
 	/* ---------------------------------------------------------------- *
