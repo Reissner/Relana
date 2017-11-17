@@ -94,6 +94,7 @@ public final class DeficiencyNode {
 	this.successors.addAll(nodes);
     }
 
+    @SuppressWarnings("checkstyle:nowhitespaceafter")
     public void addAll(DeficiencyNode other) {
 	if (!other.getDeficiency().equals(getDeficiency())) {
 	    throw new IllegalArgumentException

@@ -49,7 +49,7 @@ public final class ClassLocator {
 
     public static ClassLocator getLocator(List<String> path) {
 	int idxLast = path.size() - 1;
-	String name = path.get(idxLast);/// ****
+	String name = path.get(idxLast); // ****
 	return new ClassLocator(name,
 				Package.getPackage(path.subList(0, idxLast)));
     }
