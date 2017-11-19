@@ -25,13 +25,13 @@ public final class MapDecl {
 
     private final SClass target;
 
-    /**
+    /*
      * The set of deficiencies mapped identically. 
      * As a consequence, this is a subset of both 
      * the set represented by {@link #source} 
      * and the set represented by {@link #target}. 
      */
-    private final Set<Deficiency> idDom;
+    //private final Set<Deficiency> idDom;
 
     /**
      * The <code>map</code> declared here. 
@@ -53,11 +53,11 @@ public final class MapDecl {
 	this.setOfNew2old = setOfNew2old;
 	this.source = source;
 	this.target = target;
-	this.idDom = idDom;
+//	this.idDom = idDom;
 	this.map = new DeficiencyMap(this.setOfNew2old,
 				     this.source,
 				     this.target,
-				     this.idDom);
+				     /* */idDom);
     } // MapDecl constructor
 
     /* -------------------------------------------------------------------- *
