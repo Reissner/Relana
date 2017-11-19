@@ -103,7 +103,7 @@ public abstract class Formula {
 	 * ---------------------------------------------------------------- */
 
 	private final SInstance varS;
-	private String name;
+	private final String name;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -265,9 +265,9 @@ public abstract class Formula {
 	public String toString() {
 	    StringBuffer res = new StringBuffer();
 	    res.append(this.oper);
-	    res.append("(");
+	    res.append('(');
 	    res.append(this.args);
-	    res.append(")");
+	    res.append(')');
 	    return res.toString();
 	}
     } // class Comp 

@@ -39,13 +39,13 @@ public final class DeficiencyMap {
      * The source of this map. 
      * @see #domain
      */
-    private SClass source;
+    private final SClass source;
 
     /**
      * The target of this map. 
      * @see #range
      */
-    private SClass target;
+    private final SClass target;
 
     /**
      * The elements of {@link #source} 

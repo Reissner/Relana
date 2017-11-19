@@ -34,7 +34,7 @@ public final class SClass {
     /**
      * The name of this <code>SClass</code>. 
      */
-    protected final String sName;
+    private final String sName;
 
     /**
      * The package of this <code>SClass</code>. 

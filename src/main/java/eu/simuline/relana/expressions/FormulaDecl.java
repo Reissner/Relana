@@ -116,9 +116,9 @@ public abstract class FormulaDecl {
 	    argsStr = argsStr.substring(1, argsStr.length() - 2);
 
 	    res.append(this.oper);
-	    res.append("(");
+	    res.append('(');
 	    res.append(argsStr);
-	    res.append(")");
+	    res.append(')');
 	    return res.toString();
 	}
     } // class Var 

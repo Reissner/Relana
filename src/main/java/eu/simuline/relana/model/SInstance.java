@@ -29,7 +29,7 @@ public final class SInstance {
 
     private Formula form;
 
-    private String name; // for debugging 
+    private final String name; // for debugging 
 
     String getName() {
 	return this.name;

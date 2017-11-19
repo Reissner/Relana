@@ -21,9 +21,9 @@ public final class MapDecl {
     private boolean isRedeclare; // NOPMD ****
     private String mapName; // NOPMD ****
     private final Map<Set<Deficiency>, Deficiency> setOfNew2old;
-    private SClass source;
+    private final SClass source;
 
-    private SClass target;
+    private final SClass target;
 
     /**
      * The set of deficiencies mapped identically. 
@@ -31,7 +31,7 @@ public final class MapDecl {
      * the set represented by {@link #source} 
      * and the set represented by {@link #target}. 
      */
-    private Set<Deficiency> idDom;
+    private final Set<Deficiency> idDom;
 
     /**
      * The <code>map</code> declared here. 

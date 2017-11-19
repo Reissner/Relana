@@ -389,7 +389,7 @@ public class CClass implements CClassLink {
     /**
      * The Name of this <code>CClass</code>. 
      */
-    private String cName;
+    private final String cName;
 
     /**
      * The package of this class. 
