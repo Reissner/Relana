@@ -341,7 +341,7 @@ public class CClass implements CClassLink {
     public static final CClass COMPONENT = 
     new CClass("Component",
 	       Package.BUILD_IN,
-	       null,
+	       null, // superclass.. the only with null
 	       new HashMap<String, MapDecl>(),
 	       new HashMap<String, CClassLink>(),
 	       new HashMap<String, CClass.SClassDecl>()) {
@@ -461,7 +461,7 @@ public class CClass implements CClassLink {
      * @return 
      *    {@link #cName}. 
      */
-    public String getName() {
+    public final String getName() {
 	return this.cName;
     }
 
@@ -471,7 +471,7 @@ public class CClass implements CClassLink {
      * @return 
      *    {@link #pkg}. 
      */
-    public Package getPackage() {
+    public final Package getPackage() {
 	return this.pkg;
     }
 
@@ -483,7 +483,7 @@ public class CClass implements CClassLink {
      * @return 
      *    {@link #superClass}. 
      */
-    public CClass getSuperClass() {
+    public final CClass getSuperClass() {
 	return this.superClass;
     }
 
@@ -524,7 +524,7 @@ public class CClass implements CClassLink {
 	return getSuperClass().getComponentCls(name);
     }
 
-    public CClassLink getComponentCls(List<String> path) {
+    public final CClassLink getComponentCls(List<String> path) {
 	CClass curr = this;
 	for (String key : path) {
 	    curr = (CClass) curr.getComponentCls(key);
@@ -534,6 +534,7 @@ public class CClass implements CClassLink {
     }
 
     Set<String> getComponentNames() {
+	// Here getSuperClass() is not null 
 	Set<String> result = new TreeSet<String>
 	    (getSuperClass().getComponentNames());
 	result.addAll(getName2ComponentClss().keySet());
@@ -553,7 +554,7 @@ public class CClass implements CClassLink {
     }
 
     // based on getEffectDecl(String)
-    public SClassDecl getEffectDecl(List<String> path) {
+    public final SClassDecl getEffectDecl(List<String> path) {
 	CClass curr = this;
 	int ind = 0;
 	for (; ind < path.size() - 1; ind++) {
@@ -570,6 +571,7 @@ public class CClass implements CClassLink {
 
     // recursively down the inheritance hierarchy. 
     Set<String> getEffectNames() {
+	// Here, getSuperClass() is not null 
 	Set<String> result = 
 	    new TreeSet<String>(getSuperClass().getEffectNames());
 	result.addAll(getName2Effects().keySet());
@@ -580,7 +582,7 @@ public class CClass implements CClassLink {
 
     // **** should be recursive **** 
     // **** needed in Relana only: check that enclosing instance has no input 
-    public Set<SClassDecl> getEffectsRec() {
+    public final Set<SClassDecl> getEffectsRec() {
 	Set<SClassDecl> res = new HashSet<SClassDecl>();
 	// add immediate effects declarations 
 	for (SClassDecl decl : this.effects.values()) {
@@ -608,7 +610,7 @@ public class CClass implements CClassLink {
     }
 
     // replacement of CClassLink by CClass. 
-    public CClassLink setComponent(String name, CClass cClass) {
+    public final CClassLink setComponent(String name, CClass cClass) {
 //System.out.println(": "+this.subComponents.put(name, cClass).getClass());
 	return this.subComponents.put(name, cClass);
     }
@@ -713,6 +715,11 @@ public class CClass implements CClassLink {
 	    "PMD.SingleMethodSingleton"})
     public CInstance getInstance() {
 
+	// if (getSuperClass() == null) {
+	//     assert this == COMPONENT;
+	//     return null;
+	// }
+
 	// Here, superclass is not null 
 	CInstance cInstance = getSuperClass().getInstance();
 
@@ -759,11 +766,11 @@ public class CClass implements CClassLink {
 	    // is empty. 
     }
 
-    public boolean isResolved() {
+    public final boolean isResolved() {
 	return true;
     }
 
-    public String toString() {
+    public final String toString() {
 	StringBuffer res = new StringBuffer();
 
 	res.append("\n<CClass name=\"");
