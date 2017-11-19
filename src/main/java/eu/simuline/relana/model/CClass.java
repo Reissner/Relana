@@ -506,6 +506,8 @@ public class CClass implements CClassLink {
      *    the map declaration with the given name 
      *    or <code>null</code> if no declaration is defined with this name.  
      */
+    @SuppressWarnings("checkstyle:designforextension")
+    // **** designforextension superfluous with checkstyle >=7.2 
     public MapDecl getMapDecl(String name) {
 	// Here, getSuperclass() returns non-null 
 	MapDecl result = this.maps.get(name);
@@ -526,6 +528,8 @@ public class CClass implements CClassLink {
 	return this.subComponents;
     }
 
+    @SuppressWarnings("checkstyle:designforextension")
+    // **** designforextension superfluous with checkstyle >=7.2 
     public CClassLink getComponentCls(String name) {
 	// Here, getSuperclass() returns non-null 
 	CClassLink result = this.subComponents.get(name);
@@ -544,6 +548,8 @@ public class CClass implements CClassLink {
 	return curr;
     }
 
+    @SuppressWarnings("checkstyle:designforextension")
+    // **** designforextension superfluous with checkstyle >=7.2 
     Set<String> getComponentNames() {
 	// Here, getSuperclass() returns non-null 
 	Set<String> result = new TreeSet<String>
@@ -555,6 +561,8 @@ public class CClass implements CClassLink {
     // **** as required in FormulaParser: 
     // returns <code>null</code> if no effect with the given name is declared 
     // lookup is recursively down the inheritance hierarchy. 
+    @SuppressWarnings("checkstyle:designforextension")
+    // **** designforextension superfluous with checkstyle >=7.2 
     public SClassDecl getEffectDecl(String name) {
 	// Here, getSuperclass() returns non-null 
 	SClassDecl result = this.effects.get(name);
@@ -582,6 +590,8 @@ public class CClass implements CClassLink {
     }
 
     // recursively down the inheritance hierarchy. 
+    @SuppressWarnings("checkstyle:designforextension")
+    // **** designforextension superfluous with checkstyle >=7.2 
     Set<String> getEffectNames() {
 	// Here, getSuperclass() returns non-null 
 	Set<String> result = 
@@ -627,7 +637,8 @@ public class CClass implements CClassLink {
 	return this.subComponents.put(name, cClass);
     }
 
-
+    @SuppressWarnings("checkstyle:designforextension")
+    // **** designforextension superfluous with checkstyle >=7.2 
     void verify() throws VerifyException {
 	// Here, getSuperclass() returns non-null 
 	getSuperClass().verify();
@@ -724,7 +735,9 @@ public class CClass implements CClassLink {
      */
     @SuppressWarnings({
 	    "PMD.SingletonClassReturningNewInstance", 
-	    "PMD.SingleMethodSingleton"})
+	    "PMD.SingleMethodSingleton", 
+	    "checkstyle:designforextension"})
+	    // **** designforextension superfluous with checkstyle >=7.2 
     public CInstance getInstance() {
 	// Here, getSuperclass() returns non-null 
 	CInstance cInstance = getSuperClass().getInstance();
