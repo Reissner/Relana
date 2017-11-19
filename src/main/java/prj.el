@@ -28,7 +28,8 @@
  '(jdee-compile-enable-kill-buffer nil)
  '(jdee-compile-option-encoding "UTF-8")
  '(jdee-compile-option-sourcepath (quote ("../../../src/main/java")))
- '(jdee-compile-option-command-line-args (quote ("-Xlint")))
+ '(jdee-compile-option-command-line-args 
+   (quote ("-Xlint" "-Xlint:-processing")))
  '(jdee-compile-option-depend nil)
  '(jdee-compile-option-deprecation t)
 ; '(jdee-compile-option-debug (t t t))
