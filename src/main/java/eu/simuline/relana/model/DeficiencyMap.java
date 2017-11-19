@@ -160,17 +160,24 @@ public final class DeficiencyMap {
 
     void checkInvImg01() {
 	// check inverse images of size 0 or 1. 
-	Iterator<Set<Deficiency>> iter = this.setOfNew2old.keySet().iterator();
+	//Iterator<Set<Deficiency>> iter = this.setOfNew2old.keySet().iterator();
+	Iterator<Map.Entry<Set<Deficiency>, Deficiency>> iter = 
+	    this.setOfNew2old.entrySet()
+	    .iterator();
 	Set<Deficiency> setDef;
+	Map.Entry<Set<Deficiency>, Deficiency> mapEntry;
 	Deficiency def;
 	while (iter.hasNext()) {
-	    setDef = iter.next();
+	    mapEntry = iter.next();
+	    //setDef = iter.next();
+	    setDef = mapEntry.getKey();
 	    switch (setDef.size()) { // NOPMD
 		case 0:
 		    // size == 0: this is superfluous. 
 		    throw new IllegalArgumentException
 			("Found empty inverse image for " + 
-			 this.setOfNew2old.get(setDef) + ". ");
+			 //this.setOfNew2old.get(setDef) 
+			 mapEntry.getValue() + ". ");
 		case 1:
 		    // size == 1: if identity, remove and add to idDomain. 
 		    def = this.setOfNew2old.get(setDef);

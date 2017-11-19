@@ -157,19 +157,22 @@ public final class Project
      * methods implementing ParseExceptionHandler                            *
      * --------------------------------------------------------------------- */
 
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings
+	(value="UC_USELESS_OBJECT", 
+	 justification="use if activated ")
     public void foundMultipleAttribute(String attrName,
 				       Object oldAttrValue) {
-	StringBuilder res = new StringBuilder();
-	res.append("Found second value for attribute \"");
-	res.append(attrName);
-	res.append("\"; overwritten ");
-	if (oldAttrValue == AttributesImpl.NO_VALUE) {
-	    res.append("no value. ");
-	} else {
-	    res.append("old value \"");
-	    res.append(oldAttrValue);
-	    res.append('\"');
-	}
+	// StringBuilder res = new StringBuilder();
+	// res.append("Found second value for attribute \"");
+	// res.append(attrName);
+	// res.append("\"; overwritten ");
+	// if (oldAttrValue == AttributesImpl.NO_VALUE) {
+	//     res.append("no value. ");
+	// } else {
+	//     res.append("old value \"");
+	//     res.append(oldAttrValue);
+	//     res.append('\"');
+	// }
 
 	//this.events.add(res.toString());
     }

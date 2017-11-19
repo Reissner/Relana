@@ -68,7 +68,7 @@ public abstract class Relana { // NOPMD
 	// read project file 
 	URL proj = new URL(args[0]);
 	InputStreamReader projectStr = 
-	    new InputStreamReader(proj.openStream());
+	    new InputStreamReader(proj.openStream(), "UTF-8");
 	SGMLParser projectParser = new SGMLParser();
 	projectParser.parseXML(true);
 	Project project = new Project();

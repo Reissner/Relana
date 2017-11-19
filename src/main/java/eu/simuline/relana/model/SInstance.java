@@ -132,7 +132,7 @@ public final class SInstance {
 	    throw new IllegalArgumentException("****");
 	}
 	return new SInstance(getType() .remove(def),
-			     this.distr.remove(def),
+			     this.distr == null ? null : this.distr.remove(def),
 			     this.name);
 
     }

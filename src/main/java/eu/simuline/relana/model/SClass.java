@@ -2,6 +2,8 @@ package eu.simuline.relana.model;
 
 import eu.simuline.relana.expressions.Type;
 
+import static eu.simuline.relana.model.DeficiencyNode.unwrap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -365,9 +367,10 @@ public final class SClass {
      *    if the transitive hull of the relation contains a cycle. 
      */
     private void verifyNoShortcut() throws VerifyException {
+	// **** not so good: instead of unwrap use new Collection.
 	for (DeficiencyNode node : this.deficiency2ordering.values()) {
-	    if (node.getPredecessors().contains(node.getDeficiency()) ||
-		node.getSuccessors  ().contains(node.getDeficiency())) {
+	    if (unwrap(node.getPredecessors()).contains(node.getDeficiency()) ||
+		unwrap(node.getSuccessors  ()).contains(node.getDeficiency())) {
 		throw new VerifyException
 		("Deficiency " + node.getDeficiency() + 
 		 " is cyclically related with itself. ");

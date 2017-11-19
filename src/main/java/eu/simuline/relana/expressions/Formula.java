@@ -196,11 +196,7 @@ public abstract class Formula {
 	    }
 	    this.max = this.oper.eval(param);
 
-	    if (this.oper.getOperation().isIsoAntitone()) {
-		// nothing to do 
-		this.max = this.max;
-		this.min = this.min;
-	    } else {
+	    if (!this.oper.getOperation().isIsoAntitone()) {
 		// exchange 
 		Set<Deficiency> inter;
 		inter = this.max;

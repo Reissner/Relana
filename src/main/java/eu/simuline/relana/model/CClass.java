@@ -217,7 +217,8 @@ public class CClass implements CClassLink {
 
 	    // here, one may consider 
 	    // a weaker form of assignment compatibility ****
-	    if (!this.form.retType().equals(this.sClass.getType())) {
+	    if ((this.form != null) && 
+		!this.form.retType().equals(this.sClass.getType())) {
 		throw new IllegalArgumentException
 		    ("Tried to assign formula \"" + this.form + 
 		     "\" with return type " + this.form.retType() + 
