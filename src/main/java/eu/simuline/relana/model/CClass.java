@@ -346,28 +346,37 @@ public class CClass implements CClassLink {
 	       new HashMap<String, CClassLink>(),
 	       new HashMap<String, CClass.SClassDecl>()) {
 
+	// overrides all methods based on getSuperClass() != null 
+
 	// maybe there should be an exception ****
+	@Override
 	public MapDecl getMapDecl(String name) {
 	    return null;
 	}
 	// maybe there should be an exception ****
+	@Override
 	public CClassLink getComponentCls(String name) {
 	    return null;
 	}
 	// maybe there should be an exception ****
+	@Override
 	public SClassDecl getEffectDecl(String name) {
 	    return null;
 	}
 	@SuppressWarnings("PMD.SingletonClassReturningNewInstance")
+	@Override
 	public CInstance getInstance() {
 	    return new CInstance();
 	}
+	@Override
 	Set<String> getComponentNames() {
 	    return new TreeSet<String>();
 	}
+	@Override
 	Set<String> getEffectNames() {
 	    return new TreeSet<String>();
 	}
+	@Override
 	void verify() throws VerifyException {
 	    // is empty. 
 	}
@@ -498,6 +507,7 @@ public class CClass implements CClassLink {
      *    or <code>null</code> if no declaration is defined with this name.  
      */
     public MapDecl getMapDecl(String name) {
+	// Here, getSuperclass() returns non-null 
 	MapDecl result = this.maps.get(name);
 	if (result != null) {
 	    return result;
@@ -517,6 +527,7 @@ public class CClass implements CClassLink {
     }
 
     public CClassLink getComponentCls(String name) {
+	// Here, getSuperclass() returns non-null 
 	CClassLink result = this.subComponents.get(name);
 	if (result != null) {
 	    return result;
@@ -534,7 +545,7 @@ public class CClass implements CClassLink {
     }
 
     Set<String> getComponentNames() {
-	// Here getSuperClass() is not null 
+	// Here, getSuperclass() returns non-null 
 	Set<String> result = new TreeSet<String>
 	    (getSuperClass().getComponentNames());
 	result.addAll(getName2ComponentClss().keySet());
@@ -545,6 +556,7 @@ public class CClass implements CClassLink {
     // returns <code>null</code> if no effect with the given name is declared 
     // lookup is recursively down the inheritance hierarchy. 
     public SClassDecl getEffectDecl(String name) {
+	// Here, getSuperclass() returns non-null 
 	SClassDecl result = this.effects.get(name);
 	if (result != null) {
 	    return result;
@@ -571,7 +583,7 @@ public class CClass implements CClassLink {
 
     // recursively down the inheritance hierarchy. 
     Set<String> getEffectNames() {
-	// Here, getSuperClass() is not null 
+	// Here, getSuperclass() returns non-null 
 	Set<String> result = 
 	    new TreeSet<String>(getSuperClass().getEffectNames());
 	result.addAll(getName2Effects().keySet());
@@ -617,7 +629,7 @@ public class CClass implements CClassLink {
 
 
     void verify() throws VerifyException {
-	// Here, getSuperClass() != null
+	// Here, getSuperclass() returns non-null 
 	getSuperClass().verify();
 
 	// verify that a effect is declared only 
@@ -714,13 +726,7 @@ public class CClass implements CClassLink {
 	    "PMD.SingletonClassReturningNewInstance", 
 	    "PMD.SingleMethodSingleton"})
     public CInstance getInstance() {
-
-	// if (getSuperClass() == null) {
-	//     assert this == COMPONENT;
-	//     return null;
-	// }
-
-	// Here, superclass is not null 
+	// Here, getSuperclass() returns non-null 
 	CInstance cInstance = getSuperClass().getInstance();
 
 	// instantiate and add subcomponents 
