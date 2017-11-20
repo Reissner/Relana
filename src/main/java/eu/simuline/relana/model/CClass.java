@@ -339,6 +339,12 @@ public class CClass implements CClassLink {
      * constants.                                                           *
      * -------------------------------------------------------------------- */
 
+    /**
+     * The root of the subclass hierarchy of {@link CClass}es: 
+     * Class named <code>Component</code> without superclass, 
+     * i.e. {@link #getSuperClass()} returns <code>null</code>
+     * This represents an empty component. 
+     */
     public static final CClass COMPONENT = 
     new CClass("Component",
 	       Package.BUILD_IN,
