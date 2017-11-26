@@ -43,8 +43,8 @@ public final class MapDecl {
      * -------------------------------------------------------------------- */
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="URF_UNREAD_FIELD", 
-	 justification="to be used in later versions ")
+	(value = "URF_UNREAD_FIELD", 
+	 justification = "to be used in later versions ")
     public MapDecl(boolean isRedeclare,
 		   String mapName,
 		   Map<Set<Deficiency>, Deficiency> setOfNew2old,

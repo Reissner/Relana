@@ -4,7 +4,7 @@ import eu.simuline.relana.model.ClassLocator;
 import eu.simuline.relana.model.InstanceLocator;
 
 import eu.simuline.util.sgml.ParseExceptionHandler;
-import eu.simuline.util.sgml.AttributesImpl;
+//import eu.simuline.util.sgml.AttributesImpl;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -158,8 +158,8 @@ public final class Project
      * --------------------------------------------------------------------- */
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="UC_USELESS_OBJECT", 
-	 justification="use if activated ")
+	(value = "UC_USELESS_OBJECT", 
+	 justification = "use if activated ")
     public void foundMultipleAttribute(String attrName,
 				       Object oldAttrValue) {
 	// StringBuilder res = new StringBuilder();

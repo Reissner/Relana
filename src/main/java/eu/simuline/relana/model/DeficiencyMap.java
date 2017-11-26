@@ -160,7 +160,8 @@ public final class DeficiencyMap {
 
     void checkInvImg01() {
 	// check inverse images of size 0 or 1. 
-	//Iterator<Set<Deficiency>> iter = this.setOfNew2old.keySet().iterator();
+	//Iterator<Set<Deficiency>> iter = 
+	//                           this.setOfNew2old.keySet().iterator();
 	Iterator<Map.Entry<Set<Deficiency>, Deficiency>> iter = 
 	    this.setOfNew2old.entrySet()
 	    .iterator();
