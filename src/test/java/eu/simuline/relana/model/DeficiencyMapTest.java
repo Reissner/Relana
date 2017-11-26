@@ -15,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.runner.RunWith;
-import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
