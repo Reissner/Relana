@@ -25,6 +25,10 @@ public abstract class Formula {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
+    // **** This suppression does not work... why not???? 
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings
+    (value="IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION",
+     justification="check in main method: field correctly initialized ")
     public static final Formula EMPTY_EXPRESSION = 
 	Const.create(new HashSet<Deficiency>(), Type.getEmpty());
 
@@ -325,4 +329,9 @@ public abstract class Formula {
 	return super.hashCode();
     }
 
-} // FormulaDecl
+    // shows that EMPTY_EXPRESSION is correctly initialized 
+    public static final void main(String[] args) {
+	System.out.println("EE: "+EMPTY_EXPRESSION);
+    }
+
+} // Formula
