@@ -18,9 +18,13 @@
     This is in fact an old project. 
     It is important not so much because of its content 
     but to serve as a prototype to learn from. 
+
+    Relana models are object oriented and compute probabilities 
+    for loss of functionality. 
   </description>
 
-  <url>http://www.simuline.eu</url><!-- maybe not specific enough -->
+  <url>http://www.simuline.eu/Relana/</url><!-- same as site-deploy -->
+  <inceptionYear>2005</inceptionYear>
   <licenses>
     <license>
       <name>The Relana-License, Version 1.0</name>
@@ -30,6 +34,7 @@
       on usage, study, modification and distribution of Relana. </comments>
     </license>
   </licenses>
+
   <organization>
     <name>l2r.org</name>
     <url>http://www.simuline.eu</url>
@@ -37,23 +42,35 @@
 
   <developers>
     <developer>
+      <id>ER</id>
       <name>Ernst Reissner</name>
       <email>Ernst.Reissner@simuline.eu</email>
+      <organization>l2r</organization>
       <timezone>Europe/Berlin</timezone>
+      <properties>
+        <picUrl>http://www.simuline.eu/Gluck_0001.gif</picUrl>
+      </properties>
     </developer>
   </developers>
   <!-- mailingLists></mailingLists-->
 
   <!-- properties: ensures reproducibility -->
   <properties>
+    <!-- to keep dependencies up to date: 
+    mvn versions:display-plugin-updates
+    mvn versions:display-dependency-updates -->
     <versionMvn>3.5.0</versionMvn>
 
+    <versionPmd>5.8.1</versionPmd><!-- with mvn plugin 3.8 -->
+    <versionPmdMvnPlugin>3.8</versionPmdMvnPlugin><!-- works with pmd 5.8.1 -->
     <!-- antlr4, its runtime and mvn plugin all same version, 
          tied to antlr-annotation and ST4 -->
     <versionAntlr>4.7</versionAntlr><!-- tied to antlr 4.7 -->
     <!--versionAntlrAnnot>4.3</versionAntlrAnnot--><!-- tied to antlr 4.7 -->
     <versionAntlrST4>4.0.8</versionAntlrST4>  <!-- tied to antlr 4.7 -->
     <versionAntlr3>3.5.2</versionAntlr3>  <!-- from ST4 -->
+
+    <!-- up to date is 4.13 but there is no maven support for this. -->
     <versionJUnit>4.12</versionJUnit>
     <!-- tied to junit 4.12, not needed -->
     <!--versionHamcrestCore>1.3</versionHamcrestCore-->
@@ -74,6 +91,9 @@
     </tstModelDir>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.pmd.rulesetfiles>
+      ${basedir}/config/myPmdRuleset.xml
+    </maven.pmd.rulesetfiles>
   </properties>
 
   <!-- target repository. This will change. 
@@ -139,27 +159,96 @@
     </testResources>
 
 
-    <plugins>
+    <pluginManagement>
+      <plugins>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-checkstyle-plugin</artifactId>
+	  <version>2.17</version>
 
-      <!-- at the moment just to enforce maven version -->
+	  <dependencies>
+	    <dependency>
+	      <groupId>com.puppycrawl.tools</groupId>
+	      <artifactId>checkstyle</artifactId>
+	      <version>8.4</version>
+	    </dependency>
+	  </dependencies>
+
+	  <configuration>
+	    <headerLocation>
+	      <!-- (Default: LICENSE.txt)
+	      User property: checkstyle.header.file
+	      Specifies the location of the License file 
+	      (a.k.a. the header file) that can be used by Checkstyle 
+	      to verify that source code has the correct license header. -->
+	    </headerLocation>
+ 	    <violationIgnore>
+	      <!-- User property: checkstyle.violation.ignore
+		   Violations to ignore. 
+		   This is a comma-separated list, 
+		   each value being either a rule name, 
+		   a rule category or a java package name of rule class. -->
+	    </violationIgnore>
+	    <configLocation>
+	      ${basedir}/config/myChkStyleRuleset.xml
+	    </configLocation>
+	    <encoding>UTF-8</encoding>
+	    <excludes>**/parser/**</excludes>
+	  </configuration>
+	</plugin>
+
+	<plugin>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>findbugs-maven-plugin</artifactId>
+	  <version>3.0.5</version>
+	  <configuration>
+	    <xmlOutput>true</xmlOutput>
+	    <onlyAnalyze>
+	      eu.simuline.relana.expressions.*, 
+	      eu.simuline.relana.model.*, 
+	      eu.simuline.relana.sys.*, 
+	    </onlyAnalyze>
+	    <!-- Optional directory to put findbugs xdoc xml report -->
+	    <!--xmlOutputDirectory>target/site</xmlOutputDirectory-->
+	  </configuration>
+  	</plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- plugin to keep versions up to date -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
+
+      <!-- at the moment just to enforce maven version 
+	   **** seems to be buggy and to make also update of plugins unsafe -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.0.0-M1</version>
         <executions>
           <execution>
-            <id>enforce-maven</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
+                 <!--version>${versionMvn}</version-->
                 <requireMavenVersion>
                   <version>3.5.0</version>
-                  <!--version>${versionMvn}</version-->
-                </requireMavenVersion>
+                 </requireMavenVersion>
+                <!--requireJavaVersion>
+                  <version>1.8</version>
+                </requireJavaVersion-->
               </rules>
+	      <!--alwaysFail>true</alwaysFail-->
 	      <fail>true</fail>
+ 	      <ignoreCache>true</ignoreCache>
             </configuration>
           </execution>
         </executions>
@@ -356,6 +445,7 @@
 	    <arg>-g</arg>
   	    <arg>-Xlint:unchecked</arg>
   	    <arg>-Xlint:deprecation</arg>
+  	    <arg>-Xlint:-processing</arg>
 	  </compilerArgs>
           <fork>false</fork>
 	  <showWarnings>false</showWarnings>
@@ -394,6 +484,7 @@
 	  <testFailureIgnore>true</testFailureIgnore>
 
 	  <!-- **** check whether this is strictly required.  -->
+	  <!-- **** deprecated -->
 	  <systemProperties>
 	    <property>
 	      <name>tstModelDir</name>     <value>${tstModelDir}</value>
@@ -405,6 +496,46 @@
 
         </configuration>
      </plugin>
+
+     <!-- pmd plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
+	<!-- if update then also config/myruleset.xml as described there -->
+	<!--executions>
+	  <execution>
+	    <goals>
+	      <goal>check</goal>
+	    </goals>
+	  </execution>
+	</executions-->
+        <dependencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>${versionPmd}</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>${versionPmd}</version>
+          </dependency>
+        </dependencies>
+
+        <configuration>
+	  <format>xml</format><!--  in addition to "none", "csv", "xml", "txt" or the full class name of the PMD renderer to use. -->
+	  <skip>false</skip>
+	  <skipEmptyReport>false</skipEmptyReport>
+	  <!--suppressMarker>NOPMD</suppressMarker-->
+	  <includeTests>false</includeTests>
+          <rulesets>
+	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
+          </rulesets>
+	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
+        </configuration>
+
+      </plugin>
 
 
       <!-- javadoc plugin -->
@@ -526,6 +657,16 @@
   <reporting>
     <plugins>
 
+      <!-- creates a representation of the source code 
+	   with line numbers and cross references. 
+	   Forms the base for pmd, findbgs and checkstyle 
+	   e.g. providing line numbers -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jxr-plugin</artifactId>
+	<version>2.5</version>
+      </plugin>
+
       <!-- configures the aspects of the reporting, 
 	   i.e. the kinds of reports generated. -->
       <plugin>
@@ -560,6 +701,160 @@
 	  </reportSet>
 	</reportSets>
       </plugin>
+
+      <!-- Creates surefire test reports -->
+      <plugin>
+ 	<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${versionTestPlugins}</version>
+	<configuration>
+	  <!-- to show failed tests only -->
+	  <showSuccess>false</showSuccess>
+	</configuration>
+      </plugin>
+
+      <plugin>
+ 	<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <!--version>2.17</version>
+
+	<dependencies>
+	  <dependency>
+	    <groupId>com.puppycrawl.tools</groupId>
+	    <artifactId>checkstyle</artifactId>
+	    <version>8.4</version>
+	  </dependency>
+	</dependencies>
+
+	<configuration>
+	  <configLocation>
+	    ${basedir}/config/myChkStyleRuleset.xml
+	  </configLocation>
+         <encoding>UTF-8</encoding>
+	  <excludes>**/parser/**</excludes>
+	</configuration-->
+      </plugin>
+
+
+      <plugin>
+ 	<groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+	<configuration>
+	  <xmlOutput>true</xmlOutput>
+	  <onlyAnalyze>
+	    eu.simuline.relana.expressions.*, 
+	    eu.simuline.relana.model.*, 
+	    eu.simuline.relana.sys.*, 
+	    eu.simuline.testhelpers.*, 
+	    eu.simuline.util.*, 
+	  </onlyAnalyze>
+	  <!-- Optional directory to put findbugs xdoc xml report -->
+	  <!--xmlOutputDirectory>target/site</xmlOutputDirectory-->
+        </configuration>
+      </plugin>
+
+    <!-- pmd plugin **** reporting or build? -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
+        <!--dependencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>${versionPmd}</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>${versionPmd}</version>
+          </dependency>
+        </dependencies-->
+
+        <configuration>
+	  <format>xml</format><!--  in addition to "none", "csv", "xml", "txt" or the full class name of the PMD renderer to use. -->
+	  <skip>false</skip>
+	  <skipEmptyReport>false</skipEmptyReport>
+	  <!--suppressMarker>NOPMD</suppressMarker-->
+	  <includeTests>false</includeTests>
+          <rulesets>
+	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
+          </rulesets>
+           <excludes>
+            <exclude>eu/simuline/relana/parser/FormulaLexer.java</exclude>
+            <exclude>eu/simuline/relana/parser/FormulaParser.java</exclude>
+	    <exclude>eu/simuline/relana/parser/Formula*Listener.java</exclude>
+	    <exclude>eu/simuline/relana/parser/Formula*Visitor.java</exclude>
+
+            <exclude>eu/simuline/relana/parser/CClassLexer.java</exclude>
+            <exclude>eu/simuline/relana/parser/CClassParser.java</exclude>
+	    <exclude>eu/simuline/relana/parser/CClass*Listener.java</exclude>
+	    <exclude>eu/simuline/relana/parser/CClass*Visitor.java</exclude>
+
+            <exclude>eu/simuline/relana/parser/SClassLexer.java</exclude>
+            <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
+	    <exclude>eu/simuline/relana/parser/SClass*Listener.java</exclude>
+	    <exclude>eu/simuline/relana/parser/SClass*Visitor.java</exclude>
+          </excludes>
+	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <!-- determines code coverage of tests 
+	   **** ignores and excludes are .... ignored **** -->
+      <plugin>
+	<groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.7</version>
+	<configuration>
+          <instrumentation>
+            <ignores>
+              <ignore>org.*</ignore>
+            </ignores>
+	    <excludes>
+	      <exclude>org/**/*.class</exclude>
+	    </excludes>
+
+	  </instrumentation>
+	  <quiet>true</quiet>
+	  <formats>
+	    <format>xml</format>
+	    <format>html</format>
+	  </formats>
+	</configuration>
+      </plugin>
+
+
+      <!-- **** seems not to work currently -->
+      <!--plugin>
+	<groupId>org.jacoco</groupId>
+	<artifactId>jacoco-maven-plugin</artifactId>
+	<version>0.7.9</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin-->
+
+
+      <!--plugin>
+        <groupId>com.atlassian.maven.plugins</groupId>
+        <artifactId>maven-clover2-plugin</artifactId>
+	<version>4.0.6</version>
+     </plugin-->
+
+      <!--plugin>
+        <groupId>org.scoverage</groupId>
+        <artifactId>scoverage-maven-plugin</artifactId>
+        <version>1.3.0</version>
+	<configuration>
+	  <scalacPluginVersion>1.3.0</scalacPluginVersion>
+	  <scalaVersion>2.11.8</scalaVersion>
+	</configuration>
+      </plugin-->
 
       <!-- javadoc plugin -->
       <plugin>
@@ -638,5 +933,21 @@
       <artifactId>junit</artifactId>
       <version>${versionJUnit}</version>
     </dependency>
+
+    <!-- this one is outdated and replaced by 
+    com.google.code.findbugs/annotations 
+    which cannot be downloaded although in repo. -->
+    <dependency>
+      <groupId>net.sourceforge.findbugs</groupId>
+      <artifactId>annotations</artifactId>
+      <version>1.3.2</version>
+      <!--scope>provided</scope-->
+    </dependency>
+
+    <!--dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>annotations</artifactId>
+      <version>‌​3.0.1</version>
+   </dependency-->
   </dependencies>
 </project>
