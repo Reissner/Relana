@@ -6,6 +6,9 @@
 
   <!-- coordinates for model and artifact -->
   <modelVersion>4.0.0</modelVersion>
+
+
+  <!-- The Basics -->
   <groupId>eu.simuline</groupId>
   <artifactId>Relana</artifactId>
   <packaging>jar</packaging>
@@ -119,6 +122,7 @@
     <url>file:///SVN_Archive</url><!-- publicly browseable -->
   </scm>
 
+  <!-- Build Settings -->
   <build>
     <extensions>
       <extension>
@@ -161,6 +165,8 @@
 
     <pluginManagement>
       <plugins>
+	<!-- all plugins used for build and for reporting -->
+	<!-- checkstyle plugin-->
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-checkstyle-plugin</artifactId>
@@ -197,6 +203,7 @@
 	  </configuration>
 	</plugin>
 
+	<!-- findbugs plugin -->
 	<plugin>
 	  <groupId>org.codehaus.mojo</groupId>
 	  <artifactId>findbugs-maven-plugin</artifactId>
@@ -427,7 +434,7 @@
       </plugin>
 
 
-      <!-- configuration for the compile plugin -->
+      <!-- compiler plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -524,7 +531,12 @@
         </dependencies>
 
         <configuration>
-	  <format>xml</format><!--  in addition to "none", "csv", "xml", "txt" or the full class name of the PMD renderer to use. -->
+          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+	  <!--  in addition to "none", "csv", "xml", "txt" 
+	       or the full class name of the PMD renderer to use. -->
+          <minimumTokens>100</minimumTokens><!-- for cpd -->
+	  <format>xml</format>
+
 	  <skip>false</skip>
 	  <skipEmptyReport>false</skipEmptyReport>
 	  <!--suppressMarker>NOPMD</suppressMarker-->
@@ -570,6 +582,7 @@
 	    <link>https://jna.java.net/javadoc/</link>
 	    <link>http://junit.sourceforge.net/javadoc</link>
 	  </links>
+
           <show>private</show>
 	  <!-- **** myDefault should be linked to ${basedir}/config/MathJax.. -->
 	  <additionalparam>-Xdoclint:html -Xdoclint:reference --allow-script-in-comments</additionalparam>
@@ -591,9 +604,21 @@
 	    ${project.build.outputDirectory}/META-INF/MANIFEST.MF
 	    </manifestFile-->
 	    <manifest>
+	      <!-- adds the following lines to MANIFEST.MF (default is false): 
+		   Implementation-Title: ${project.name}
+		   Implementation-Version: ${project.version}
+		   Implementation-Vendor-Id: ${project.groupId}
+		   Implementation-Vendor: ${project.organization.name}
+		   Implementation-URL: ${project.url} -->
 	      <addDefaultImplementationEntries>
 		true
 	      </addDefaultImplementationEntries>
+	      <!-- adds the following lines to MANIFEST.MF (default is false): 
+		   Specification-Title: ${project.name}
+		   Specification-Version: 
+		   ${project.artifact.selectedVersion.majorVersion}.
+		   ${project.artifact.selectedVersion.minorVersion}
+		   Specification-Vendor: ${project.organization.name} -->
 	      <addDefaultSpecificationEntries>
 		true
 	      </addDefaultSpecificationEntries>
@@ -642,8 +667,6 @@
 	<artifactId>maven-install-plugin</artifactId>
 	<version>2.5.2</version>
       </plugin>
-
-
 
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
@@ -713,6 +736,13 @@
 	</configuration>
       </plugin>
 
+      <!-- pmd plugin **** reporting or build? -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-pmd-plugin</artifactId>
+	<version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
+      </plugin>
+
       <plugin>
  	<groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -735,7 +765,7 @@
 	</configuration-->
       </plugin>
 
-
+      <!-- findbugs -->
       <plugin>
  	<groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
@@ -753,7 +783,7 @@
         </configuration>
       </plugin>
 
-    <!-- pmd plugin **** reporting or build? -->
+      <!-- pmd plugin **** reporting or build? -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
