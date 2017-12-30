@@ -544,6 +544,13 @@
           <rulesets>
 	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
           </rulesets>
+          <excludes>
+            <exclude>eu/simuline/relana/parser/*Lexer.java</exclude>
+            <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
+            <exclude>eu/simuline/relana/parser/*Parser.java</exclude>
+	    <include>eu/simuline/relana/parser/*Listener.java</include>
+	    <include>eu/simuline/relana/parser/*Visitor.java</include>
+          </excludes>
 	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
         </configuration>
 
@@ -741,6 +748,41 @@
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-pmd-plugin</artifactId>
 	<version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
+        <!--dependencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>${versionPmd}</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>${versionPmd}</version>
+          </dependency>
+        </dependencies-->
+       <configuration>
+          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+	  <!--  in addition to "none", "csv", "xml", "txt" 
+	       or the full class name of the PMD renderer to use. -->
+          <minimumTokens>100</minimumTokens><!-- for cpd -->
+	  <format>xml</format>
+
+	  <skip>false</skip>
+	  <skipEmptyReport>false</skipEmptyReport>
+	  <!--suppressMarker>NOPMD</suppressMarker-->
+	  <includeTests>false</includeTests>
+          <rulesets>
+	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
+          </rulesets>
+          <excludes>
+            <exclude>eu/simuline/relana/parser/*Lexer.java</exclude>
+            <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
+            <exclude>eu/simuline/relana/parser/*Parser.java</exclude>
+	    <include>eu/simuline/relana/parser/*Listener.java</include>
+	    <include>eu/simuline/relana/parser/*Visitor.java</include>
+          </excludes>
+	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -927,6 +969,21 @@
 	  </header>
 	</configuration>
       </plugin>
+
+      <!-- changes plugin: src/changes/changes.xml -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.12.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
     </plugins>
   </reporting>
 
