@@ -1,0 +1,8 @@
+research on licenses and including one. 
+
+trial replacing jdee with eclime 
+
+eliminating links in the project 
+because changes of the linked in classes 
+corrupt reproduceability of a build of this project. 
+
