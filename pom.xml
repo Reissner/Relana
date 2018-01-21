@@ -66,6 +66,7 @@
 
     <versionPmd>5.8.1</versionPmd><!-- with mvn plugin 3.8 -->
     <versionPmdMvnPlugin>3.8</versionPmdMvnPlugin><!-- works with pmd 5.8.1 -->
+
     <!-- antlr4, its runtime and mvn plugin all same version, 
          tied to antlr-annotation and ST4 -->
     <versionAntlr>4.7</versionAntlr><!-- tied to antlr 4.7 -->
@@ -666,7 +667,7 @@
             </goals>
           </execution>
         </executions>
-     </plugin>
+      </plugin>
 
 
       <plugin>
@@ -674,7 +675,7 @@
 	<artifactId>maven-install-plugin</artifactId>
 	<version>2.5.2</version>
       </plugin>
-
+     
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-deploy-plugin</artifactId>
