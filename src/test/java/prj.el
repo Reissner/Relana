@@ -52,6 +52,8 @@
    `(;("sourcepath"      . ,(concat jdee-maven-project-dir "src/main/java:" 
      ;	                            jdee-maven-project-dir "src/test/java"))
 
+     ; for eu.simuline.testhelpers.GUIRunner only 
+     ("chooseClasspath" . ,(concat jdee-maven-project-dir "target/test-classes"))
      ("tstModelDir"     . ,(concat jdee-maven-project-dir "target/test-classes/" "../filteredTestResources/")) 
      )
    )
