@@ -1,0 +1,60 @@
+
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<document 
+    xmlns="http://maven.apache.org/XDOC/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+
+  <body>
+    <section name='Introduction'>
+      Here, we describe what Relana is and what it is for. ****
+    </section>
+
+    <section name='An example'>
+      Here, describe the example in the test resources. 
+    </section>
+
+    <section name='The File Formats'>
+      <subsection name='Project Files' id='subsec:prjFiles'>
+	Description of project files in rml: Relana Markup Language. ***
+      </subsection>
+
+      <subsection name='Component classes'>
+	<p> Description of component classes in ccl-files: 
+	**** link to grammar and to example files. </p>
+
+	<p> Component classes are much like java classes: 
+	Each component class has a name <code>CClassName</code> 
+	and is is defined by a ccl-file <code>CClassName.ccl</code>. </p>
+
+	<p> The class belongs to a package 
+	which is a path to locate the file <code>CClassName.ccl</code> 
+	in a library. 
+	For libraries see <a href='#subsec:prjFiles'>project files</a>. 
+	For example package <code>eu.simuline.relana.basic.switches</code> 
+	is represented by a path of nested folders 
+	<code>eu/simuline/relana/basic/switches</code> 
+	in a library and the according file <code>CClassName.ccl</code> 
+	representing the class <code>CClassName</code> 
+	must be in the innermost folder. 
+	</p>
+
+	<p> As declared java classes also component classes have a super class 
+	which may be given explicitly or defaults to ${publishDate}
+	<a href='./apidocs/eu/simuline/relana/model/CClass.html#COMPONENT'>CClass.COMPONENT</a>
+</p>
+      </subsection>
+
+      <subsection name='Service classes'>
+	Description of service classes in scl-files: **** link to grammar. 
+      </subsection>
+
+      <subsection name='Formulae'>
+	Description of formulae, where do they occur?: **** link to grammar. 
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

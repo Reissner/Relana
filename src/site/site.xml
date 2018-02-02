@@ -19,10 +19,9 @@
   </skin>
 
   <body>
-    <!--menu name='Documentation'>
-      <item name='operations' href='./operations/overview.html'/>
-      <item name='quality'    href='./quality/overview.html'/>
-    </menu-->
+    <menu name='Documentation'>
+      <item name='overview' href='./overview.html'/>
+    </menu>
 
     <menu ref='modules'/>
     <menu ref='parent'/>
