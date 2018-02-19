@@ -100,6 +100,10 @@
     </maven.pmd.rulesetfiles>
   </properties>
 
+
+  <!-- requires no source repositories at the moment. -->
+
+
   <!-- target repository. This will change. 
   In the long run it shall be something in www.simuline.eu -->
   <distributionManagement>
