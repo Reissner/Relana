@@ -96,7 +96,7 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.pmd.rulesetfiles>
-      ${basedir}/config/myPmdRuleset.xml
+      ${basedir}/../config/myPmdRuleset.xml
     </maven.pmd.rulesetfiles>
   </properties>
 
@@ -105,8 +105,8 @@
   <repositories>
     <repository>
       <id>localRepository</id>
-      <url>file:///home/ernst/Software/RepositoryLocal/maven2/</url>
-      <!--url>ftp://www.simuline.eu/public_ftp/RepositoryTarget</url-->
+      <!--url>file:///home/ernst/Software/RepositoryLocal/maven2/</url-->
+      <url>https://www.simuline.eu/RepositoryMaven</url>
     </repository>
   </repositories>
 
@@ -123,7 +123,8 @@
     <repository>
       <id>fileRepository</id>
       <!--url>file:///home/ernst/Software/RepositoryTarget</url-->
-      <url>ftp://www.simuline.eu/public_ftp/RepositoryTarget</url>
+      <!--url>ftp://www.simuline.eu/public_ftp/RepositoryTarget</url-->
+      <url>ftp://www.simuline.eu/public_html/RepositoryMaven</url>
     </repository>
   </distributionManagement>
 
@@ -146,6 +147,11 @@
         <groupId>org.apache.maven.wagon</groupId>
          <artifactId>wagon-file</artifactId>
          <version>2.10</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-http</artifactId>
+         <version>3.1.0</version>
       </extension>
     </extensions>
 
@@ -1036,7 +1042,7 @@
     <dependency>
       <groupId>eu.simuline</groupId>
       <artifactId>TestHelpers</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0</version>
       <!--scope>compile test</scope-->
     </dependency>
 
