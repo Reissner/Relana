@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- coordinates for model and artifact -->
   <modelVersion>4.0.0</modelVersion>
@@ -266,7 +268,7 @@
 	    <!--  in addition to "none", "csv", "xml", "txt" 
 		 or the full class name of the PMD renderer to use. -->
 	    <minimumTokens>100</minimumTokens><!-- for cpd -->
-	    <format>xml</format>
+	    <format>html</format>
 
 	    <skip>false</skip>
 	    <skipEmptyReport>false</skipEmptyReport>
@@ -581,6 +583,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.1.0</version>
         <configuration>
+	  <source>11</source>
 	  <!--phase>generate-sources</phase--> <!-- this is the default -->
 	  <sourcepath>
 	    ${project.basedir}/src/main/java:${project.basedir}/src/test/java
@@ -600,7 +603,6 @@
 	  <!-- does not work with current plugin version: bug already filed 
 	  -->
 	  <links>
-	    <link>file:///usr/share/javadoc/java-1.8.0-openjdk/api/</link>
 	    <link>http://www.antlr.org/api/JavaTool/</link>
 	    <link>http://www.antlr.org/api/Java/</link>
 	    <link>http://www.stringtemplate.org/api/</link>
@@ -852,7 +854,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.1.0</version>
         <configuration>
 	  <!--phase>generate-sources</phase--> <!-- this is the default -->
 	  <sourcepath>
@@ -873,7 +875,6 @@
 	  <!-- does not work with current plugin version: bug already filed 
 	  -->
 	  <links>
-	    <link>file:///usr/share/javadoc/java-1.8.0-openjdk/api/</link>
 	    <link>http://www.antlr.org/api/JavaTool/</link>
 	    <link>http://www.antlr.org/api/Java/</link>
 	    <link>http://www.stringtemplate.org/api/</link>
