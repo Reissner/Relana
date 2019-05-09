@@ -60,10 +60,9 @@
     <!-- to keep dependencies up to date: 
     mvn versions:display-plugin-updates
     mvn versions:display-dependency-updates -->
-    <versionMvn>3.5.0</versionMvn>
+    <versionMvn>3.6.0</versionMvn>
 
-    <versionPmd>5.8.1</versionPmd><!-- with mvn plugin 3.8 -->
-    <versionPmdMvnPlugin>3.8</versionPmdMvnPlugin><!-- works with pmd 5.8.1 -->
+    <versionPmd>6.14.0</versionPmd>
 
     <!-- antlr4, its runtime and mvn plugin all same version, 
          tied to antlr-annotation and ST4 -->
@@ -76,7 +75,7 @@
     <versionJUnit>4.12</versionJUnit>
     <!-- tied to junit 4.12, not needed -->
     <!--versionHamcrestCore>1.3</versionHamcrestCore-->
-    <versionTestPlugins>2.20.1</versionTestPlugins>
+    <!--versionTestPlugins>2.20.1</versionTestPlugins-->
 
     <resourcesDir>src/main/resources</resourcesDir>
     <srcJavaDir>src/main/java/</srcJavaDir>
@@ -102,8 +101,8 @@
   <!-- source repositories: at the moment for tests only. -->
   <repositories>
     <repository>
-      <id>localRepository</id>
-      <!--url>file:///home/ernst/Software/RepositoryLocal/maven2/</url-->
+      <id>publicRepoAtSimuline</id>
+      <name>repo at simuline</name>
       <url>https://www.simuline.eu/RepositoryMaven</url>
     </repository>
   </repositories>
@@ -113,15 +112,14 @@
   In the long run it shall be something in www.simuline.eu -->
   <distributionManagement>
     <site>
-      <id>fileSite</id>
-      <!--url>file:///home/ernst/Software/RepositoryTarget/Site</url-->
+      <id>publicSiteAtSimuline</id>
+      <name>Relana site at simuline</name>
       <url>ftp://www.simuline.eu/public_html/Relana</url>
     </site>
 
     <repository>
-      <id>fileRepository</id>
-      <!--url>file:///home/ernst/Software/RepositoryTarget</url-->
-      <!--url>ftp://www.simuline.eu/public_ftp/RepositoryTarget</url-->
+      <id>publicRepoAtSimuline</id>
+      <name>repo at simuline</name>
       <url>ftp://www.simuline.eu/public_html/RepositoryMaven</url>
     </repository>
   </distributionManagement>
@@ -234,7 +232,62 @@
 	    <!-- Optional directory to put findbugs xdoc xml report -->
 	    <!--xmlOutputDirectory>target/site</xmlOutputDirectory-->
 	  </configuration>
-  	</plugin>
+	</plugin>
+
+
+	<!-- pmd plugin -->
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-pmd-plugin</artifactId>
+	  <version>3.12.0</version>
+	  <!-- if update then also config/myruleset.xml as described there -->
+	  <!--executions>
+	      <execution>
+	      <goals>
+	      <goal>check</goal>
+	      </goals>
+	      </execution>
+	      </executions-->
+	  <dependencies>
+	    <dependency>
+	      <groupId>net.sourceforge.pmd</groupId>
+	      <artifactId>pmd-core</artifactId>
+	      <version>${versionPmd}</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>net.sourceforge.pmd</groupId>
+	      <artifactId>pmd-java</artifactId>
+	      <version>${versionPmd}</version>
+	    </dependency>
+	  </dependencies>
+
+	  <configuration>
+	    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+	    <!--  in addition to "none", "csv", "xml", "txt" 
+		 or the full class name of the PMD renderer to use. -->
+	    <minimumTokens>100</minimumTokens><!-- for cpd -->
+	    <format>xml</format>
+
+	    <skip>false</skip>
+	    <skipEmptyReport>false</skipEmptyReport>
+	    <!--suppressMarker>NOPMD</suppressMarker-->
+	    <includeTests>false</includeTests>
+	    <rulesets>
+	      <ruleset>${maven.pmd.rulesetfiles}</ruleset>
+	    </rulesets>
+	    <excludes>
+	      <exclude>eu/simuline/relana/parser/*Lexer.java</exclude>
+	      <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
+	      <exclude>eu/simuline/relana/parser/*Parser.java</exclude>
+	      <include>eu/simuline/relana/parser/*Listener.java</include>
+	      <include>eu/simuline/relana/parser/*Visitor.java</include>
+	    </excludes>
+	    <outputDirectory>${project.basedir}/target/site/</outputDirectory>
+	  </configuration>
+
+	</plugin>
+
+	
 
       </plugins>
     </pluginManagement>
@@ -252,7 +305,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.0.0-M2</version>
         <executions>
           <execution>
             <id>enforce</id>
@@ -263,7 +316,7 @@
               <rules>
                  <!--version>${versionMvn}</version-->
                 <requireMavenVersion>
-                  <version>3.5.0</version>
+                  <version>3.6</version>
                  </requireMavenVersion>
                 <!--requireJavaVersion>
                   <version>1.8</version>
@@ -454,10 +507,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.0</version>
         <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>11</source>
+            <target>11</target>
             <fork>true</fork>
 
           <verbose>false</verbose>
@@ -479,7 +532,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.7</version>
+        <version>3.7.1</version>
         <configuration>
           <locales>en</locales>
         </configuration>
@@ -489,7 +542,7 @@
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${versionTestPlugins}</version>
+        <version>3.0.0-M3</version>
         <configuration>
 	  <redirectTestOutputToFile>true</redirectTestOutputToFile>
 
@@ -520,64 +573,13 @@
         </configuration>
      </plugin>
 
-     <!-- pmd plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
-	<!-- if update then also config/myruleset.xml as described there -->
-	<!--executions>
-	  <execution>
-	    <goals>
-	      <goal>check</goal>
-	    </goals>
-	  </execution>
-	</executions-->
-        <dependencies>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-core</artifactId>
-            <version>${versionPmd}</version>
-          </dependency>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-java</artifactId>
-            <version>${versionPmd}</version>
-          </dependency>
-        </dependencies>
-
-        <configuration>
-          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-	  <!--  in addition to "none", "csv", "xml", "txt" 
-	       or the full class name of the PMD renderer to use. -->
-          <minimumTokens>100</minimumTokens><!-- for cpd -->
-	  <format>xml</format>
-
-	  <skip>false</skip>
-	  <skipEmptyReport>false</skipEmptyReport>
-	  <!--suppressMarker>NOPMD</suppressMarker-->
-	  <includeTests>false</includeTests>
-          <rulesets>
-	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
-          </rulesets>
-          <excludes>
-            <exclude>eu/simuline/relana/parser/*Lexer.java</exclude>
-            <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
-            <exclude>eu/simuline/relana/parser/*Parser.java</exclude>
-	    <include>eu/simuline/relana/parser/*Listener.java</include>
-	    <include>eu/simuline/relana/parser/*Visitor.java</include>
-          </excludes>
-	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
-        </configuration>
-
-      </plugin>
 
 
       <!-- javadoc plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.1.0</version>
         <configuration>
 	  <!--phase>generate-sources</phase--> <!-- this is the default -->
 	  <sourcepath>
@@ -620,7 +622,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.1.1</version>
         <configuration>
           <archive>
             <!--manifestFile>
@@ -662,7 +664,7 @@
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -688,13 +690,13 @@
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-install-plugin</artifactId>
-	<version>2.5.2</version>
+	<version>3.0.0-M1</version>
       </plugin>
      
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-deploy-plugin</artifactId>
-	<version>2.8.2</version>
+	<version>3.0.0-M1</version>
       </plugin>
 
     </plugins>
@@ -705,7 +707,7 @@
 
       <!-- creates a representation of the source code 
 	   with line numbers and cross references. 
-	   Forms the base for pmd, findbgs and checkstyle 
+	   Forms the base for pmd, findbugs and checkstyle 
 	   e.g. providing line numbers -->
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
@@ -718,7 +720,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.9</version>
+        <version>3.0.0</version>
         <configuration>
           <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
         </configuration>
@@ -728,17 +730,17 @@
 	    <reports>
 	      <report>index</report>
 	      <report>summary</report>
-	      <report>license</report>
-	      <report>project-team</report>
+	      <report>licenses</report>
+	      <report>team</report>
 
-	      <report>cim</report>
+	      <report>ci-management</report>
 	      <!--report>dependencies</report-->
 	      <report>dependency-convergence</report>
 	      <report>dependency-info</report>
 	      <report>dependency-management</report>
 	      <report>distribution-management</report>
-	      <report>issue-tracking</report>
-	      <report>mailing-list</report>
+	      <report>issue-management</report>
+	      <report>mailing-lists</report>
 	      <report>modules</report>
 	      <report>plugin-management</report>
 	      <report>plugins</report>
@@ -752,53 +754,11 @@
       <plugin>
  	<groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${versionTestPlugins}</version>
+        <version>3.0.0-M3</version>
 	<configuration>
 	  <!-- to show failed tests only -->
 	  <showSuccess>false</showSuccess>
 	</configuration>
-      </plugin>
-
-      <!-- pmd plugin **** reporting or build? -->
-      <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-pmd-plugin</artifactId>
-	<version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
-        <!--dependencies>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-core</artifactId>
-            <version>${versionPmd}</version>
-          </dependency>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-java</artifactId>
-            <version>${versionPmd}</version>
-          </dependency>
-        </dependencies-->
-       <configuration>
-          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-	  <!--  in addition to "none", "csv", "xml", "txt" 
-	       or the full class name of the PMD renderer to use. -->
-          <minimumTokens>100</minimumTokens><!-- for cpd -->
-	  <format>xml</format>
-
-	  <skip>false</skip>
-	  <skipEmptyReport>false</skipEmptyReport>
-	  <!--suppressMarker>NOPMD</suppressMarker-->
-	  <includeTests>false</includeTests>
-          <rulesets>
-	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
-          </rulesets>
-          <excludes>
-            <exclude>eu/simuline/relana/parser/*Lexer.java</exclude>
-            <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
-            <exclude>eu/simuline/relana/parser/*Parser.java</exclude>
-	    <include>eu/simuline/relana/parser/*Listener.java</include>
-	    <include>eu/simuline/relana/parser/*Visitor.java</include>
-          </excludes>
-	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -824,9 +784,10 @@
       </plugin>
 
       <!-- findbugs -->
-      <plugin>
+      <!--plugin>
  	<groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
+	<artifactId>findbugs-maven-plugin</artifactId>
+	<version>3.0.5</version>
 	<configuration>
 	  <xmlOutput>true</xmlOutput>
 	  <onlyAnalyze>
@@ -836,61 +797,12 @@
 	    eu.simuline.testhelpers.*, 
 	    eu.simuline.util.*, 
 	  </onlyAnalyze>
-	  <!-- Optional directory to put findbugs xdoc xml report -->
-	  <!--xmlOutputDirectory>target/site</xmlOutputDirectory-->
         </configuration>
-      </plugin>
+      </plugin-->
 
-      <!-- pmd plugin **** reporting or build? -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${versionPmdMvnPlugin}</version><!-- works with pmd 5.8.1 -->
-        <!--dependencies>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-core</artifactId>
-            <version>${versionPmd}</version>
-          </dependency>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-java</artifactId>
-            <version>${versionPmd}</version>
-          </dependency>
-        </dependencies-->
-
-        <configuration>
-	  <format>xml</format><!--  in addition to "none", "csv", "xml", "txt" or the full class name of the PMD renderer to use. -->
-	  <skip>false</skip>
-	  <skipEmptyReport>false</skipEmptyReport>
-	  <!--suppressMarker>NOPMD</suppressMarker-->
-	  <includeTests>false</includeTests>
-          <rulesets>
-	    <ruleset>${maven.pmd.rulesetfiles}</ruleset>
-          </rulesets>
-           <excludes>
-            <exclude>eu/simuline/relana/parser/FormulaLexer.java</exclude>
-            <exclude>eu/simuline/relana/parser/FormulaParser.java</exclude>
-	    <exclude>eu/simuline/relana/parser/Formula*Listener.java</exclude>
-	    <exclude>eu/simuline/relana/parser/Formula*Visitor.java</exclude>
-
-            <exclude>eu/simuline/relana/parser/CClassLexer.java</exclude>
-            <exclude>eu/simuline/relana/parser/CClassParser.java</exclude>
-	    <exclude>eu/simuline/relana/parser/CClass*Listener.java</exclude>
-	    <exclude>eu/simuline/relana/parser/CClass*Visitor.java</exclude>
-
-            <exclude>eu/simuline/relana/parser/SClassLexer.java</exclude>
-            <exclude>eu/simuline/relana/parser/SClassParser.java</exclude>
-	    <exclude>eu/simuline/relana/parser/SClass*Listener.java</exclude>
-	    <exclude>eu/simuline/relana/parser/SClass*Visitor.java</exclude>
-          </excludes>
-	  <outputDirectory>${project.basedir}/target/site/</outputDirectory>
-        </configuration>
-      </plugin>
-
-      <!-- determines code coverage of tests 
+       <!-- determines code coverage of tests 
 	   **** ignores and excludes are .... ignored **** -->
-      <plugin>
+      <!--plugin>
 	<groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.7</version>
@@ -910,22 +822,14 @@
 	    <format>html</format>
 	  </formats>
 	</configuration>
-      </plugin>
+      </plugin-->
 
 
-      <!-- **** seems not to work currently -->
-      <!--plugin>
+      <plugin>
 	<groupId>org.jacoco</groupId>
 	<artifactId>jacoco-maven-plugin</artifactId>
-	<version>0.7.9</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin-->
+	<version>0.8.3</version>
+      </plugin>
 
 
       <!--plugin>
