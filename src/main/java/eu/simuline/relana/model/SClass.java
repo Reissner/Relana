@@ -287,8 +287,8 @@ public final class SClass {
 		 this.getPathName() + "\" but found " + maxDefs + ". ");
 	}
 
-	this.minDef = minDefs.toArray(new Deficiency[1])[0];
-	this.maxDef = maxDefs.toArray(new Deficiency[1])[0];
+	this.minDef = minDefs.toArray(new Deficiency[0])[0];
+	this.maxDef = maxDefs.toArray(new Deficiency[0])[0];
     }
 
     // **** valid after verification only 

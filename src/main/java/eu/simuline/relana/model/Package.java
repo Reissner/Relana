@@ -146,15 +146,16 @@ public final class Package {
     public static Package getPackage(List<String> path) {
 	Package knot = ROOT;
 	Package cand;
-	for (int i = 0; i < path.size(); i++) {
-	    cand = knot.subPackage(path.get(i));
+	//for (int i = 0; i < path.size(); i++) {
+	for (String elem : path) {
+	    cand = knot.subPackage(elem);
 	    if (cand != null) {
 		knot = cand;
 		continue;
 	    }
-	    cand = knot.addSubPackage(path.get(i));
+	    cand = knot.addSubPackage(elem);
 	    assert cand == null;
-	    knot = knot.subPackage(path.get(i));
+	    knot = knot.subPackage(elem);
 	    assert knot != null;
 	}
 
