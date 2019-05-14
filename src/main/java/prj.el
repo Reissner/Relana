@@ -18,7 +18,7 @@
 ; jdk 
  '(jdee-jdk (quote "1.8"))
  '(jdee-jdk-registry (quote (("1.8" . "/usr/lib64/jvm/javaLatest/"))))
- '(jdee-jdk-doc-url "file:///usr/share/javadoc/java-1.8.0-openjdk/api/index.html")
+ '(jdee-jdk-doc-url "file:///usr/share/javadoc/java/index.html")
 
 ; code generation 
  '(jdee-gen-comments nil)
