@@ -612,10 +612,13 @@
 
           <show>private</show>
 	  <!-- **** myDefault should be linked to ${basedir}/config/MathJax.. -->
-	  <additionalparam>-Xdoclint:html -Xdoclint:reference --allow-script-in-comments</additionalparam>
+	  <additionalOptions>
+	    <additionalOption>-Xdoclint:all -Xdoclint:-missing</additionalOption>
+	    <additionalOption>--allow-script-in-comments</additionalOption>
+	  </additionalOptions>
 	  <header>Relana
-<!--&lt;script type="text/javascript" \
-	  src="file:///${basedir}/jars/MathJax/latest/MathJax.js?config=myDefault"&gt; &lt;/script&gt;-->
+	    &lt;script type="text/javascript" 
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,https://www.simuline.eu/MathJax/config/myDefault.js"&gt; &lt;/script&gt;
 	  </header>
 	</configuration>
       </plugin>
