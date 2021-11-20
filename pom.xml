@@ -94,9 +94,6 @@
     </tstModelDir>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.pmd.rulesetfiles>
-      ${basedir}/../config/myPmdRuleset.xml
-    </maven.pmd.rulesetfiles>
   </properties>
 
 
@@ -186,14 +183,19 @@
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-checkstyle-plugin</artifactId>
-	  <version>2.17</version>
+	  <version>3.1.2</version>
 
 	  <dependencies>
 	    <dependency>
 	      <groupId>com.puppycrawl.tools</groupId>
 	      <artifactId>checkstyle</artifactId>
-	      <version>8.4</version>
+	      <version>8.15</version><!-- TBD: make 8.30, 9.1 work -->
 	    </dependency>
+            <dependency>
+	      <groupId>eu.simuline</groupId>
+	      <artifactId>qMngmnt</artifactId>
+	      <version>0.0.1-SNAPSHOT</version>
+            </dependency>
 	  </dependencies>
 
 	  <configuration>
@@ -212,7 +214,10 @@
 		   a rule category or a java package name of rule class. -->
 	    </violationIgnore>
 	    <configLocation>
-	      ${basedir}/config/myChkStyleRuleset.xml
+	      <!-- refers to the dependency qMngmnt -->
+	      eu/simuline/qMngmnt/checkstyle/myChkStyleRuleset.xml
+	      <!-- eu/simuline/qMngmnt/checkstyle/google_checks.xml -->
+	      <!-- eu/simuline/qMngmnt/checkstyle/sun_checks.xml -->
 	    </configLocation>
 	    <encoding>UTF-8</encoding>
 	    <excludes>**/parser/**</excludes>
@@ -261,7 +266,12 @@
 	      <artifactId>pmd-java</artifactId>
 	      <version>${versionPmd}</version>
 	    </dependency>
-	  </dependencies>
+            <dependency>
+	      <groupId>eu.simuline</groupId>
+	      <artifactId>qMngmnt</artifactId>
+	      <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+ 	  </dependencies>
 
 	  <configuration>
 	    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
@@ -275,7 +285,9 @@
 	    <!--suppressMarker>NOPMD</suppressMarker-->
 	    <includeTests>false</includeTests>
 	    <rulesets>
-	      <ruleset>${maven.pmd.rulesetfiles}</ruleset>
+	    <!-- refers to the dependency qMngmnt -->
+	    <ruleset>eu/simuline/qMngmnt/pmd/myPmdRuleset.xml</ruleset>
+ 	    <!--ruleset>${maven.pmd.rulesetfiles}</ruleset-->
 	    </rulesets>
 	    <excludes>
 	      <exclude>eu/simuline/relana/parser/*Lexer.java</exclude>
