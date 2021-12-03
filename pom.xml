@@ -959,6 +959,13 @@
 
     <dependency>
       <groupId>eu.simuline</groupId>
+      <artifactId>SUtils</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <!--scope>test</scope-->
+    </dependency>
+
+    <dependency>
+      <groupId>eu.simuline</groupId>
       <artifactId>TestHelpers</artifactId>
       <version>1.0</version>
       <!--scope>compile test</scope-->
